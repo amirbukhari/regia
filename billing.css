@@ -895,3 +895,224 @@ thead th{
 }
 /* Also update sidebar brand mark accent with theme */
 .brand-mark .brand-accent{transition:fill .35s ease}
+
+/* ═══════════════════════════════════════════════════════
+   DELONIX UI/UX OVERHAUL — comprehensive design pass
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Brand mark in sidebar ── */
+.brand{padding:16px 16px 14px;gap:10px}
+.brand-mark{
+  width:36px;height:36px;flex:none;
+  color:var(--ember);
+  filter:drop-shadow(0 0 10px rgba(255,90,31,.4));
+  transition:filter .3s;
+  overflow:visible;
+}
+.brand:hover .brand-mark{filter:drop-shadow(0 0 18px rgba(255,90,31,.6))}
+.brand-mark use{display:block}
+.brand .name{
+  font-family:var(--display);
+  font-size:19px;font-weight:700;letter-spacing:.2px;
+  line-height:1;
+}
+.brand .env{
+  font-size:8.5px;letter-spacing:1.4px;padding:2px 7px;
+  background:rgba(255,90,31,.1);
+  border-color:rgba(255,90,31,.28);
+  margin-left:auto;
+}
+
+/* ── KPI grid: 3-col for better rhythm on 6 items ── */
+.kpis{grid-template-columns:repeat(3,1fr)}
+@media(max-width:1180px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.kpis{grid-template-columns:1fr}}
+
+/* ── Cards — richer elevation ── */
+.card{
+  background:linear-gradient(160deg,var(--surface) 0%,var(--bg-2) 100%);
+  border:1px solid var(--border-soft);
+  border-radius:var(--r);
+  box-shadow:
+    0 1px 0 rgba(255,240,224,.05) inset,   /* top highlight */
+    0 0 0 1px rgba(0,0,0,.35),
+    0 4px 16px rgba(0,0,0,.4),
+    0 24px 48px -16px rgba(0,0,0,.7);
+  transition:box-shadow .2s,transform .2s;
+}
+.card:hover{
+  box-shadow:
+    0 1px 0 rgba(255,240,224,.07) inset,
+    0 0 0 1px rgba(0,0,0,.4),
+    0 8px 24px rgba(0,0,0,.5),
+    0 28px 56px -16px rgba(0,0,0,.75);
+  transform:translateY(-1px);
+}
+
+/* ── KPI card refinements ── */
+.kpi{padding:20px 20px 16px}
+.kpi .lab{font-size:10px;letter-spacing:1.4px;margin-bottom:4px}
+.kpi .val{
+  font-size:31px;font-weight:800;margin:8px 0 6px;
+  background:linear-gradient(135deg,var(--text) 0%,var(--text-2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.kpi.accent .val{
+  background:linear-gradient(135deg,#fff 0%,var(--ember-soft) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  text-shadow:none;
+}
+.kpi.accent{
+  background:linear-gradient(145deg,#1e1008 0%,#130a05 100%);
+  border-color:rgba(255,90,31,.25);
+}
+.kpi.accent::after{
+  background:radial-gradient(180px 120px at 95% -20%,rgba(255,90,31,.2),transparent);
+}
+.kpi .sub{padding-right:84px;font-size:11.5px}
+.trend{font-size:11.5px}
+
+/* ── Page header ── */
+.page-head{margin-bottom:24px;gap:14px}
+.page-head h1{
+  font-size:30px;font-weight:800;letter-spacing:-.6px;
+  background:linear-gradient(130deg,var(--text) 0%,var(--text-2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.page-head p{font-size:12.5px;color:var(--text-3);margin-top:3px}
+
+/* ── Panel/section headers ── */
+.panel{padding:20px}
+.panel-head{margin-bottom:16px;gap:9px}
+.panel-head h3{font-size:14px;font-weight:700;letter-spacing:-.1px;color:var(--text)}
+.panel-head .sub{font-size:11.5px}
+
+/* ── Dashboard stat rows (A/R summary mini-stats) ── */
+.stat-label{
+  font-size:10.5px;text-transform:uppercase;letter-spacing:1px;
+  color:var(--text-3);font-weight:600;margin-bottom:4px;
+}
+/* the stat values are inline styled; just ensure the container has a rhythm */
+.stat-row{padding:8px 0;border-bottom:1px solid var(--border-soft)}
+.stat-row:last-child{border:none}
+
+/* ── Tables ── */
+tbody td{padding:14px 15px}
+thead th{padding:13px 15px;font-size:10px;letter-spacing:1.1px}
+tbody tr:hover{background:rgba(255,90,31,.04)}
+td.nm{font-weight:600;color:var(--text)}
+
+/* ── Topbar ── */
+.topbar{
+  padding:12px 24px;gap:12px;
+  background:rgba(11,10,8,.82);
+  backdrop-filter:blur(20px) saturate(1.5);
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.crumbs{font-size:12.5px}
+.search input{font-size:12.5px;padding:8px 13px 8px 36px;border-radius:20px}
+.pill-select{font-size:11.5px;padding:6px 12px;gap:6px;border-radius:20px}
+.icon-btn{width:34px;height:34px;border-radius:9px}
+.btn{padding:8px 14px;font-size:12.5px;border-radius:9px;gap:6px}
+.btn.primary{box-shadow:0 8px 20px -8px rgba(255,90,31,.6),0 0 0 1px rgba(255,90,31,.15)}
+
+/* ── Segment controls ── */
+.seg{border-radius:8px;padding:2px}
+.seg button{font-size:11px;padding:4px 10px;border-radius:5px}
+.seg button.on{background:rgba(255,90,31,.15);color:var(--ember-soft)}
+
+/* ── Tabs ── */
+.tabs button{font-size:12px;padding:6px 12px}
+
+/* ── Sidebar nav ── */
+.nav-item{font-size:13px;padding:8px 10px;border-radius:9px}
+.nav-group h6{font-size:9.5px;letter-spacing:1.8px;margin:6px 10px 6px}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(255,90,31,.12),rgba(255,90,31,.04) 80%,transparent);
+}
+.nav-item.active::before{width:2.5px;top:8px;bottom:8px}
+
+/* ── Sidebar footer ── */
+.sb-foot{padding:11px 14px}
+.avatar{border-radius:8px;font-size:11px}
+
+/* ── Drawer ── */
+.drawer{width:min(540px,94vw)}
+.drawer-head{padding:18px 20px}
+.drawer-body{padding:20px}
+
+/* ── Chip ── */
+.chip{font-size:11.5px;padding:6px 11px;border-radius:8px}
+
+/* ── Toast ── */
+.toast{border-radius:10px;padding:11px 17px;font-size:12.5px}
+
+/* ── Scrollbar global ── */
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--border)}
+*{scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent}
+
+/* ── Note banners ── */
+.note{border-radius:var(--r-sm);font-size:12px}
+
+/* ── Toolbar / filter row ── */
+.toolbar{gap:8px;margin-bottom:14px}
+.toolbar .chip svg{opacity:.65}
+
+/* ── Pill refinement ── */
+.pill{font-size:11px;padding:2px 9px;letter-spacing:.1px}
+
+/* ── Progress bars ── */
+.bar{height:5px;border-radius:4px}
+.bar>i{border-radius:4px}
+
+/* ── Section title divider ── */
+.sec-title{font-size:10.5px;letter-spacing:1.3px;margin:20px 0 10px}
+
+/* ── Quick-actions buttons in dashboard ── */
+.btn.outline{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text-2);
+}
+.btn.outline:hover{border-color:var(--ember);color:var(--text);background:rgba(255,90,31,.05)}
+
+/* ── Legend in charts ── */
+.legend{font-size:11px;margin-top:8px;gap:14px}
+
+/* ── Activity feed ── */
+.act .at{font-size:12.5px}
+.act .am{font-size:11px}
+
+/* ── dot step (progress steps) ── */
+.dot-step .ds small{font-size:10px}
+
+/* ── Plan cards ── */
+.plan{padding:18px;gap:12px}
+.plan h4{font-size:15px}
+.plan .price{font-size:26px}
+
+/* ═══ Sidebar background refinement ═══ */
+.sidebar{
+  background:linear-gradient(180deg,#0f0c09 0%,#090807 100%);
+  border-right:1px solid rgba(255,255,255,.04);
+}
+
+/* ═══ Main area subtle grid lines ═══ */
+.main{
+  background-image:
+    linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);
+  background-size:48px 48px;
+  background-position:top left;
+}
+
+/* ═══ Theme-aware ember transitions ═══ */
+.splash-logo-wrap svg path,
+.brand-mark svg path,
+.brand-mark use{
+  transition:fill .35s ease,color .35s ease;
+}
+
