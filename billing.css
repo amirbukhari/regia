@@ -1116,3 +1116,114 @@ td.nm{font-weight:600;color:var(--text)}
   transition:fill .35s ease,color .35s ease;
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   CEO-READY PASS — bento grid, featured card, executive type
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Bento KPI grid: 4-col, MRR spans 2, Churn spans 2 ── */
+.kpis{
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.kpi-featured{
+  grid-column:span 2;
+  padding:24px 24px 20px;
+  position:relative;
+}
+/* Featured MRR value — big and commanding */
+.kpi-featured .val{
+  font-size:48px;font-weight:800;letter-spacing:-1.5px;margin:10px 0 8px;
+  background:linear-gradient(130deg,#fff 0%,var(--ember-soft) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;
+}
+.kpi-featured .lab{font-size:11px;letter-spacing:1.6px}
+.kpi-featured .sub{font-size:12.5px;padding-right:200px}
+.kpi-featured .trend{font-size:13px;font-weight:700}
+.kpi-featured .spark{position:absolute;right:16px;bottom:18px;opacity:.9}
+/* Richer ember accent background */
+.kpi.accent{
+  background:
+    radial-gradient(180px 120px at 95% -10%,rgba(255,90,31,.22),transparent),
+    linear-gradient(150deg,#1c1008 0%,#0e0905 100%);
+  border:1px solid rgba(255,90,31,.22);
+  box-shadow:
+    0 0 0 1px rgba(255,90,31,.08),
+    inset 0 1px 0 rgba(255,200,100,.08),
+    0 4px 24px rgba(0,0,0,.5),
+    0 0 40px -10px rgba(255,90,31,.15);
+}
+.kpi.accent:hover{
+  border-color:rgba(255,90,31,.32);
+  box-shadow:
+    0 0 0 1px rgba(255,90,31,.12),
+    inset 0 1px 0 rgba(255,200,100,.1),
+    0 8px 32px rgba(0,0,0,.55),
+    0 0 60px -10px rgba(255,90,31,.22);
+}
+/* Last KPI (Gross Churn) spans 2 cols to balance the grid */
+#kpisRevops .kpi:last-child{grid-column:span 2}
+#kpisCfo .kpi:first-child{grid-column:span 2}
+
+/* ── Responsive: collapse bento on smaller viewports ── */
+@media(max-width:1200px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .kpi-featured{grid-column:span 3}
+  #kpisRevops .kpi:last-child{grid-column:span 1}
+  #kpisCfo .kpi:first-child{grid-column:span 1}
+}
+@media(max-width:780px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi-featured{grid-column:span 2}
+}
+@media(max-width:480px){
+  .kpis{grid-template-columns:1fr}
+  .kpi-featured{grid-column:span 1}
+  .kpi-featured .val{font-size:36px}
+}
+
+/* ── Executive page header ── */
+.page-head h1{
+  font-size:32px;font-weight:800;letter-spacing:-.8px;
+  background:linear-gradient(120deg,#fff 0%,rgba(247,242,234,.7) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.page-head p{
+  font-size:12px;letter-spacing:.3px;text-transform:uppercase;
+  color:var(--text-3);font-weight:500;margin-top:5px;
+}
+
+/* ── Sidebar brand: ensure logo mark is crisp ── */
+.brand-mark{
+  display:block;width:36px;height:36px;flex:none;overflow:hidden;
+  color:var(--ember);
+}
+.brand-mark svg,.brand-mark>svg{
+  width:100%;height:100%;display:block;
+  color:inherit;
+}
+
+/* ── Trend indicator typography ── */
+.trend.up{color:#3fb950;font-size:12px;font-weight:700;letter-spacing:.2px}
+.trend.down{color:var(--crit);font-size:12px;font-weight:700;letter-spacing:.2px}
+
+/* ── Revenue chart container ── */
+#revChart{border-radius:8px;overflow:hidden}
+
+/* ── Table: column alignment ── */
+.num{font-variant-numeric:tabular-nums;font-family:var(--mono)}
+
+/* ── Quick actions outline button ── */
+.btn.outline{
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--border);
+  color:var(--text-2);
+  transition:.14s;
+}
+.btn.outline:hover{
+  border-color:rgba(255,90,31,.4);
+  color:var(--text);
+  background:rgba(255,90,31,.05);
+}
+

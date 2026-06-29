@@ -53,3 +53,29 @@ const I = {
   team:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 1-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'
 };
 const svg=(p,s=17)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+/* ---- KPI count-up animation ---- */
+function countUpKPIs() {
+  const dur = 920, ease = t => t<.5?2*t*t:-1+(4-2*t)*t;
+  document.querySelectorAll('.kpi .val[data-val]').forEach(el => {
+    const raw = el.dataset.val.trim();
+    const m = raw.match(/^(\$?)([\d,]+\.?\d*)(.*)$/);
+    if (!m) return;
+    const prefix=m[1], numStr=m[2].replace(/,/g,''), suffix=m[3].trim();
+    const target=parseFloat(numStr); if(!isFinite(target)||target===0) return;
+    const decimals=(numStr.includes('.'))?numStr.split('.')[1].length:0;
+    const useComma=raw.includes(',');
+    const fmt=v=>{
+      const n=decimals?v.toFixed(decimals):Math.round(v);
+      const s=useComma?Number(Math.round(v)).toLocaleString('en-US'):n;
+      return prefix+s+(suffix?' '+suffix:'');
+    };
+    const t0=performance.now();
+    const tick=now=>{
+      const t=Math.min((now-t0)/dur,1), v=target*ease(t);
+      el.textContent=fmt(v);
+      if(t<1) requestAnimationFrame(tick); else el.textContent=raw;
+    };
+    requestAnimationFrame(tick);
+  });
+}

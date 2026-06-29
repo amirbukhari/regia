@@ -89,12 +89,13 @@ function closeCmd(){ const m=document.getElementById('cmdMenu'); if(m) m.classLi
 function pill(status,label){return `<span class="pill ${status}">${label}</span>`;}
 function pageHead(title,sub,actions=''){return `<div class="page-head"><div><h1>${title}</h1><p>${sub}</p></div><div class="actions">${actions}</div></div>`;}
 function kpi(lab,val,sub,opts={}){
-  const trend = opts.trend!=null?`<span class="trend ${opts.trend>=0?'up':'down'}">${opts.trend>=0?'▲':'▼'} ${Math.abs(opts.trend)}%</span> `:'';
-  return `<div class="card kpi ${opts.accent?'accent':''}">
+  const trend = opts.trend!=null?`<span class="trend ${opts.trend>=0?'up':'down'}">${opts.trend>=0?'↑':'↓'} ${Math.abs(opts.trend)}%</span>`:'';
+  const featured = opts.featured ? 'kpi-featured' : '';
+  return `<div class="card kpi ${opts.accent?'accent':''} ${featured}">
     <div class="lab">${lab}</div>
-    <div class="val tnum">${val}</div>
-    <div class="sub">${trend}${sub}</div>
-    ${opts.spark?`<canvas class="spark" width="92" height="34" data-spark="${opts.spark}"></canvas>`:''}
+    <div class="val tnum" data-val="${val}">${val}</div>
+    <div class="sub">${trend}${trend&&sub?' · ':''}${sub}</div>
+    ${opts.spark?`<canvas class="spark${opts.featured?' spark-wide':''}" width="${opts.featured?180:92}" height="${opts.featured?44:34}" data-spark="${opts.spark}"></canvas>`:''}
   </div>`;
 }
 

@@ -15,7 +15,7 @@ VIEWS.dashboard = (v)=>{
     )}
 
     <div class="grid kpis" id="kpisRevops">
-      ${kpi('MRR','$418,350','Jun 2026',{trend:4.2,accent:true,spark:'mrr'})}
+      ${kpi('Monthly Recurring Revenue','$418,350','Jun 2026',{trend:4.2,accent:true,spark:'mrr',featured:true})}
       ${kpi('ARR','$5.02M','annualised run rate',{trend:6.1,spark:'arr'})}
       ${kpi('Net Revenue MTD','$329,400','net of credits & refunds',{trend:6.8,spark:'rev'})}
       ${kpi('Net Rev Retention','112%','trailing 12 months',{trend:2.0,spark:'nrr'})}
@@ -115,7 +115,7 @@ VIEWS.dashboard = (v)=>{
       </div>
     </div>
   </div>`));
-  requestAnimationFrame(()=>{ drawRevChart(); drawSparks(); });
+  requestAnimationFrame(()=>{ drawRevChart(); drawSparks(); countUpKPIs(); });
 };
 
 
@@ -4198,14 +4198,32 @@ function drawWaterfall(){
 }
 
 function drawSparks(){
+  const seeds={
+    mrr:[6,7,7,8,8,9,10,11,12],
+    arr:[5,5,6,7,7,8,9,10,11],
+    rev:[5,6,7,8,7,9,10,11,12],
+    nrr:[9,10,10,11,11,12,12,12,12],
+    subs:[6,7,7,8,9,9,10,11,12],
+    churn:[12,11,11,10,10,9,9,8,7]
+  };
   document.querySelectorAll('canvas[data-spark]').forEach(c=>{
-    const seeds={'1':[8,9,9,10,11,12],'2':[6,7,8,8,9,11],'3':[7,8,8,9,10,12]};
     const data=seeds[c.dataset.spark]||[5,6,7,6,8,9];
+    const isDown=c.dataset.spark==='churn';
     const {x,w,h}=dpi(c); const max=Math.max(...data),min=Math.min(...data);
     const X=i=>4+(w-8)*i/(data.length-1), Y=v=>4+(h-8)*(1-(v-min)/(max-min||1));
+    // area fill
+    const grad=x.createLinearGradient(0,0,0,h);
+    grad.addColorStop(0,isDown?'rgba(242,78,48,.25)':'rgba(255,90,31,.28)');
+    grad.addColorStop(1,'rgba(255,90,31,0)');
+    x.beginPath();x.moveTo(X(0),Y(data[0]));
+    data.forEach((d,i)=>{if(i)x.lineTo(X(i),Y(d));});
+    x.lineTo(X(data.length-1),h);x.lineTo(X(0),h);x.closePath();x.fillStyle=grad;x.fill();
+    // line
     x.beginPath();data.forEach((d,i)=>{i?x.lineTo(X(i),Y(d)):x.moveTo(X(i),Y(d));});
-    x.strokeStyle='rgba(255,138,76,.85)';x.lineWidth=1.6;x.lineJoin='round';x.stroke();
-    x.fillStyle='#ff5a1f';x.beginPath();x.arc(X(data.length-1),Y(data.at(-1)),2.2,0,7);x.fill();
+    x.strokeStyle=isDown?'rgba(242,78,48,.9)':'rgba(255,138,76,.9)';x.lineWidth=1.8;x.lineJoin='round';x.stroke();
+    // endpoint dot
+    x.fillStyle=isDown?'#f24e30':'#ff5a1f';
+    x.beginPath();x.arc(X(data.length-1),Y(data.at(-1)),2.4,0,7);x.fill();
   });
 }
 
