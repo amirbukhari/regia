@@ -1227,3 +1227,117 @@ td.nm{font-weight:600;color:var(--text)}
   background:rgba(255,90,31,.05);
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   CEO-READY PASS 2 — splash premium + sidebar logo fix
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Splash screen: premium enterprise login ── */
+#splash{
+  background:
+    radial-gradient(ellipse 900px 600px at 50% 30%, #1a0f07 0%, #000 70%);
+}
+
+/* Remove the <?xml version> invisible content gap */
+.splash-logo-wrap{
+  width:200px;max-width:60vw;
+  margin:0 auto 0;
+  color:var(--ember);
+}
+.splash-logo{
+  width:100%;height:auto;display:block;
+  animation:logoIntro .95s cubic-bezier(.2,.8,.2,1) both,
+             emberGlow 4.5s 1.1s ease-in-out infinite;
+}
+
+/* Wordmark below the icon mark */
+.splash-wordmark{
+  font-family:var(--display);
+  font-size:38px;font-weight:800;letter-spacing:-1px;
+  color:var(--text);text-align:center;
+  margin:10px 0 4px;
+  opacity:0;animation:fadeUp .5s .3s cubic-bezier(.2,.8,.2,1) both;
+}
+.splash-wm-del{color:var(--ember)}
+
+/* Tagline */
+.splash-tagline{
+  font-size:11px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--text-3);font-weight:600;text-align:center;
+  margin-bottom:28px;
+  opacity:0;animation:fadeUp .5s .38s cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* Form fields: glass style */
+.splash-form{margin-top:0;gap:8px}
+.splash-form input{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  padding:13px 14px;
+  font-size:14.5px;
+  transition:border-color .15s,background .15s,box-shadow .15s;
+}
+.splash-form input:focus{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,90,31,.5);
+  box-shadow:0 0 0 3px rgba(255,90,31,.12);
+}
+
+/* Enter button: full-width, premium */
+.enter-btn{
+  margin-top:6px;
+  padding:14px;
+  font-size:14px;font-weight:700;
+  letter-spacing:.4px;
+  border-radius:10px;
+  background:linear-gradient(180deg,#ff7033 0%,#e64e1a 100%);
+  box-shadow:0 8px 28px -8px rgba(255,90,31,.7),0 0 0 1px rgba(255,120,60,.2);
+  transition:filter .15s,transform .12s,box-shadow .15s;
+}
+.enter-btn:hover{
+  filter:brightness(1.1);
+  transform:translateY(-1px);
+  box-shadow:0 12px 36px -8px rgba(255,90,31,.8),0 0 0 1px rgba(255,120,60,.3);
+}
+.enter-btn:active{transform:translateY(0);filter:brightness(.97)}
+
+/* SSO button: subtle */
+.sso-btn{
+  border-radius:10px;
+  font-size:13.5px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+}
+.sso-btn:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+
+/* Meta bar */
+.splash-meta{margin-top:22px;gap:14px}
+.splash-meta span{font-size:10.5px;letter-spacing:.2px}
+
+/* Splash card: wider for the wordmark layout */
+.splash-card{width:min(420px,92vw);text-align:center}
+
+/* ── Sidebar brand mark: fix SVG rendering ── */
+.brand-mark{
+  display:block;
+  width:34px;height:34px;
+  flex:none;
+  overflow:visible;        /* don't clip the SVG */
+  color:var(--ember);      /* currentColor source for phoenix path */
+}
+
+/* Ensure the <use> content fills the SVG viewport */
+.brand-mark use{display:block}
+
+/* ── Dashboard chart containers ── */
+.card.panel canvas{border-radius:6px}
+
+/* ── Topbar: refine entity pill ── */
+.pill-select.ent .ent-dot{
+  animation:pulse-ember 2s ease-in-out infinite;
+}
+
+/* ── Global: better form label spacing ── */
+.splash-form label{margin-top:4px;font-size:10px;letter-spacing:1.5px}
+
