@@ -32,7 +32,7 @@ VIEWS.dashboard = (v)=>{
       ${kpi('Runway','28 mo','at current burn rate',{trend:2.0})}
     </div>
 
-    <div class="two-col" style="margin-bottom:16px;align-items:start">
+    <div class="two-col dash-cols" style="margin-bottom:16px;align-items:start">
       <div>
         <div class="card panel" style="margin-bottom:16px">
           <div class="panel-head">
@@ -42,7 +42,7 @@ VIEWS.dashboard = (v)=>{
               <div class="seg"><button class="on">Net Rev</button><button data-act="toast" data-arg="Switching to MRR view">MRR</button></div>
             </div>
           </div>
-          <canvas id="revChart" style="width:100%;height:220px;display:block"></canvas>
+          <canvas id="revChart" style="width:100%;height:240px;display:block"></canvas>
           <div class="legend" style="display:flex;gap:18px;padding:10px 0 2px;font-size:11px;letter-spacing:.04em;color:var(--text-2)">
             <span style="display:flex;align-items:center;gap:5px"><i style="width:12px;height:3px;border-radius:2px;background:var(--ember);display:inline-block"></i>Net revenue</span>
             <span style="display:flex;align-items:center;gap:5px"><i style="width:12px;height:3px;border-radius:2px;background:rgba(182,169,154,.45);display:inline-block"></i>Prior year</span>
@@ -4127,7 +4127,7 @@ function drawRevChart(){
   const X=i=>pad.l+(w-pad.l-pad.r)*i/(data.length-1);
   const Y=val=>pad.t+(h-pad.t-pad.b)*(1-(val-min)/(max-min));
   // grid + axis
-  x.strokeStyle='#241d16'; x.fillStyle='#7f7264'; x.font='10px Hanken,ui-sans-serif'; x.lineWidth=1;
+  x.strokeStyle='#241d16'; x.fillStyle='#7f7264'; x.font='10px 'Plus Jakarta Sans',ui-sans-serif'; x.lineWidth=1;
   for(let g=0;g<=4;g++){const val=min+(max-min)*g/4;const y=Y(val);x.beginPath();x.moveTo(pad.l,y);x.lineTo(w-pad.r,y);x.stroke();x.fillText('$'+Math.round(val)+'k',6,y+3);}
   months.forEach((m,i)=>{if(i%2===0)x.fillText(m,X(i)-8,h-8);});
   // prior-year dashed comparison
@@ -4155,7 +4155,7 @@ function drawUsageChart(){
   const {x,w,h}=dpi(c); const pad={l:34,r:8,t:12,b:22};
   const data=[28,31,33,30,36,39,38,41,44,46,45,48]; const max=Math.max(...data)*1.15;
   const bw=(w-pad.l-pad.r)/data.length*0.6;
-  x.fillStyle='#7f7264'; x.font='10px Hanken,ui-sans-serif';
+  x.fillStyle='#7f7264'; x.font='10px 'Plus Jakarta Sans',ui-sans-serif';
   for(let g=0;g<=3;g++){const y=pad.t+(h-pad.t-pad.b)*g/3;x.strokeStyle='#241d16';x.beginPath();x.moveTo(pad.l,y);x.lineTo(w-pad.r,y);x.stroke();}
   data.forEach((d,i)=>{
     const cx=pad.l+(w-pad.l-pad.r)*(i+0.5)/data.length;
@@ -4183,7 +4183,7 @@ function drawMrrChart(){
     [g[0],g[1]].forEach((v,k)=>{const bh=scale(v);yUp-=bh;x.fillStyle=cols[k];if(x.roundRect&&k===1){x.beginPath();x.roundRect(cx-14,yUp,28,bh,[4,4,0,0]);x.fill();}else{x.fillRect(cx-14,yUp,28,bh);} });
     let yDn=zero;
     [g[2],g[3]].forEach((v,k)=>{const bh=scale(-v);x.fillStyle=cols[k+2];x.fillRect(cx-14,yDn,28,bh);yDn+=bh;});
-    x.fillStyle='#7f7264';x.font='10px Hanken,ui-sans-serif';x.fillText(labs[i],cx-9,h-6);
+    x.fillStyle='#7f7264';x.font='10px 'Plus Jakarta Sans',ui-sans-serif';x.fillText(labs[i],cx-9,h-6);
   });
 }
 
