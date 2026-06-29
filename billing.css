@@ -523,6 +523,20 @@ th.num{text-align:right}
 #kpisCfo{grid-template-columns:repeat(3,1fr)}
 @media(max-width:980px){#kpisCfo{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){#kpisCfo{grid-template-columns:1fr}}
+/* RevOps board: 1 hero + 5 peers — 6-col so it tiles 3×2 with no orphan cell.
+   The MRR card leads by treatment (ember rail, wider spark, larger value), not size. */
+#kpisRevops{grid-template-columns:repeat(6,1fr)}
+#kpisRevops .kpi{grid-column:span 2}
+#kpisRevops .kpi-featured{grid-column:span 2}
+@media(max-width:1080px){
+  #kpisRevops{grid-template-columns:repeat(2,1fr)}
+  #kpisRevops .kpi{grid-column:span 1}
+  #kpisRevops .kpi-featured{grid-column:span 2}
+}
+@media(max-width:760px){
+  #kpisRevops{grid-template-columns:1fr}
+  #kpisRevops .kpi,#kpisRevops .kpi-featured{grid-column:auto}
+}
 
 /* ── Brand mark in sidebar ── */
 .brand{padding:16px 16px 14px;gap:10px}
