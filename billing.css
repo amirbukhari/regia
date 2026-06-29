@@ -2092,6 +2092,34 @@ tbody tr:hover td:first-child{border-left-color:var(--ember);padding-left:14px}
   #app.show{grid-template-columns:1fr}
   .sidebar{display:none}
   .row,.two-col{grid-template-columns:1fr}
-  .kpis{grid-template-columns:repeat(2,1fr)}
-  .view{padding:16px}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+  .view{padding:14px;max-width:100%}
+  .topbar{padding:11px 14px;gap:10px}
+  .page-head{margin-bottom:16px;gap:12px}
+  .page-head h1{font-size:22px}
+  .page-head p{font-size:12px}
+  .kpi{padding:14px 12px 12px}
+  .kpi .lab{font-size:9px;letter-spacing:1.2px}
+  .kpi .val{font-size:28px}
+  .kpi-featured .val{font-size:36px}
+  .kpi.accent.kpi-featured .val{font-size:42px}
+  .card{border-radius:10px}
+  table{font-size:12px;min-width:100%}
+  tbody td{padding:10px 12px}
+  thead th{padding:10px 12px;font-size:9px}
+  .pill{font-size:10px}
+  .btn{font-size:12px;padding:8px 12px}
+}
+@media(max-width:480px){
+  .kpis{grid-template-columns:1fr;gap:10px}
+  .view{padding:12px}
+  .topbar{padding:10px 12px;font-size:12px}
+  .page-head h1{font-size:18px}
+  .kpi .val{font-size:24px}
+  .kpi-featured .val{font-size:32px}
+  .kpi.accent.kpi-featured .val{font-size:38px}
+  .panel{padding:14px}
+  .drawer{width:100%!important}
+  .search input{font-size:12px;padding:8px 12px 8px 32px}
+  .crumbs{font-size:11px}
 }
