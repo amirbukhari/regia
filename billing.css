@@ -4,19 +4,19 @@
 /* Bricolage Grotesque = display, Plus Jakarta Sans = body */
 
 :root{
-  --bg:#0b0a08; --bg-2:#100d0a; --surface:#16120e; --surface-2:#1e1813; --surface-3:#28201a;
-  --border:#2e261f; --border-soft:#241d17; --hair:rgba(255,236,214,.06);
-  --text:#f7f2ea; --text-2:#b6a99a; --text-3:#7f7264;
-  --ember:#ff5a1f; --ember-soft:#ff9152; --ember-deep:#bf3d10; --ember-glow:rgba(255,90,31,.18);
-  --good:#49c46e; --good-bg:rgba(73,196,110,.12);
-  --warn:#e8b23f; --warn-bg:rgba(232,178,63,.12);
-  --crit:#f24e30; --crit-bg:rgba(242,78,48,.12);
-  --info:#6aa6ff; --info-bg:rgba(106,166,255,.12);
+  --bg:#050403; --bg-2:#0a0905; --surface:#0f0d0a; --surface-2:#171410; --surface-3:#20190f;
+  --border:#2a1f15; --border-soft:#1a140d; --hair:rgba(255,240,224,.04);
+  --text:#fefdfb; --text-2:#c4b5a0; --text-3:#8b7d6d;
+  --ember:#ff6b2c; --ember-soft:#ff9456; --ember-deep:#d84315; --ember-glow:rgba(255,107,44,.25);
+  --good:#4caf50; --good-bg:rgba(76,175,80,.15);
+  --warn:#ffc107; --warn-bg:rgba(255,193,7,.15);
+  --crit:#f44336; --crit-bg:rgba(244,67,54,.15);
+  --info:#2196f3; --info-bg:rgba(33,150,243,.15);
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
   --sans:'Plus Jakarta Sans','Hanken',ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --display:'Bricolage Grotesque','Bricolage','Plus Jakarta Sans',ui-sans-serif,-apple-system,sans-serif;
   --r:14px; --r-sm:9px;
-  --shadow:inset 0 1px 0 rgba(255,240,224,.045), 0 1px 2px rgba(0,0,0,.4), 0 22px 48px -28px rgba(0,0,0,.85);
+  --shadow:inset 0 1px 0 rgba(255,245,230,.08), 0 2px 4px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.6);
   --sidebar-w:244px;
 }
 *{box-sizing:border-box}
@@ -124,7 +124,7 @@ button{font-family:inherit;cursor:pointer}
 .card:hover{border-color:var(--border);box-shadow:inset 0 1px 0 rgba(255,240,224,.06), 0 1px 3px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.28)}
 .kpi{padding:20px 22px 18px;position:relative;overflow:hidden}
 .kpi .lab{font-size:10px;text-transform:uppercase;letter-spacing:1.3px;color:var(--text-3);display:flex;align-items:center;gap:6px;font-weight:700}
-.kpi .val{font-family:var(--display);font-size:29px;font-weight:800;margin:14px 0 6px;letter-spacing:-.6px;font-variant-numeric:tabular-nums;color:var(--text)}
+.kpi .val{font-family:var(--display);font-size:42px;font-weight:900;margin:16px 0 8px;letter-spacing:-.8px;font-variant-numeric:tabular-nums;color:#fff;background:linear-gradient(135deg,#fff 0%,rgba(255,240,224,.85) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .kpi .sub{font-size:12px;color:var(--text-3);padding-right:96px;line-height:1.4}
 .trend{font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;letter-spacing:.3px}
 .trend.up{color:var(--good)}.trend.down{color:var(--crit)}
@@ -132,7 +132,7 @@ button{font-family:inherit;cursor:pointer}
 .kpi.accent{border-color:var(--ember-deep);background:linear-gradient(155deg,rgba(255,90,31,.08),rgba(255,90,31,.02))}
 .kpi.accent::before{content:"";position:absolute;top:-50%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,var(--ember-glow),transparent 70%);pointer-events:none}
 .kpi.accent::after{content:"";position:absolute;inset:0;background:radial-gradient(180px 100px at 92% -5%,rgba(255,90,31,.12),transparent);pointer-events:none;z-index:1}
-.kpi.accent .val{color:var(--text);text-shadow:0 0 20px rgba(255,90,31,.3);position:relative;z-index:2}
+.kpi.accent .val{color:#fff;text-shadow:0 0 30px var(--ember-glow), 0 0 60px rgba(255,107,44,.4);position:relative;z-index:2;font-size:56px}
 .kpi.accent .lab{color:var(--ember-soft);position:relative;z-index:2}
 .kpi.accent .sub{position:relative;z-index:2}
 
@@ -2096,47 +2096,48 @@ tbody tr:hover td:first-child{border-left-color:var(--ember);padding-left:14px}
   #app.show{grid-template-columns:1fr}
   .sidebar{display:none}
   .row,.two-col{grid-template-columns:1fr}
-  .kpis{grid-template-columns:1fr;gap:14px;margin-bottom:20px}
+  .kpis{grid-template-columns:1fr;gap:0;margin-bottom:32px}
   .kpi:nth-child(n+2){display:none}
   .kpi.kpi-featured{display:block!important;grid-column:auto}
-  .view{padding:16px;max-width:100%}
-  .topbar{padding:12px 16px;gap:11px}
-  .page-head{margin-bottom:18px;gap:12px}
-  .page-head h1{font-size:24px;font-weight:800}
-  .page-head p{font-size:12px}
-  .kpi{padding:18px 16px 16px}
-  .kpi .lab{font-size:9.5px;letter-spacing:1.2px}
-  .kpi .val{font-size:34px}
-  .kpi-featured .val{font-size:40px}
-  .kpi.accent.kpi-featured .val{font-size:48px}
-  .card{border-radius:12px}
+  .view{padding:20px;max-width:100%}
+  .topbar{padding:13px 18px;gap:12px}
+  .page-head{margin-bottom:24px;gap:14px}
+  .page-head h1{font-size:26px;font-weight:900}
+  .page-head p{font-size:13px}
+  .kpi{padding:24px 20px 22px;border-radius:16px}
+  .kpi .lab{font-size:10px;letter-spacing:1.4px;font-weight:800}
+  .kpi .val{font-size:48px}
+  .kpi-featured .val{font-size:52px}
+  .kpi.accent.kpi-featured .val{font-size:60px}
+  .card{border-radius:14px}
   table{font-size:12px;min-width:100%}
   tbody td{padding:11px 13px}
   thead th{padding:11px 13px;font-size:9px}
   .pill{font-size:10px}
-  .btn{font-size:12px;padding:9px 13px}
-  .panel{padding:16px}
-  .drawer{width:100%!important;border-radius:16px 16px 0 0}
-  .search input{font-size:13px;padding:9px 13px 9px 36px}
+  .btn{font-size:12px;padding:9px 13px;font-weight:700}
+  .panel{padding:18px}
+  .drawer{width:100%!important;border-radius:18px 18px 0 0}
+  .search input{font-size:13px;padding:10px 14px 10px 38px;font-weight:500}
 }
 @media(max-width:480px){
-  .kpis{grid-template-columns:1fr;gap:12px;margin-bottom:16px}
-  .kpi{padding:16px 14px 14px}
-  .kpi .val{font-size:28px}
-  .kpi-featured .val{font-size:36px}
-  .kpi.accent.kpi-featured .val{font-size:44px}
-  .view{padding:12px 14px}
-  .topbar{padding:10px 12px;font-size:13px}
-  .page-head{margin-bottom:14px;gap:10px}
-  .page-head h1{font-size:20px}
-  .page-head p{font-size:11px;max-width:100%}
-  .crumbs{font-size:11px}
-  tbody td{padding:9px 11px;font-size:11px}
-  thead th{padding:9px 11px;font-size:8px;letter-spacing:.5px}
-  .pill{font-size:9px;padding:2px 8px}
-  .card{border-radius:10px}
+  .kpis{grid-template-columns:1fr;gap:0;margin-bottom:28px}
+  .kpi{padding:28px 18px 26px;border-radius:14px}
+  .kpi .lab{font-size:10px;letter-spacing:1.5px;font-weight:800}
+  .kpi .val{font-size:52px}
+  .kpi-featured .val{font-size:56px}
+  .kpi.accent.kpi-featured .val{font-size:64px}
+  .view{padding:18px;max-width:100%}
+  .topbar{padding:12px 16px;font-size:13px;font-weight:600}
+  .page-head{margin-bottom:20px;gap:12px}
+  .page-head h1{font-size:22px;font-weight:900}
+  .page-head p{font-size:12px;max-width:100%;line-height:1.5}
+  .crumbs{font-size:12px;font-weight:600}
+  tbody td{padding:10px 12px;font-size:12px}
+  thead th{padding:10px 12px;font-size:9px;letter-spacing:.6px;font-weight:800}
+  .pill{font-size:10px;padding:3px 9px;font-weight:700}
+  .card{border-radius:12px}
   .search{max-width:100%}
-  .search input{font-size:12px;padding:8px 11px 8px 30px}
-  .panel{padding:12px}
-  .btn{font-size:11px;padding:7px 11px;gap:5px}
+  .search input{font-size:13px;padding:10px 12px 10px 32px;font-weight:500}
+  .panel{padding:16px;border-radius:12px}
+  .btn{font-size:12px;padding:9px 13px;gap:6px;font-weight:700}
 }
