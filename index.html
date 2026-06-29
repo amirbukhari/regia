@@ -17,12 +17,9 @@
 <!-- ============ SPLASH / LOGIN ============ -->
 <div id="splash">
   <div class="splash-card">
-    <svg class="splash-logo" viewBox="0 0 380 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="delonix">
-      <path d="M26 74 C26 74 16 56 20 38 C22 27 32 18 40 16 C35 29 30 44 34 58 C36 65 41 69 46 74 Z" fill="#ff5a1f" opacity="0.92"/>
-      <path d="M46 74 C46 74 54 56 48 38 C45 27 36 19 28 17 C35 30 42 44 40 58 C38 66 36 69 34 74 Z" fill="#bf3d10" opacity="0.72"/>
-      <text x="9" y="76" font-family="'Bricolage Grotesque','Bricolage','Georgia',serif" font-size="70" font-weight="700" fill="#ff5a1f" letter-spacing="-2">d</text>
-      <text x="60" y="76" font-family="'Bricolage Grotesque','Bricolage','Georgia',serif" font-size="70" font-weight="700" fill="#f7f2ea" letter-spacing="-2">elonix</text>
-    </svg>
+    <div class="splash-logo-wrap" id="splashLogoWrap">
+      <!-- logo.svg injected inline by inlineLogo() so CSS vars cascade -->
+    </div>
     <form class="splash-form" id="loginForm">
       <label for="email">Work email</label>
       <input id="email" type="email" value="abukhari@rentsync.com" autocomplete="username" />
@@ -111,6 +108,25 @@
 <aside class="drawer" id="drawer"></aside>
 <div class="toast" id="toast"><span class="dotg"></span><span id="toastMsg"></span></div>
 
+<script>
+// Inline logo.svg so CSS currentColor / var(--ember) cascade from the parent
+(function inlineLogo(){
+  var wrap = document.getElementById('splashLogoWrap');
+  if (!wrap) return;
+  fetch('logo.svg')
+    .then(function(r){ return r.text(); })
+    .then(function(svg){
+      wrap.innerHTML = svg;
+      var el = wrap.querySelector('svg');
+      if (el) {
+        el.removeAttribute('width');
+        el.removeAttribute('height');
+        el.classList.add('splash-logo');
+      }
+    })
+    .catch(function(){ /* fallback: leave empty */ });
+})();
+</script>
 <script src="js/utils.js"></script>
   <script src="js/data.js"></script>
   <script src="js/helpers.js"></script>

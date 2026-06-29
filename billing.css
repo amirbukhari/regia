@@ -876,3 +876,22 @@ thead th{
   0%,100%{opacity:.5;transform:scale(1)}
   50%    {opacity:1; transform:scale(1.1)}
 }
+
+/* ===== LOGO SVG — theme-aware phoenix color ===== */
+.splash-logo-wrap{
+  display:block;
+  width:280px;
+  max-width:72vw;
+  margin:0 auto 18px;
+  color:var(--ember);           /* currentColor in SVG inherits this */
+}
+.splash-logo-wrap svg.splash-logo{
+  width:100%;height:auto;display:block;
+}
+/* White tree side keeps white; phoenix/currentColor follows --ember */
+/* Transition so theme switches animate smoothly */
+.splash-logo-wrap svg.splash-logo path[fill="currentColor"]{
+  transition:fill .35s ease;
+}
+/* Also update sidebar brand mark accent with theme */
+.brand-mark .brand-accent{transition:fill .35s ease}
