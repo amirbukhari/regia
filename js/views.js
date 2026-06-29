@@ -4161,7 +4161,7 @@ function drawUsageChart(){
   const {x,w,h}=dpi(c); const pad={l:34,r:8,t:12,b:22};
   const data=[28,31,33,30,36,39,38,41,44,46,45,48]; const max=Math.max(...data)*1.15;
   const bw=(w-pad.l-pad.r)/data.length*0.6;
-  x.fillStyle='#7f7264'; x.font='10px 'Plus Jakarta Sans',ui-sans-serif';
+  x.fillStyle='#7f7264'; x.font="10px 'Plus Jakarta Sans',ui-sans-serif";
   for(let g=0;g<=3;g++){const y=pad.t+(h-pad.t-pad.b)*g/3;x.strokeStyle='#241d16';x.beginPath();x.moveTo(pad.l,y);x.lineTo(w-pad.r,y);x.stroke();}
   data.forEach((d,i)=>{
     const cx=pad.l+(w-pad.l-pad.r)*(i+0.5)/data.length;
@@ -4189,7 +4189,7 @@ function drawMrrChart(){
     [g[0],g[1]].forEach((v,k)=>{const bh=scale(v);yUp-=bh;x.fillStyle=cols[k];if(x.roundRect&&k===1){x.beginPath();x.roundRect(cx-14,yUp,28,bh,[4,4,0,0]);x.fill();}else{x.fillRect(cx-14,yUp,28,bh);} });
     let yDn=zero;
     [g[2],g[3]].forEach((v,k)=>{const bh=scale(-v);x.fillStyle=cols[k+2];x.fillRect(cx-14,yDn,28,bh);yDn+=bh;});
-    x.fillStyle='#7f7264';x.font='10px 'Plus Jakarta Sans',ui-sans-serif';x.fillText(labs[i],cx-9,h-6);
+    x.fillStyle='#7f7264';x.font="10px 'Plus Jakarta Sans',ui-sans-serif";x.fillText(labs[i],cx-9,h-6);
   });
 }
 
