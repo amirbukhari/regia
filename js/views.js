@@ -999,13 +999,13 @@ VIEWS.revrec = (v)=>{
 };
 
 function setDashLens(which, btn){
-  const ro=document.getElementById('kpisRevops'), fin=document.getElementById('kpisFinance');
-  if(!ro||!fin) return;
-  const finance = which==='finance';
-  ro.style.display = finance?'none':'';
-  fin.style.display = finance?'':'none';
+  const ro=document.getElementById('kpisRevops'), cfo=document.getElementById('kpisCfo');
+  if(!ro||!cfo) return;
+  const isCfo = which==='cfo';
+  ro.style.display = isCfo?'none':'';
+  cfo.style.display = isCfo?'':'none';
   document.querySelectorAll('#lensSeg button').forEach(b=>b.classList.toggle('on', b===btn));
-  if(!finance) requestAnimationFrame(drawSparks); // re-draw sparklines when revops grid returns
+  requestAnimationFrame(()=>{ if(!isCfo) drawSparks(); countUpKPIs(); });
 }
 
 function openSubscription(acct){
@@ -4127,9 +4127,15 @@ function drawRevChart(){
   const X=i=>pad.l+(w-pad.l-pad.r)*i/(data.length-1);
   const Y=val=>pad.t+(h-pad.t-pad.b)*(1-(val-min)/(max-min));
   // grid + axis
-  x.strokeStyle='#241d16'; x.fillStyle='#7f7264'; x.font='10px 'Plus Jakarta Sans',ui-sans-serif'; x.lineWidth=1;
-  for(let g=0;g<=4;g++){const val=min+(max-min)*g/4;const y=Y(val);x.beginPath();x.moveTo(pad.l,y);x.lineTo(w-pad.r,y);x.stroke();x.fillText('$'+Math.round(val)+'k',6,y+3);}
-  months.forEach((m,i)=>{if(i%2===0)x.fillText(m,X(i)-8,h-8);});
+  x.font="500 10px 'Plus Jakarta Sans',ui-sans-serif";
+  for(let g=0;g<=4;g++){
+    const val=min+(max-min)*g/4; const y=Y(val);
+    x.strokeStyle=g===0?'rgba(46,38,31,.9)':'rgba(46,38,31,.45)';
+    x.lineWidth=g===0?1:.7; x.beginPath();x.moveTo(pad.l,y);x.lineTo(w-pad.r,y);x.stroke();
+    x.fillStyle='#7f7264'; x.fillText('$'+Math.round(val)+'k',4,y+3.5);
+  }
+  x.fillStyle='#7f7264';
+  months.forEach((m,i)=>{if(i%2===0)x.fillText(m,X(i)-8,h-7);});
   // prior-year dashed comparison
   x.save(); x.setLineDash([4,4]); x.beginPath();
   prior.forEach((d,i)=>{i?x.lineTo(X(i),Y(d)):x.moveTo(X(i),Y(d));});
