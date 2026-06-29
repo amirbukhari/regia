@@ -59,16 +59,16 @@ function countUpKPIs() {
   const dur = 920, ease = t => t<.5?2*t*t:-1+(4-2*t)*t;
   document.querySelectorAll('.kpi .val[data-val]').forEach(el => {
     const raw = el.dataset.val.trim();
-    const m = raw.match(/^(\$?)([\d,]+\.?\d*)(.*)$/);
+    const m = raw.match(/^(\$?)([\d,]+\.?\d*)(\s*)(.*)$/);
     if (!m) return;
-    const prefix=m[1], numStr=m[2].replace(/,/g,''), suffix=m[3].trim();
+    const prefix=m[1], numStr=m[2].replace(/,/g,''), gap=m[3], suffix=m[4];
     const target=parseFloat(numStr); if(!isFinite(target)||target===0) return;
     const decimals=(numStr.includes('.'))?numStr.split('.')[1].length:0;
     const useComma=raw.includes(',');
     const fmt=v=>{
       const n=decimals?v.toFixed(decimals):Math.round(v);
       const s=useComma?Number(Math.round(v)).toLocaleString('en-US'):n;
-      return prefix+s+(suffix?' '+suffix:'');
+      return prefix+s+gap+suffix;  // preserve the value's own spacing exactly
     };
     const t0=performance.now();
     const tick=now=>{
