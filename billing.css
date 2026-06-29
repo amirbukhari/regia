@@ -1,8 +1,7 @@
 /* delonix — enterprise billing console styles */
 
-
-@font-face{font-family:'Bricolage';src:url(assets/asset-font-woff2-1.woff2) format('woff2');font-weight:200 800;font-display:swap;}
-@font-face{font-family:'Hanken';src:url(assets/asset-font-woff2-2.woff2) format('woff2');font-weight:300 800;font-display:swap;}
+/* Google Fonts CDN replaces local woff2 assets */
+/* Bricolage Grotesque = display, Plus Jakarta Sans = body */
 
 :root{
   --bg:#0b0a08; --bg-2:#100d0a; --surface:#16120e; --surface-2:#1e1813; --surface-3:#28201a;
@@ -14,8 +13,8 @@
   --crit:#f24e30; --crit-bg:rgba(242,78,48,.12);
   --info:#6aa6ff; --info-bg:rgba(106,166,255,.12);
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
-  --sans:'Hanken',ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --display:'Bricolage','Hanken',ui-sans-serif,-apple-system,sans-serif;
+  --sans:'Plus Jakarta Sans','Hanken',ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --display:'Bricolage Grotesque','Bricolage','Plus Jakarta Sans',ui-sans-serif,-apple-system,sans-serif;
   --r:14px; --r-sm:9px;
   --shadow:inset 0 1px 0 rgba(255,240,224,.045), 0 1px 2px rgba(0,0,0,.4), 0 22px 48px -28px rgba(0,0,0,.85);
   --sidebar-w:244px;
@@ -488,3 +487,334 @@ th.num{text-align:right}
 .grouping-level-name{min-width:110px;font-weight:600;color:var(--text-2)}
 .grouping-level-value{flex:1;color:var(--text)}
 .grouping-level-source{font-size:11px;color:var(--text-3)}
+
+/* ============================================================
+   UI-UX PRO MAX UPGRADE — Financial Dashboard / Dark Mode Elite
+   Principles: Bento Grid · Glassmorphism · Data-Dense · Ember accent
+   ============================================================ */
+
+/* ── Ambient background system ── */
+body{
+  background-image:
+    radial-gradient(900px 500px at 100% -5%, rgba(255,90,31,.06), transparent 60%),
+    radial-gradient(600px 400px at 0% 80%, rgba(255,90,31,.03), transparent 60%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='0.8' fill='%23ffffff' fill-opacity='0.025'/%3E%3C/svg%3E");
+}
+
+/* ── Sidebar — deeper, richer, live gradient ── */
+.sidebar{
+  background:linear-gradient(170deg,#130f0b 0%,#0c0906 55%,#070604 100%);
+  border-right:1px solid rgba(46,38,31,.7);
+  box-shadow:2px 0 40px rgba(0,0,0,.5);
+}
+.brand{
+  background:linear-gradient(90deg,rgba(255,90,31,.05),transparent);
+  border-bottom:1px solid rgba(46,38,31,.5);
+}
+.nav-item{
+  transition:background .18s cubic-bezier(.2,.8,.2,1), color .18s, transform .12s;
+}
+.nav-item:hover{
+  background:rgba(255,90,31,.07);
+  color:var(--text);
+  transform:translateX(2px);
+}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(255,90,31,.16),rgba(255,90,31,.04));
+  box-shadow:inset 0 0 0 1px rgba(255,90,31,.18);
+}
+.nav-item.active::before{
+  box-shadow:0 0 18px rgba(255,90,31,.7), 0 0 6px rgba(255,90,31,.9);
+}
+
+/* ── Topbar — glass elevation ── */
+.topbar{
+  background:rgba(9,8,6,.82);
+  backdrop-filter:blur(20px) saturate(1.6);
+  -webkit-backdrop-filter:blur(20px) saturate(1.6);
+  border-bottom:1px solid rgba(46,38,31,.5);
+  box-shadow:0 1px 0 rgba(255,236,214,.04), 0 4px 24px rgba(0,0,0,.3);
+}
+
+/* ── Cards — lifted glass ── */
+.card{
+  background:linear-gradient(160deg,rgba(28,20,14,.95),rgba(14,11,8,.98));
+  border:1px solid rgba(46,38,31,.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255,240,224,.06),
+    0 2px 4px rgba(0,0,0,.4),
+    0 8px 32px rgba(0,0,0,.35),
+    0 32px 64px -32px rgba(0,0,0,.6);
+  transition:box-shadow .22s cubic-bezier(.2,.8,.2,1), border-color .22s, transform .22s;
+}
+.card:hover{
+  box-shadow:
+    inset 0 1px 0 rgba(255,240,224,.09),
+    0 2px 4px rgba(0,0,0,.4),
+    0 12px 40px rgba(0,0,0,.4),
+    0 40px 80px -32px rgba(0,0,0,.65);
+  border-color:rgba(46,38,31,.9);
+  transform:translateY(-1px);
+}
+
+/* ── KPI cards ── */
+.kpi .val{
+  background:linear-gradient(135deg,var(--text) 0%,rgba(247,242,234,.7) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.kpi.accent .val{
+  background:linear-gradient(135deg,#fff8f4 0%,#ffb899 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.kpi.accent{
+  background:linear-gradient(160deg,rgba(36,20,8,.97),rgba(20,10,5,.98));
+  border-color:rgba(191,61,16,.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255,138,76,.1),
+    0 0 0 1px rgba(191,61,16,.12),
+    0 8px 40px rgba(255,90,31,.08),
+    0 32px 80px -32px rgba(0,0,0,.7);
+}
+.kpi.accent::after{
+  background:radial-gradient(220px 120px at 95% -15%,rgba(255,90,31,.14),transparent);
+}
+
+/* ── Table rows — smoother hover ── */
+tbody tr{transition:background .15s cubic-bezier(.2,.8,.2,1);}
+tbody tr:hover{background:rgba(40,32,26,.9);}
+tbody tr[style*="cursor:pointer"]{cursor:pointer}
+
+/* ── Table container — glass border ── */
+.table-wrap{
+  border:1px solid rgba(46,38,31,.6);
+  box-shadow:inset 0 1px 0 rgba(255,240,224,.04), 0 8px 32px rgba(0,0,0,.3);
+}
+thead th{
+  background:rgba(14,11,8,.95);
+  backdrop-filter:blur(8px);
+}
+
+/* ── Drawer — deeper glass ── */
+.drawer{
+  background:linear-gradient(160deg,rgba(18,14,10,.98),rgba(10,9,7,.99));
+  border-left:1px solid rgba(46,38,31,.6);
+  box-shadow:-60px 0 120px -40px rgba(0,0,0,.8), -2px 0 0 rgba(255,90,31,.04);
+}
+.drawer-head{
+  background:linear-gradient(90deg,rgba(255,90,31,.04),transparent);
+  border-bottom:1px solid rgba(46,38,31,.5);
+}
+
+/* ── Pills — more pop ── */
+.pill.good{box-shadow:0 0 8px rgba(73,196,110,.15);}
+.pill.crit{box-shadow:0 0 8px rgba(242,78,48,.15);}
+.pill.warn{box-shadow:0 0 8px rgba(232,178,63,.12);}
+.pill.ember{box-shadow:0 0 8px rgba(255,90,31,.2);}
+
+/* ── Buttons ── */
+.btn.primary{
+  box-shadow:0 4px 20px -6px rgba(255,90,31,.5), inset 0 1px 0 rgba(255,255,255,.1);
+  transition:filter .15s, transform .12s, box-shadow .15s;
+}
+.btn.primary:hover{
+  filter:brightness(1.1);
+  transform:translateY(-1px);
+  box-shadow:0 8px 28px -6px rgba(255,90,31,.6), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.btn.primary:active{transform:translateY(0);filter:brightness(.96);}
+
+.btn{transition:background .14s, border-color .14s, transform .1s, box-shadow .14s;}
+.btn:not(.primary):hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.3);}
+.btn:not(.primary):active{transform:translateY(0);}
+
+/* ── Chips ── */
+.chip{transition:background .14s, border-color .14s, color .14s, transform .1s;}
+.chip:hover{transform:translateY(-1px);}
+
+/* ── Icon buttons ── */
+.icon-btn{transition:background .14s, border-color .14s, color .14s, transform .1s, box-shadow .14s;}
+.icon-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.3);}
+
+/* ── Nav group headers ── */
+.nav-group h6{
+  letter-spacing:2px;
+  opacity:.55;
+}
+
+/* ── Search bar ── */
+.search input{
+  background:rgba(22,18,14,.8);
+  backdrop-filter:blur(8px);
+  transition:border-color .18s, box-shadow .18s, background .18s;
+}
+.search input:focus{
+  background:rgba(22,18,14,.95);
+  box-shadow:0 0 0 3px rgba(255,90,31,.16), 0 4px 16px rgba(0,0,0,.3);
+}
+
+/* ── Form inputs ── */
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  box-shadow:0 0 0 3px rgba(255,90,31,.14);
+}
+
+/* ── Splash screen ── */
+.splash-form input:focus{
+  box-shadow:0 0 0 3px rgba(255,90,31,.18), 0 4px 20px rgba(0,0,0,.4);
+}
+.enter-btn{
+  letter-spacing:.5px;
+  box-shadow:0 12px 36px -10px rgba(255,90,31,.5), inset 0 1px 0 rgba(255,255,255,.12);
+  transition:filter .15s, transform .14s, box-shadow .15s;
+}
+.enter-btn:hover{
+  box-shadow:0 18px 48px -12px rgba(255,90,31,.65), inset 0 1px 0 rgba(255,255,255,.15);
+  transform:translateY(-2px);
+}
+
+/* ── Activity feed ── */
+.act{transition:background .14s;}
+.act:hover{background:rgba(40,32,26,.6);border-radius:8px;padding-left:6px;padding-right:6px;margin:0 -6px;}
+
+/* ── Toast — more polish ── */
+.toast{
+  background:rgba(22,18,14,.95);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(46,38,31,.7);
+  box-shadow:0 16px 48px rgba(0,0,0,.5), 0 0 0 1px rgba(255,90,31,.06);
+}
+
+/* ── Scroll bar — refined ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(46,38,31,.8);border-radius:6px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(70,55,43,.9);}
+
+/* ── Page head h1 ── */
+.page-head h1{
+  background:linear-gradient(135deg,var(--text) 0%,rgba(247,242,234,.65) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing:-.7px;
+}
+
+/* ── Brand mark glow ── */
+.brand-mark{
+  filter:drop-shadow(0 0 14px rgba(255,90,31,.35));
+  transition:filter .3s;
+}
+.brand:hover .brand-mark{filter:drop-shadow(0 0 22px rgba(255,90,31,.55));}
+
+/* ── Sidebar footer avatar ── */
+.avatar{
+  box-shadow:0 0 0 2px rgba(255,90,31,.25), 0 4px 12px rgba(0,0,0,.4);
+  transition:box-shadow .2s;
+}
+.sb-foot:hover .avatar{box-shadow:0 0 0 2px rgba(255,90,31,.5), 0 4px 16px rgba(0,0,0,.5);}
+
+/* ── View entrance animation ── */
+@keyframes fade{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:none;}
+}
+.view{animation:fade .38s cubic-bezier(.2,.8,.2,1);}
+
+/* ── Dot status — live pulse ── */
+.dotg{
+  animation:pulse-good 2.4s ease-in-out infinite;
+}
+@keyframes pulse-good{
+  0%,100%{box-shadow:0 0 6px rgba(73,196,110,.6);}
+  50%{box-shadow:0 0 14px rgba(73,196,110,.9), 0 0 24px rgba(73,196,110,.3);}
+}
+.icon-btn .dot{
+  animation:pulse-ember 2s ease-in-out infinite;
+}
+@keyframes pulse-ember{
+  0%,100%{box-shadow:0 0 5px rgba(255,90,31,.7);}
+  50%{box-shadow:0 0 12px rgba(255,90,31,.9), 0 0 20px rgba(255,90,31,.4);}
+}
+
+/* ── Number counter animation ── */
+@keyframes countUp{
+  from{opacity:0;transform:translateY(8px);}
+  to{opacity:1;transform:none;}
+}
+.kpi .val{animation:countUp .5s cubic-bezier(.2,.8,.2,1) both;}
+.kpi:nth-child(1) .val{animation-delay:.05s;}
+.kpi:nth-child(2) .val{animation-delay:.1s;}
+.kpi:nth-child(3) .val{animation-delay:.15s;}
+.kpi:nth-child(4) .val{animation-delay:.2s;}
+.kpi:nth-child(5) .val{animation-delay:.25s;}
+.kpi:nth-child(6) .val{animation-delay:.3s;}
+
+/* ── Segment controls ── */
+.seg button.on{
+  background:linear-gradient(135deg,rgba(255,90,31,.22),rgba(255,90,31,.1));
+  box-shadow:inset 0 1px 0 rgba(255,138,76,.15), 0 1px 4px rgba(0,0,0,.3);
+}
+
+/* ── Tabs ── */
+.tabs button.on{
+  background:linear-gradient(135deg,rgba(40,32,26,.9),rgba(30,24,19,.95));
+  box-shadow:inset 0 1px 0 rgba(255,240,224,.06);
+}
+
+/* ── Bar fill — animated on load ── */
+@keyframes barFill{from{width:0}to{}}
+.bar > i{animation:barFill .8s cubic-bezier(.4,0,.2,1) both;}
+
+/* ── Timeline dots ── */
+.tl-dot.done{box-shadow:0 0 8px rgba(76,175,130,.4);}
+.tl-dot.active{box-shadow:0 0 12px rgba(255,90,31,.5);}
+.tl-dot.fail{box-shadow:0 0 8px rgba(229,73,73,.4);}
+
+/* ── Theme: Dawn overrides for glass ── */
+[data-theme="dawn"] body{
+  background-image:
+    radial-gradient(800px 400px at 100% -5%, rgba(224,68,15,.05), transparent),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='0.8' fill='%23000000' fill-opacity='0.025'/%3E%3C/svg%3E");
+}
+[data-theme="dawn"] .sidebar{
+  background:linear-gradient(170deg,#ede8e2,#e5dfd8);
+  box-shadow:2px 0 24px rgba(0,0,0,.08);
+}
+[data-theme="dawn"] .card{
+  background:linear-gradient(160deg,#ffffff,#f8f4ef);
+  box-shadow:0 2px 8px rgba(0,0,0,.06), 0 12px 32px rgba(0,0,0,.08);
+}
+[data-theme="dawn"] .topbar{
+  background:rgba(248,246,243,.88);
+}
+[data-theme="dawn"] .kpi .val,
+[data-theme="dawn"] .page-head h1{
+  -webkit-text-fill-color:var(--text);
+  background:none;
+}
+
+/* ── Midnight theme accent glow ── */
+[data-theme="midnight"] .kpi.accent{
+  border-color:rgba(42,111,196,.35);
+  box-shadow:0 0 0 1px rgba(42,111,196,.12), 0 8px 40px rgba(74,158,255,.08);
+}
+[data-theme="midnight"] .nav-item.active::before{
+  box-shadow:0 0 18px rgba(74,158,255,.7);
+}
+
+/* ── Ripple click effect ── */
+.nav-item,.btn,.chip,.icon-btn{position:relative;overflow:hidden;}
+@keyframes ripple{
+  to{transform:scale(4);opacity:0;}
+}
+.ripple-effect{
+  position:absolute;width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.08);transform:scale(0);
+  animation:ripple .5s ease-out;pointer-events:none;margin:-20px;
+}
+
+/* ── Scrollbar in nav ── */
+.nav{scrollbar-width:thin;scrollbar-color:rgba(46,38,31,.5) transparent;}
