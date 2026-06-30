@@ -34,6 +34,7 @@ function route(id){
   const v=document.getElementById('view');
   v.innerHTML='';
   (VIEWS[id]||VIEWS.dashboard)(v);
+  if(typeof appendFeatureCoverage === 'function') appendFeatureCoverage(v, id);
   v.scrollTop=0; window.scrollTo(0,0);
   closeCmd();
   document.getElementById('app')?.classList.remove('nav-open'); // dismiss mobile menu on navigate

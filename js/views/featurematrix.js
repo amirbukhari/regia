@@ -64,6 +64,39 @@ function featureRow(section, feature, i){
   </tr>`;
 }
 
+function featureCoverageForRoute(routeId){
+  if(!Array.isArray(FEATURE_MATRIX)) return [];
+  return FEATURE_MATRIX
+    .map(section=>({section, route:featureRoute(section.title)}))
+    .filter(x=>x.route===routeId)
+    .flatMap(({section})=>section.features.map((feature,i)=>({
+      section:section.title,
+      feature,
+      index:i,
+      blueprint:featureBlueprint(section.title, feature)
+    })));
+}
+
+function appendFeatureCoverage(viewEl, routeId){
+  if(routeId==='featurematrix') return;
+  const items=featureCoverageForRoute(routeId);
+  if(!items.length) return;
+  const preview=items.slice(0,12);
+  viewEl.appendChild(el(`<div class="card panel module-feature-coverage">
+    <div class="panel-head">
+      <h3>Completed feature mockups in this module</h3>
+      <span class="sub">${items.length}/${items.length} mapped FEATURES.md items · click any feature to inspect its complete mock</span>
+      <div class="right"><button class="btn ghost" data-act="route" data-arg="featurematrix">Open Workbench</button></div>
+    </div>
+    <div class="module-feature-grid">
+      ${preview.map((item,i)=>`<button class="module-feature-chip" data-act="featuredetail" data-arg="${encodeURIComponent(item.section+'|'+item.feature+'|'+routeId+'|'+i)}">
+        <span>${item.feature}</span><b>${item.blueprint.kind}</b>
+      </button>`).join('')}
+    </div>
+    ${items.length>preview.length?`<div class="module-feature-more">+${items.length-preview.length} more completed mockups in the Feature Workbench</div>`:''}
+  </div>`));
+}
+
 VIEWS.featurematrix = (v)=>{
   const total=FEATURE_MATRIX.reduce((a,s)=>a+s.features.length,0);
   v.appendChild(el(`<div class="view">
