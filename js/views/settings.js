@@ -3,28 +3,9 @@
 VIEWS.settings = (v)=>{
   requestAnimationFrame(()=>{
     const p=document.getElementById('themePicker');if(p)buildThemePicker(p);
-    // Build settings accent swatches
-    const ar=document.getElementById('settingsAccentRow');
-    if(ar&&!ar.dataset.built){
-      ar.dataset.built='1';
-      const curAccent=localStorage.getItem('dlx-accent')||'';
-      ACCENT_PRESETS.forEach(a=>{
-        const sw=document.createElement('span');
-        sw.className='accent-swatch'+(curAccent===a.hex?' active':'');
-        sw.title=a.label;sw.dataset.hex=a.hex;
-        sw.style.cssText=`background:${a.hex};width:24px;height:24px;border-radius:50%;cursor:pointer;display:inline-block;border:2px solid transparent;transition:transform .12s,border-color .12s;flex-shrink:0`;
-        sw.addEventListener('click',()=>setAccentColor(a.hex));
-        ar.appendChild(sw);
-      });
-      const wrap=document.createElement('div');
-      wrap.style.cssText='display:flex;align-items:center;gap:4px;margin-left:4px';
-      wrap.innerHTML='<input type="color" id="settingsColorPicker" value="#ff5a1f" style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border-2);padding:0;cursor:pointer"><span style="font-size:11px;color:var(--text-3);margin-left:2px">Custom</span>';
-      wrap.querySelector('input').addEventListener('input',e=>setAccentColor(e.target.value));
-      ar.appendChild(wrap);
-      // Sync density buttons
-      const saved=localStorage.getItem('dlx-density')||'default';
-      document.querySelectorAll('.settings-d-btn').forEach(b=>b.classList.toggle('active',b.dataset.arg===saved));
-    }
+    // Sync density buttons
+    const saved=localStorage.getItem('dlx-density')||'default';
+    document.querySelectorAll('.settings-d-btn').forEach(b=>b.classList.toggle('active',b.dataset.arg===saved));
   });
   v.appendChild(el(`<div class="view">
     ${pageHead('Settings','Billing configuration, payment gateways, team access and audit trail.','')}
@@ -33,10 +14,6 @@ VIEWS.settings = (v)=>{
           <div style="padding:0 18px 18px">
             <div style="font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3);font-weight:700;padding:12px 0 8px">Color theme</div>
             <div class="theme-picker-grid" id="themePicker"></div>
-            <div style="font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3);font-weight:700;padding:18px 0 8px">Accent color</div>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" id="settingsAccentRow">
-              <span style="font-size:12px;color:var(--text-2)">Preset:</span>
-            </div>
             <div style="font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3);font-weight:700;padding:18px 0 8px">Data density</div>
             <div style="display:flex;gap:8px">
               <button class="d-btn settings-d-btn" data-act="density" data-arg="compact" style="flex:1;padding:8px 0;border-radius:6px;border:1px solid var(--border-2);background:var(--surface-2);cursor:pointer;font-size:12px;color:var(--text-2);font-weight:600">Compact</button>

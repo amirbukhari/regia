@@ -2,7 +2,6 @@
 
 VIEWS.thememanager = (v)=>{
   const cur=document.documentElement.dataset.theme||'ember';
-  const curAccent=localStorage.getItem('dlx-accent')||'';
   // Real themes from theme.js — clicking one actually switches the whole UI live.
   const themes=THEMES.map(t=>({id:t.id,label:t.name,desc:t.desc,bg:t.bg,acc:t.dot,active:t.id===cur}));
   const fonts=[
@@ -30,25 +29,6 @@ VIEWS.thememanager = (v)=>{
                 </div>
                 <div class="mut" style="font-size:11px">${t.desc}</div>
               </div>`).join('')}
-          </div>
-        </div>
-
-        <div class="card panel" style="margin-bottom:16px">
-          <div class="panel-title" style="margin-bottom:14px">Brand colours</div>
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div><div style="font-size:13px;font-weight:600">Accent colour</div><div class="mut" style="font-size:11px">CTAs, active states, highlights · overrides the theme accent</div></div>
-              <div style="display:flex;align-items:center;gap:6px">
-                ${ACCENT_PRESETS.map(a=>`<div data-act="accent" data-arg="${a.hex}" class="accent-swatch${curAccent===a.hex?' active':''}" data-hex="${a.hex}" style="width:22px;height:22px;border-radius:50%;background:${a.hex};cursor:pointer" title="${a.label}"></div>`).join('')}
-                <input type="color" value="${curAccent||'#ff5a1f'}" style="width:28px;height:28px;border:none;background:none;cursor:pointer;border-radius:4px" title="Custom accent" oninput="setAccentColor(this.value)">
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div><div style="font-size:13px;font-weight:600">Secondary colour</div><div class="mut" style="font-size:11px">Charts, secondary badges</div></div>
-              <div style="display:flex;align-items:center;gap:6px">
-                ${['#5aa9ff','#3fb950','#e3b341','#b07cff','#ff6b9d'].map(c=>`<div data-act="toast" data-arg="Secondary set to ${c}" style="width:22px;height:22px;border-radius:50%;background:${c};cursor:pointer" title="${c}"></div>`).join('')}
-              </div>
-            </div>
           </div>
         </div>
 

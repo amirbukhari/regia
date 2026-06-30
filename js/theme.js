@@ -13,16 +13,6 @@ const THEMES=[
   {id:'dawn',    name:'Dawn',     dot:'#e0440f', bg:'#f8f6f3', desc:'Light · warm'},
   {id:'paper',   name:'Paper',    dot:'#4f46e5', bg:'#f5f6f8', desc:'Light · indigo'},
 ];
-const ACCENT_PRESETS=[
-  {hex:'#ff5a1f',label:'Ember'},
-  {hex:'#4a9eff',label:'Azure'},
-  {hex:'#22d3ee',label:'Cyan'},
-  {hex:'#3ecf7f',label:'Emerald'},
-  {hex:'#a855f7',label:'Violet'},
-  {hex:'#fb5c7d',label:'Rose'},
-  {hex:'#ffaa00',label:'Amber'},
-  {hex:'#84cc16',label:'Lime'},
-];
 
 function setTheme(id){
   const t=THEMES.find(x=>x.id===id)||THEMES[0];
@@ -56,23 +46,6 @@ function repaintCharts(){
     try{ if(typeof current!=='undefined' && typeof route==='function'){ route(current); } }
     catch(e){}
   });
-}
-
-function setAccentColor(hex){
-  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-  const soft=`#${Math.min(255,r+50).toString(16).padStart(2,'0')}${Math.min(255,g+50).toString(16).padStart(2,'0')}${Math.min(255,b+50).toString(16).padStart(2,'0')}`;
-  const deep=`#${Math.max(0,r-50).toString(16).padStart(2,'0')}${Math.max(0,g-50).toString(16).padStart(2,'0')}${Math.max(0,b-50).toString(16).padStart(2,'0')}`;
-  const root=document.documentElement;
-  root.style.setProperty('--ember',hex);
-  root.style.setProperty('--ember-soft',soft);
-  root.style.setProperty('--ember-deep',deep);
-  root.style.setProperty('--ember-glow',`rgba(${r},${g},${b},.18)`);
-  localStorage.setItem('dlx-accent',hex);
-  // Sync swatches
-  document.querySelectorAll('.accent-swatch,[data-act="accent"]').forEach(s=>s.classList.toggle('active',s.dataset.hex===hex||s.dataset.arg===hex));
-  const dot=document.getElementById('themeBtnDot');
-  if(dot)dot.style.background=hex;
-  repaintCharts();
 }
 
 function setDensity(val){
@@ -116,25 +89,7 @@ function buildThemePopover(pop){
       list.appendChild(btn);
     });
   }
-  const accentRow=document.getElementById('accentRow');
-  if(accentRow){
-    const curAccent=localStorage.getItem('dlx-accent')||'';
-    ACCENT_PRESETS.forEach(a=>{
-      const sw=document.createElement('span');
-      sw.className='accent-swatch'+(curAccent===a.hex?' active':'');
-      sw.title=a.label;sw.dataset.hex=a.hex;
-      sw.style.background=a.hex;
-      sw.addEventListener('click',e=>{e.stopPropagation();setAccentColor(a.hex);});
-      accentRow.appendChild(sw);
-    });
-    // Custom color picker
-    const custom=document.createElement('span');
-    custom.className='accent-custom';custom.title='Custom color';
-    custom.innerHTML='<input type="color" title="Custom accent" value="#ff5a1f">';
-    custom.querySelector('input').addEventListener('input',e=>{e.stopPropagation();setAccentColor(e.target.value);});
-    custom.addEventListener('click',e=>e.stopPropagation());
-    accentRow.appendChild(custom);
-  }
+  // Color comes from the theme preset — no separate accent picker.
   // Sync density buttons
   const saved=localStorage.getItem('dlx-density')||'default';
   document.querySelectorAll('.d-btn').forEach(b=>b.classList.toggle('active',b.dataset.arg===saved));
@@ -165,9 +120,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
     btn.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')openThemePopover();});
   }
-  // Restore accent
-  const savedAccent=localStorage.getItem('dlx-accent');
-  if(savedAccent)setAccentColor(savedAccent);
+  // Clear any legacy custom-accent override — color now comes solely from the theme
+  ['--ember','--ember-soft','--ember-deep','--ember-glow'].forEach(p=>document.documentElement.style.removeProperty(p));
+  localStorage.removeItem('dlx-accent');
   // Restore density
   const savedDensity=localStorage.getItem('dlx-density')||'default';
   if(savedDensity&&savedDensity!=='default'){setDensity(savedDensity);}

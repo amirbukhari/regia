@@ -21,7 +21,6 @@ document.addEventListener('click',e=>{
   if(a==='acctfilter') return setAcctFilter(arg, t);
   if(a==='toast') return toast(arg);
         if(a==='theme') return setTheme(arg);
-        if(a==='accent') return setAccentColor(arg);
         if(a==='density') return setDensity(arg);
         if(a==='newinvoice') return openNewInvoice();
         if(a==='notifications') return openNotifications();
