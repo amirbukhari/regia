@@ -96,7 +96,7 @@ function kpi(lab,val,sub,opts={}){
     <div class="lab">${lab}</div>
     <div class="val tnum" data-val="${val}">${val}</div>
     <div class="sub">${trend}${trend&&sub?' · ':''}${sub}</div>
-    ${opts.spark?`<canvas class="spark${opts.featured?' spark-wide':''}" width="${opts.featured?180:92}" height="${opts.featured?44:34}" data-spark="${opts.spark}"></canvas>`:''}
+    ${opts.spark?`<canvas class="spark${opts.featured?' spark-wide':''}" width="320" height="${opts.featured?64:54}" data-spark="${opts.spark}"></canvas>`:''}
   </div>`;
 }
 

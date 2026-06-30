@@ -4216,20 +4216,27 @@ function drawSparks(){
     const data=seeds[c.dataset.spark]||[5,6,7,6,8,9];
     const isDown=c.dataset.spark==='churn';
     const {x,w,h}=dpi(c); const max=Math.max(...data),min=Math.min(...data);
-    const X=i=>4+(w-8)*i/(data.length-1), Y=v=>4+(h-8)*(1-(v-min)/(max-min||1));
-    // area fill
-    const grad=x.createLinearGradient(0,0,0,h);
-    grad.addColorStop(0,isDown?'rgba(242,78,48,.25)':'rgba(255,90,31,.28)');
-    grad.addColorStop(1,'rgba(255,90,31,0)');
+    // full-bleed footer: line lives in the lower band, fill grounds the card bottom
+    const top=Math.round(h*0.34), X=i=>w*i/(data.length-1), Y=v=>top+(h-top-3)*(1-(v-min)/(max-min||1));
+    // accent follows the live theme; semantic rose for a declining metric
+    const css=getComputedStyle(document.documentElement);
+    const ember=(css.getPropertyValue('--ember')||'#ff6b3d').trim();
+    const neg=(css.getPropertyValue('--neg')||'#f0626f').trim();
+    const stroke=isDown?neg:ember;
+    const hex=stroke.replace('#',''); const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+    // area fill — subtle, stronger toward the baseline so the card feels grounded
+    const grad=x.createLinearGradient(0,top,0,h);
+    grad.addColorStop(0,`rgba(${r},${g},${b},.04)`);
+    grad.addColorStop(1,`rgba(${r},${g},${b},.20)`);
     x.beginPath();x.moveTo(X(0),Y(data[0]));
     data.forEach((d,i)=>{if(i)x.lineTo(X(i),Y(d));});
     x.lineTo(X(data.length-1),h);x.lineTo(X(0),h);x.closePath();x.fillStyle=grad;x.fill();
     // line
     x.beginPath();data.forEach((d,i)=>{i?x.lineTo(X(i),Y(d)):x.moveTo(X(i),Y(d));});
-    x.strokeStyle=isDown?'rgba(242,78,48,.9)':'rgba(255,138,76,.9)';x.lineWidth=1.8;x.lineJoin='round';x.stroke();
-    // endpoint dot
-    x.fillStyle=isDown?'#f24e30':'#ff5a1f';
-    x.beginPath();x.arc(X(data.length-1),Y(data.at(-1)),2.4,0,7);x.fill();
+    x.strokeStyle=stroke;x.globalAlpha=.85;x.lineWidth=1.75;x.lineJoin='round';x.lineCap='round';x.stroke();x.globalAlpha=1;
+    // emphasized endpoint
+    x.fillStyle=stroke;
+    x.beginPath();x.arc(X(data.length-1),Y(data.at(-1)),2.6,0,7);x.fill();
   });
 }
 
