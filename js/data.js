@@ -6,7 +6,7 @@ const NAV = [
     {id:'dashboard', label:'Dashboard', icon:'dash'},
     {id:'reports', label:'Reports & Analytics', icon:'reports'},
     {id:'aiinsights', label:'AI Insights', icon:'ai'},
-    {id:'featurematrix', label:'Feature Mockups', icon:'reports', badge:'100%'},
+    {id:'featurematrix', label:'Feature Audit', icon:'reports', badge:'Audit'},
   ]},
   {group:'Revenue', items:[
     {id:'accounts', label:'Customers', icon:'accounts'},

@@ -49,6 +49,54 @@ VIEWS.reports = (v)=>{
       </div>
     </div>
 
+    <div class="card panel custom-report-builder" style="margin-bottom:16px">
+      <div class="panel-head">
+        <h3>Custom report builder</h3>
+        <span class="sub">Drag-and-drop reporting mockup · saved as Finance / QBR / Renewal Risk</span>
+        <div class="right"><button class="btn primary" data-act="reportbuilder">${svg(I.plus,14)} Open builder</button></div>
+      </div>
+      <div class="report-builder-grid">
+        <div class="builder-rail">
+          <div class="builder-label">Dataset</div>
+          <div class="builder-card selected">${svg(I.revrec,14)} Revenue ledger</div>
+          <div class="builder-card">${svg(I.invoices,14)} Invoices</div>
+          <div class="builder-card">${svg(I.subscriptions,14)} Subscriptions</div>
+          <div class="builder-card">${svg(I.accounts,14)} Customers</div>
+        </div>
+        <div class="builder-canvas">
+          <div class="builder-label">Builder canvas</div>
+          <div class="drop-zone">
+            <div>
+              <strong>Metrics</strong>
+              <span>MRR · ARR · NRR · GRR · churn · expansion · DSO · AR aging</span>
+            </div>
+            <div>
+              <strong>Dimensions</strong>
+              <span>Plan · region · legal entity · cohort · customer segment · owner</span>
+            </div>
+            <div>
+              <strong>Filters</strong>
+              <span>Enterprise plans · US + EU · active subscriptions · Q2 2026</span>
+            </div>
+          </div>
+          <div class="builder-preview">
+            <div class="preview-bar" style="width:92%"></div>
+            <div class="preview-bar" style="width:76%"></div>
+            <div class="preview-bar" style="width:61%"></div>
+            <div class="preview-bar" style="width:47%"></div>
+          </div>
+        </div>
+        <div class="builder-inspector">
+          <div class="builder-label">Inspector</div>
+          <div class="inspector-row"><span>Visualization</span><b>Pivot + line</b></div>
+          <div class="inspector-row"><span>Delivery</span><b>Email + Slack</b></div>
+          <div class="inspector-row"><span>Exports</span><b>CSV · PDF · XLSX</b></div>
+          <div class="inspector-row"><span>Permissions</span><b>CFO, RevOps</b></div>
+          <button class="btn ghost" data-act="schedulereport" style="width:100%;justify-content:center;margin-top:10px">Schedule this report</button>
+        </div>
+      </div>
+    </div>
+
     <div class="two-col" style="margin-bottom:16px;align-items:start">
       <div>
         <div class="card panel">

@@ -1,15 +1,16 @@
 /* delonix — reports.js */
 
 function openReportBuilder(){
-  openDrawer('Report Builder',`
+  openDrawer('Custom Report Builder',`
+    <div class="val-banner info" style="margin-bottom:16px">${svg(I.reports,15)} Build a custom report from billing datasets, preview it, then export or schedule delivery.</div>
     <div class="form-section">
-      <div class="form-section-title">1 — Report type</div>
+      <div class="form-section-title">1 — Dataset</div>
       <div class="radio-group">
-        ${[['Revenue Analytics','MRR, ARR, churn, expansion — with charts'],
-           ['A/R Aging','Outstanding invoices by age bucket and customer'],
-           ['Subscription Cohorts','Retention and expansion by signup cohort'],
-           ['Cash Flow','Operating, investing, financing activities'],
-           ['Executive Summary','One-page KPI snapshot for board meetings']
+        ${[['Revenue ledger','MRR, ARR, NRR, GRR, churn, expansion'],
+           ['Invoices','Invoice status, aging, tax, credits, payments'],
+           ['Subscriptions','Plan, lifecycle, cohort, seats, renewals'],
+           ['Usage events','Meters, overages, caps, invoice usage detail'],
+           ['Customers','Segment, health, credit risk, lifecycle stage']
           ].map((r,i)=>`<label class="radio-opt${i===0?' selected':''}">
           <input type="radio" name="rtype" ${i===0?'checked':''} style="accent-color:var(--ember)">
           <div><div style="font-size:13px;font-weight:600;color:var(--text)">${r[0]}</div>
@@ -18,7 +19,17 @@ function openReportBuilder(){
       </div>
     </div>
     <div class="form-section">
-      <div class="form-section-title">2 — Date range</div>
+      <div class="form-section-title">2 — Metrics, dimensions and filters</div>
+      <div class="builder-pillbox">
+        ${['MRR','ARR','NRR','GRR','Churn','Expansion','DSO','AR aging','Tax liability','Usage overage'].map((m,i)=>`<span class="builder-pill ${i<6?'on':''}">${m}</span>`).join('')}
+      </div>
+      <div class="form-row" style="margin-top:10px"><div class="form-group"><label class="form-label">Group by</label>
+        <select class="form-select"><option>Plan → Region → Legal entity</option><option>Cohort → Segment</option><option>Owner → Customer health</option></select></div>
+        <div class="form-group"><label class="form-label">Filter</label>
+        <select class="form-select"><option>Active enterprise customers</option><option>At-risk renewals</option><option>Open invoices only</option></select></div></div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title">3 — Date range</div>
       <div class="form-row"><div class="form-group"><label class="form-label">From</label>
         <input class="form-input" type="date" value="2026-06-01"></div>
         <div class="form-group"><label class="form-label">To</label>
@@ -28,16 +39,31 @@ function openReportBuilder(){
       </div>
     </div>
     <div class="form-section">
-      <div class="form-section-title">3 — Output format</div>
+      <div class="form-section-title">4 — Visualization and output</div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Visualization</label>
+        <select class="form-select"><option>Pivot table + line chart</option><option>Bar chart</option><option>Cohort heatmap</option><option>Waterfall</option></select></div>
+        <div class="form-group"><label class="form-label">Destination</label>
+        <select class="form-select"><option>Reports library + Slack</option><option>Email recipients</option><option>Google Sheets</option><option>S3 export</option></select></div></div>
       <div class="radio-group" style="flex-direction:row;gap:8px">
-        ${['PDF','XLSX','CSV'].map((f,i)=>`<label class="radio-opt${i===0?' selected':''}" style="flex:1;justify-content:center">
+        ${['PDF','XLSX','CSV','Sheets'].map((f,i)=>`<label class="radio-opt${i===0?' selected':''}" style="flex:1;justify-content:center">
           <input type="radio" name="rfmt" ${i===0?'checked':''} style="accent-color:var(--ember)">${f}</label>`).join('')}
       </div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title">Preview</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Plan</th><th>Region</th><th class="num">MRR</th><th class="num">NRR</th><th class="num">Churn</th></tr></thead>
+        <tbody>
+          <tr><td>Enterprise+</td><td>US</td><td class="num tnum">$238,400</td><td class="num tnum">116%</td><td class="num tnum">1.2%</td></tr>
+          <tr><td>Enterprise</td><td>EU</td><td class="num tnum">$91,200</td><td class="num tnum">109%</td><td class="num tnum">2.1%</td></tr>
+          <tr><td>Growth</td><td>APAC</td><td class="num tnum">$42,700</td><td class="num tnum">101%</td><td class="num tnum">3.4%</td></tr>
+        </tbody>
+      </table></div>
     </div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
       <button class="btn ghost" data-act="schedulereport">Schedule delivery</button>
-      <button class="btn primary" data-act="download" data-arg="xlsx|Custom Report|generating…">Generate report</button>
+      <button class="btn primary" data-act="download" data-arg="xlsx|Custom Revenue Report|MRR · ARR · NRR · custom dimensions">Generate report</button>
     </div>`);
 }
 
