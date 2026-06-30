@@ -55,6 +55,7 @@ button{font-family:inherit;cursor:pointer}
 .enter-btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
 .splash-meta{margin-top:20px;color:var(--text-3);font-size:11px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
 .splash-meta span{display:inline-flex;align-items:center;gap:5px}
+.splash-meta .build-stamp{border:1px solid var(--border);border-radius:999px;padding:4px 8px;background:rgba(0,0,0,.22);color:var(--text-2)}
 .dotg{width:6px;height:6px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes flicker{0%,100%{filter:drop-shadow(0 0 55px rgba(255,90,31,.16))}50%{filter:drop-shadow(0 0 80px rgba(255,90,31,.32))}}
