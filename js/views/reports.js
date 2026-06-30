@@ -1,0 +1,155 @@
+/* delonix — reports.js */
+
+VIEWS.reports = (v)=>{
+  v.appendChild(el(`<div class="view">
+    ${pageHead('Reports & analytics',
+      'Board-ready financial reporting, SaaS metrics and data exports — June 2026',
+      `<div class="seg" id="reportRangeSeg">
+        <button class="on" data-act="toast" data-arg="Showing month-to-date data">MTD</button>
+        <button data-act="toast" data-arg="Switching to quarter-to-date">QTD</button>
+        <button data-act="toast" data-arg="Switching to year-to-date">YTD</button>
+        <button data-act="daterange" data-arg="custom">Custom</button>
+      </div>
+      <button class="btn ghost" data-act="schedulereport">${svg(I.settings,15)} Schedule</button>
+      <button class="btn primary" data-act="reportbuilder">${svg(I.plus,15)} New report</button>`
+    )}
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:24px">
+      <div class="card panel" style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.revrec,18)}</div>
+          <div style="font-weight:700;font-size:14px;color:var(--text-1)">Revenue Analytics</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.5">MRR bridge, cohort ARR, expansion waterfall, and churn analysis across all entities.</div>
+        <button class="btn outline" style="margin-top:auto;justify-content:center" data-act="download" data-arg="pdf|Revenue Analytics|June 2026 · 847 records">${svg(I.download,14)} Generate Report</button>
+      </div>
+      <div class="card panel" style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.ar,18)}</div>
+          <div style="font-weight:700;font-size:14px;color:var(--text-1)">A/R Aging</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.5">Aging buckets by customer, overdue exposure, DSO trend, and collection risk scoring.</div>
+        <button class="btn outline" style="margin-top:auto;justify-content:center" data-act="download" data-arg="xlsx|A/R Aging|Jun 28 · 94 invoices · $157,800">${svg(I.download,14)} Generate Report</button>
+      </div>
+      <div class="card panel" style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.subscriptions,18)}</div>
+          <div style="font-weight:700;font-size:14px;color:var(--text-1)">Subscription Cohorts</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.5">Monthly cohort retention, expansion rates, and lifetime value by acquisition quarter.</div>
+        <button class="btn outline" style="margin-top:auto;justify-content:center" data-act="download" data-arg="xlsx|Subscription Cohort Analysis|Q2 2026 · 842 subscribers">${svg(I.download,14)} Generate Report</button>
+      </div>
+      <div class="card panel" style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.reports,18)}</div>
+          <div style="font-weight:700;font-size:14px;color:var(--text-1)">Executive Pack</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.5">Board-ready PDF: KPI summary, variance to budget, forecast, and key commentary.</div>
+        <button class="btn primary" style="margin-top:auto;justify-content:center" data-act="download" data-arg="pdf|Executive Board Pack|12 slides · P&L · MRR bridge · AR aging">${svg(I.download,14)} Generate Report</button>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:16px;align-items:start">
+      <div>
+        <div class="card panel">
+          <div class="panel-head"><h3>Metric snapshot</h3><span class="sub">June 2026 · MTD unless noted</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            ${kpi('Net Revenue','$329,400','MTD collected',{trend:6.8})}
+            ${kpi('Gross Revenue','$487,200','invoiced MTD',{trend:5.1})}
+            ${kpi('MRR','$418,350','Jun 2026',{trend:4.2,accent:true})}
+            ${kpi('ARR','$5.02M','run rate',{trend:6.1})}
+            ${kpi('Gross Churn','1.8%','revenue churn',{trend:-0.4})}
+            ${kpi('Expansion MRR','$28,400','upsell & seat adds',{trend:12.3})}
+            ${kpi('DSO','28 days','days sales outstanding',{trend:-3.1})}
+            ${kpi('Collection Rate','96.2%','MTD payments',{trend:0.6})}
+            ${kpi('Invoice Count','172','issued MTD',{trend:2.4})}
+            ${kpi('Avg Invoice','$2,840','per issued invoice',{trend:2.6})}
+            ${kpi('CAC','$4,100','blended, Jun',{trend:-5.0})}
+            ${kpi('LTV','$17,220','blended, trailing',{trend:3.2})}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card panel">
+          <div class="panel-head"><h3>Recent reports</h3><div class="right"><button class="btn ghost" style="padding:5px 10px" data-act="reportarchive">View all</button></div></div>
+          <div class="table-wrap" style="border:none">
+            <table>
+              <thead><tr><th>Report</th><th>Period</th><th>Generated by</th><th>Date</th><th>Format</th><th></th></tr></thead>
+              <tbody>
+                <tr>
+                  <td class="nm">Executive Board Pack</td>
+                  <td class="mut">May 2026</td>
+                  <td class="mut">M. Reyes</td>
+                  <td class="mut tnum">Jun 01</td>
+                  <td>${pill('muted','PDF')}</td>
+                  <td><button class="btn ghost" style="padding:4px 8px" data-act="download" data-arg="pdf|Executive Board Pack|May 2026 · 12 slides">${svg(I.download,13)}</button></td>
+                </tr>
+                <tr>
+                  <td class="nm">A/R Aging Detail</td>
+                  <td class="mut">Jun 28</td>
+                  <td class="mut">D. Cho</td>
+                  <td class="mut tnum">Jun 28</td>
+                  <td>${pill('muted','XLSX')}</td>
+                  <td><button class="btn ghost" style="padding:4px 8px" data-act="download" data-arg="xlsx|A/R Aging Detail|Jun 28 · 94 invoices">${svg(I.download,13)}</button></td>
+                </tr>
+                <tr>
+                  <td class="nm">Revenue Analytics</td>
+                  <td class="mut">Q2 2026</td>
+                  <td class="mut">M. Reyes</td>
+                  <td class="mut tnum">Jun 27</td>
+                  <td>${pill('muted','PDF')}</td>
+                  <td><button class="btn ghost" style="padding:4px 8px" data-act="download" data-arg="pdf|Revenue Analytics|Q2 2026 · 847 records">${svg(I.download,13)}</button></td>
+                </tr>
+                <tr>
+                  <td class="nm">Subscription Cohorts</td>
+                  <td class="mut">Q1 2026</td>
+                  <td class="mut">System</td>
+                  <td class="mut tnum">Jun 25</td>
+                  <td>${pill('muted','XLSX')}</td>
+                  <td><button class="btn ghost" style="padding:4px 8px" data-act="download" data-arg="xlsx|Subscription Cohort Analysis|Q1 2026">${svg(I.download,13)}</button></td>
+                </tr>
+                <tr>
+                  <td class="nm">Tax Liability Summary</td>
+                  <td class="mut">May 2026</td>
+                  <td class="mut">P. Anand</td>
+                  <td class="mut tnum">Jun 20</td>
+                  <td>${pill('muted','PDF')}</td>
+                  <td><button class="btn ghost" style="padding:4px 8px" data-act="download" data-arg="xlsx|Tax Liability Summary|May 2026">${svg(I.download,13)}</button></td>
+                </tr>
+                <tr>
+                  <td class="nm">Collections Risk Report</td>
+                  <td class="mut">Jun 2026</td>
+                  <td class="mut">D. Cho</td>
+                  <td class="mut tnum">Jun 18</td>
+                  <td>${pill('muted','XLSX')}</td>
+                  <td><button class="btn ghost" style="padding:4px 8px" data-act="download" data-arg="xlsx|Collections Risk Report|Jun 2026 · 23 accounts">${svg(I.download,13)}</button></td>
+                </tr>
+                <tr>
+                  <td class="nm">Cash Flow Forecast</td>
+                  <td class="mut">H2 2026</td>
+                  <td class="mut">M. Reyes</td>
+                  <td class="mut tnum">Jun 15</td>
+                  <td>${pill('muted','XLSX')}</td>
+                  <td><button class="btn ghost" style="padding:4px 8px" data-act="download" data-arg="xlsx|Cash Flow Forecast|H2 2026 · 6 months">${svg(I.download,13)}</button></td>
+                </tr>
+                <tr>
+                  <td class="nm">MRR Movement Bridge</td>
+                  <td class="mut">May 2026</td>
+                  <td class="mut">System</td>
+                  <td class="mut tnum">Jun 01</td>
+                  <td>${pill('muted','PDF')}</td>
+                  <td><button class="btn ghost" style="padding:4px 8px" data-act="download" data-arg="xlsx|MRR Movement Bridge|May 2026">${svg(I.download,13)}</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`));
+};
+
+
+/* ---------- Settings ---------- */
+/* ---------- Consolidation ---------- */
