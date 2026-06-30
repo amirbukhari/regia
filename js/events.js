@@ -9,6 +9,7 @@ document.addEventListener('click',e=>{
   if(a==='signout') return signOut();
   if(a==='close') return closeDrawer();
   if(a==='toggle') return t.classList.toggle('on');
+  if(a==='menu') return document.getElementById('app').classList.toggle('nav-open');
   if(a==='route'){ closeDrawer(); return route(arg); }
   if(a==='invoice') return openInvoice(arg);
   if(a==='account') return openAccount(arg);

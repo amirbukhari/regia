@@ -36,6 +36,7 @@ function route(id){
   (VIEWS[id]||VIEWS.dashboard)(v);
   v.scrollTop=0; window.scrollTo(0,0);
   closeCmd();
+  document.getElementById('app')?.classList.remove('nav-open'); // dismiss mobile menu on navigate
 }
 
 

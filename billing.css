@@ -271,7 +271,7 @@ th.num{text-align:right}
 .dot-step .ds.done::after{background:var(--good)}
 .dot-step .ds small{margin-top:8px;font-size:10.5px;color:var(--text-3);text-align:center}
 
-@media (max-width:760px){#app.show{grid-template-columns:1fr}.sidebar{display:none}.row,.two-col{grid-template-columns:1fr}.kpis{grid-template-columns:1fr;gap:18px}.view{padding:28px 20px}.page-head h1{font-size:2rem}.page-head{margin-bottom:32px}}
+/* (mobile layout consolidated in the composition layer below) */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:13px 19px;font-size:13px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);z-index:60;opacity:0;transition:.3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast .dotg{background:var(--ember);box-shadow:0 0 8px var(--ember)}
@@ -572,19 +572,43 @@ th.num{text-align:right}
 
 /* ── Responsive ── */
 @media(max-width:1180px){.kpis{grid-template-columns:repeat(2,1fr)}}
+/* ── Mobile menu button + scrim (hidden on desktop) ── */
+.menu-btn{display:none;align-items:center;justify-content:center;width:38px;height:38px;flex:none;
+  border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-2)}
+.menu-btn:hover{color:var(--text);border-color:var(--text-3)}
+.nav-scrim{display:none;position:fixed;inset:0;z-index:38;background:rgba(0,0,0,.55);backdrop-filter:blur(2px)}
+/* topbar brand — only shown on mobile (desktop has it in the sidebar) */
+.topbar-brand{display:none;align-items:center;gap:8px}
+.topbar-brand .brand-mark{width:26px;height:26px;color:var(--ember);flex:none}
+.topbar-wm{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.3px;color:var(--text)}
+.topbar-wm b{color:var(--ember);font-weight:700}
+
 @media(max-width:760px){
   #app.show{grid-template-columns:1fr}
-  .sidebar{display:none}
+  /* sidebar becomes a slide-in overlay drawer instead of vanishing */
+  .sidebar{position:fixed;top:0;left:0;height:100dvh;width:min(280px,84vw);z-index:39;
+    transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
+    box-shadow:24px 0 60px -30px #000;border-right:1px solid var(--border)}
+  #app.nav-open .sidebar{transform:none}
+  #app.nav-open .nav-scrim{display:block}
+  .menu-btn{display:inline-flex}
   .row,.two-col,.dash-cols{grid-template-columns:1fr}
-  .kpis{grid-template-columns:1fr}
+  /* !important so it also overrides views that set the KPI grid via inline styles */
+  .kpis{grid-template-columns:1fr!important;gap:14px}
   .kpi-featured{grid-column:auto}
   .kpi-featured .sub{padding-right:120px}
   .view{padding:22px 18px 44px}
   .page-head h1{font-size:23px}
   .page-head{margin-bottom:22px}
-  /* topbar: keep it from overflowing — drop secondary pills, keep essentials */
-  .topbar{padding:11px 16px;gap:10px}
-  .topbar .search,.topbar .pill-select{display:none}
+  /* topbar: keep it from overflowing — drop secondary pills, show the brand */
+  .topbar{padding:11px 14px;gap:10px}
+  .topbar .search,.topbar .pill-select,.topbar .crumbs{display:none}
+  .topbar-brand{display:inline-flex}
   .topbar .spacer{flex:1}
+  /* page-head actions + period strip: stack instead of cramming on a narrow row */
+  .page-head .actions{margin-left:0;width:100%}
+  .period-bar{flex-wrap:wrap}
+  .period-bar>span[style*="margin-left:auto"]{margin-left:0!important;width:100%}
+  .toolbar{flex-wrap:wrap}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
