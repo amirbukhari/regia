@@ -3393,9 +3393,10 @@ VIEWS.aiinsights = (v)=>{
   )}
     <div style="margin-bottom:18px;display:flex;gap:10px;align-items:center">
       <div style="flex:1;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px">
-        ${svg(I.ai,16)}<input class="finput" style="border:none;background:transparent;flex:1;font-size:14px;padding:0" placeholder="Ask your data… e.g. "Which cohorts have net retention above 110%?"" oninput="filterAIQuery(this.value)">
+        ${svg(I.ai,16)}<input class="finput" style="border:none;background:transparent;flex:1;font-size:14px;padding:0" placeholder="Ask your data… e.g. &quot;Which cohorts have net retention above 110%?&quot;" oninput="filterAIQuery(this.value)">
         <button class="btn primary" style="padding:5px 14px;font-size:13px" data-act="aiquery">Ask Ember</button>
       </div>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px">
       ${[
         {label:'Anomalies detected', val:'4', sub:'Last 7 days', color:'var(--crit)', icon:'dunning'},

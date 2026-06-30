@@ -581,6 +581,8 @@ th.num{text-align:right}
    table, a chart) refuses to shrink and blows out the page instead of letting
    its overflow-x:auto wrapper scroll. Allow them to shrink. */
 .grid>*,.row>*,.two-col>*,.dash-cols>*,.cards-2>*,.cards-3>*,.main,.panel{min-width:0}
+/* same shrink fix for grids declared via inline styles (bare divs without a helper class) */
+[style*="grid-template-columns"]>*{min-width:0}
 .table-wrap{max-width:100%}
 .panel-head{flex-wrap:wrap}
 
@@ -624,3 +626,21 @@ th.num{text-align:right}
   .toolbar{flex-wrap:wrap}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ============================================================
+   Mobile overflow hardening
+   Many views set grid columns / tables inline; inline styles beat
+   media queries, so stack/scroll them defensively on small screens.
+   ============================================================ */
+@media(max-width:760px){
+  /* stack every explicitly-gridded layout (page-level cards, sidebars, stat rows) */
+  [style*="grid-template-columns"]{grid-template-columns:1fr!important}
+  .grid,.cards-2,.cards-3{grid-template-columns:1fr!important}
+  /* any data table not already in a scroll wrapper: scroll it instead of the page */
+  table:not(.table-wrap table){display:block;overflow-x:auto;min-width:0;-webkit-overflow-scrolling:touch}
+  table:not(.table-wrap table) th,table:not(.table-wrap table) td{white-space:nowrap}
+  /* segmented filter tabs: scroll horizontally rather than overflow */
+  .tabs{max-width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:none}
+}
