@@ -572,6 +572,14 @@ th.num{text-align:right}
 
 /* ── Responsive ── */
 @media(max-width:1180px){.kpis{grid-template-columns:repeat(2,1fr)}}
+/* ── Overflow containment ──
+   Grid/flex children default to min-width:auto, so a wide child (a 640px-min
+   table, a chart) refuses to shrink and blows out the page instead of letting
+   its overflow-x:auto wrapper scroll. Allow them to shrink. */
+.grid>*,.row>*,.two-col>*,.dash-cols>*,.cards-2>*,.cards-3>*,.main,.panel{min-width:0}
+.table-wrap{max-width:100%}
+.panel-head{flex-wrap:wrap}
+
 /* ── Mobile menu button + scrim (hidden on desktop) ── */
 .menu-btn{display:none;align-items:center;justify-content:center;width:38px;height:38px;flex:none;
   border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-2)}
