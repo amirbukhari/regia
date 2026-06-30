@@ -10,6 +10,7 @@ Completion is implemented through a repeatable Feature Workbench pattern rather 
 - A row in the all-feature workbench table
 - A routed module destination
 - A module-level coverage panel in the mapped product area
+- A module-level studio with Configure, Operate and Control lanes
 - A dedicated detail drawer
 - Configuration controls
 - Workflow stages
@@ -20,7 +21,7 @@ Completion is implemented through a repeatable Feature Workbench pattern rather 
 
 ## Why this is now different from the previous matrix
 
-The previous matrix only listed every feature. This pass adds per-feature UI evidence, module-level coverage panels, and a full detail drawer that changes content based on the feature and its product area. That makes each checklist item demonstrable from both the central Workbench and the module where users expect to find it.
+The previous matrix only listed every feature. This pass adds per-feature UI evidence, module-level coverage panels, module studios with workflow lanes, and a full detail drawer that changes content based on the feature and its product area. That makes each checklist item demonstrable from both the central Workbench and the module where users expect to find it.
 
 ## Custom reporting evidence
 

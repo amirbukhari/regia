@@ -754,4 +754,19 @@ th.num{text-align:right}
 .module-feature-chip span{display:block;font-size:12px;line-height:1.35}
 .module-feature-chip b{display:block;margin-top:6px;color:var(--text-3);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
 .module-feature-more{margin-top:10px;color:var(--text-3);font-size:12px}
+.module-studio{margin-top:16px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(135deg,var(--surface-2),var(--surface));padding:14px}
+.module-studio-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:12px}
+.module-studio-head h4{margin:0 0 5px;font-size:16px;color:var(--text-1)}
+.module-studio-head p{margin:0;color:var(--text-2);font-size:12px;line-height:1.5}
+.studio-lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.studio-lane{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:12px;min-width:0}
+.studio-lane-title{font-weight:800;color:var(--text-1);font-size:13px;margin-bottom:4px}
+.studio-lane p{color:var(--text-3);font-size:11px;line-height:1.45;margin:0 0 10px}
+.studio-flow{display:block;width:100%;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);padding:9px 10px;margin-top:7px;text-align:left;color:var(--text-1);cursor:pointer}
+.studio-flow:hover{border-color:var(--ember);background:rgba(255,90,31,.08)}
+.studio-flow b{display:block;font-size:12px;line-height:1.35}.studio-flow span{display:block;margin-top:4px;color:var(--text-3);font-size:10.5px}
+.studio-bottom{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:10px;margin-top:10px}
+.studio-card{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:10px;color:var(--text-2);font-size:12px;line-height:1.5}
+.studio-card strong{display:block;color:var(--text-1);margin-bottom:7px}
+@media(max-width:980px){.studio-lanes,.studio-bottom{grid-template-columns:1fr}.module-studio-head{flex-direction:column}}
 @media(max-width:980px){.report-builder-grid{grid-template-columns:1fr}.builder-rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.builder-card{margin-bottom:0}}

@@ -77,6 +77,51 @@ function featureCoverageForRoute(routeId){
     })));
 }
 
+function featureStudioForRoute(routeId, items){
+  const routeLabel = (NAV.flatMap(g=>g.items).find(i=>i.id===routeId)?.label || routeId);
+  const byKind = items.reduce((acc,item)=>{ (acc[item.blueprint.kind] ||= []).push(item); return acc; }, {});
+  const lanes = [
+    ['Configure', 'Setup, defaults, templates, policy and admin controls'],
+    ['Operate', 'Daily queue, state transitions, bulk actions and exception handling'],
+    ['Control', 'Approvals, audit trail, exports, APIs and implementation handoff']
+  ];
+  const kinds = Object.keys(byKind);
+  const hero = items[0];
+  return `<div class="module-studio">
+    <div class="module-studio-head">
+      <div>
+        <div class="builder-label">Module mock studio</div>
+        <h4>${routeLabel} feature flows</h4>
+        <p>${items.length} checklist features are grouped into workflow lanes with config, operations and control surfaces.</p>
+      </div>
+      <span class="pill good">Demo complete</span>
+    </div>
+    <div class="studio-lanes">
+      ${lanes.map(([name,desc],laneIdx)=>`<div class="studio-lane">
+        <div class="studio-lane-title">${name}</div>
+        <p>${desc}</p>
+        ${items.slice(laneIdx*4,laneIdx*4+4).map((item,i)=>`<button class="studio-flow" data-act="featuredetail" data-arg="${encodeURIComponent(item.section+'|'+item.feature+'|'+routeId+'|'+i)}">
+          <b>${item.feature}</b><span>${item.blueprint.kind} · ${item.blueprint.owner}</span>
+        </button>`).join('')}
+      </div>`).join('')}
+    </div>
+    <div class="studio-bottom">
+      <div class="studio-card">
+        <strong>Feature types</strong>
+        <div class="builder-pillbox">${kinds.slice(0,6).map(k=>`<span class="builder-pill on">${k} · ${byKind[k].length}</span>`).join('')}</div>
+      </div>
+      <div class="studio-card">
+        <strong>Primary evidence</strong>
+        <span>${hero?.feature || 'Module feature'} has a module page, drawer, config, data preview, export and audit handoff.</span>
+      </div>
+      <div class="studio-card">
+        <strong>Handoff</strong>
+        <span>Exportable evidence pack · API payload preview · owner assignment · audit log.</span>
+      </div>
+    </div>
+  </div>`;
+}
+
 function appendFeatureCoverage(viewEl, routeId){
   if(routeId==='featurematrix') return;
   const items=featureCoverageForRoute(routeId);
@@ -94,6 +139,7 @@ function appendFeatureCoverage(viewEl, routeId){
       </button>`).join('')}
     </div>
     ${items.length>preview.length?`<div class="module-feature-more">+${items.length-preview.length} more completed mockups in the Feature Workbench</div>`:''}
+    ${featureStudioForRoute(routeId, items)}
   </div>`));
 }
 
