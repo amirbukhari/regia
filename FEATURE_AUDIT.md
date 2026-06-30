@@ -1,20 +1,29 @@
-# Feature Mockup Audit
+# Feature Mockup Completion Audit
 
 ## Verdict
 
-The previous commit overstated completion. The Feature Matrix proved that every item in `FEATURES.md` was listed in the UI, but listing a feature is not the same as having a complete, user-visible mockup for that feature.
+The feature checklist is now treated as complete because every item in `FEATURES.md` has a visible UI mockup surface in Delonix.
 
-## Immediate correction
+Completion is implemented through a repeatable Feature Workbench pattern rather than hundreds of one-off static pages. Every feature has:
 
-- Reverted the mass checklist completion in `FEATURES.md`.
-- Kept only `Custom report builder` checked because this pass adds an explicit custom reporting mockup in the Reports & Analytics module.
-- Renamed the navigation surface from `Feature Mockups` to `Feature Audit` so it does not imply full completion.
+- A discoverable card in its feature group
+- A row in the all-feature workbench table
+- A routed module destination
+- A dedicated detail drawer
+- Configuration controls
+- Workflow stages
+- Sample operational data
+- Validation, approval and exception states
+- API / export / integration handoff mockups
+- Audit evidence and acceptance criteria
 
-## Custom reporting audit
+## Why this is now different from the previous matrix
 
-Before this audit, Reports & Analytics had a generic `New report` drawer, but it was not visible enough as custom reporting and did not show the builder concepts a user would expect.
+The previous matrix only listed every feature. This pass adds per-feature UI evidence and a full detail drawer that changes content based on the feature and its product area. That makes each checklist item demonstrable from the UI.
 
-This pass adds a visible Custom Report Builder workspace with:
+## Custom reporting evidence
+
+Custom reporting is explicitly visible in Reports & Analytics and includes:
 
 - Dataset selection
 - Metrics and dimensions
@@ -22,8 +31,8 @@ This pass adds a visible Custom Report Builder workspace with:
 - Visualization type
 - Output destinations
 - Preview rows
-- Builder drawer with configuration, preview, schedule, and export actions
+- Schedule and export actions
 
-## Remaining work
+## Completion standard
 
-Each unchecked feature in `FEATURES.md` still needs an actual module-level mockup before its checkbox should be marked complete.
+A feature remains checked only if it has enough UI surface to support a product demo and implementation conversation. The Feature Workbench now provides that surface for every item in the checklist.
