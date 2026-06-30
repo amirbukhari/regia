@@ -20,6 +20,7 @@ document.addEventListener('click',e=>{
   if(a==='invfilter') return setInvFilter(arg, t);
   if(a==='acctfilter') return setAcctFilter(arg, t);
   if(a==='toast') return toast(arg);
+  if(a==='featuredetail') return openFeatureDetail(arg);
         if(a==='theme') return setTheme(arg);
         if(a==='density') return setDensity(arg);
         if(a==='newinvoice') return openNewInvoice();
