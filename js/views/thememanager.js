@@ -1,12 +1,10 @@
 /* delonix — thememanager.js */
 
 VIEWS.thememanager = (v)=>{
-  const themes=[
-    {id:'dark',label:'Midnight',desc:'Default dark · ember accents',bg:'#0b0a08',acc:'#ff5a1f',active:true},
-    {id:'dawn',label:'Dawn',desc:'Light mode · warm neutrals',bg:'#f7f4f0',acc:'#e84e0f',active:false},
-    {id:'slate',label:'Slate',desc:'Cool dark · blue-grey tones',bg:'#0f1117',acc:'#638cff',active:false},
-    {id:'forest',label:'Forest',desc:'Dark green · earthy palette',bg:'#0b110d',acc:'#3fb950',active:false},
-  ];
+  const cur=document.documentElement.dataset.theme||'ember';
+  const curAccent=localStorage.getItem('dlx-accent')||'';
+  // Real themes from theme.js — clicking one actually switches the whole UI live.
+  const themes=THEMES.map(t=>({id:t.id,label:t.name,desc:t.desc,bg:t.bg,acc:t.dot,active:t.id===cur}));
   const fonts=[
     {id:'inter',label:'Inter',preview:'The quick brown fox',note:'Default — clean, legible'},
     {id:'dm',label:'DM Sans',preview:'The quick brown fox',note:'Geometric, modern'},
@@ -14,19 +12,19 @@ VIEWS.thememanager = (v)=>{
   ];
   v.appendChild(el(`<div class="view">
     ${pageHead('Theme & Branding','Customise the visual identity of the delonix platform',`
-      <button class="btn ghost" data-act="toast" data-arg="Theme reset to defaults">Reset defaults</button>
-      <button class="btn primary" data-act="applytheme">Apply changes</button>
+      <button class="btn ghost" data-act="theme" data-arg="ember">Reset to default</button>
+      <button class="btn primary" data-act="toast" data-arg="Theme preferences saved">Save preferences</button>
     `)}
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
       <div>
         <div class="card panel" style="margin-bottom:16px">
-          <div class="panel-title" style="margin-bottom:14px">Theme preset</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="panel-title" style="margin-bottom:14px">Theme preset <span class="mut" style="font-weight:400;font-size:11px">· ${themes.length} themes · click to apply</span></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">
             ${themes.map(t=>`
-              <div data-act="switchtheme" data-arg="${t.id}" style="cursor:pointer;border:1px solid ${t.active?'var(--ember)':'var(--border)'};border-radius:var(--r-sm);padding:12px;transition:.15s;${t.active?'background:rgba(255,90,31,.06)':''}">
+              <div class="theme-preset${t.active?' active':''}" data-act="theme" data-arg="${t.id}" style="cursor:pointer;border:1px solid ${t.active?'var(--ember)':'var(--border)'};border-radius:var(--r-sm);padding:12px;transition:border-color .15s,background .15s;${t.active?'background:color-mix(in srgb,var(--ember) 8%,transparent)':''}">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-                  <div style="width:18px;height:18px;border-radius:50%;background:${t.bg};border:2px solid ${t.acc}"></div>
+                  <div style="width:18px;height:18px;border-radius:50%;background:${t.bg};border:2px solid ${t.acc};flex:none"></div>
                   <span style="font-weight:650;font-size:12px">${t.label}</span>
                   ${t.active?'<span class="pill good" style="font-size:10px;margin-left:auto">Active</span>':''}
                 </div>
@@ -39,10 +37,10 @@ VIEWS.thememanager = (v)=>{
           <div class="panel-title" style="margin-bottom:14px">Brand colours</div>
           <div style="display:flex;flex-direction:column;gap:12px">
             <div style="display:flex;align-items:center;justify-content:space-between">
-              <div><div style="font-size:13px;font-weight:600">Accent colour</div><div class="mut" style="font-size:11px">CTAs, active states, highlights</div></div>
+              <div><div style="font-size:13px;font-weight:600">Accent colour</div><div class="mut" style="font-size:11px">CTAs, active states, highlights · overrides the theme accent</div></div>
               <div style="display:flex;align-items:center;gap:6px">
-                ${['#ff5a1f','#635bff','#0abf53','#e8b23f','#00a1e0','#b07cff'].map(c=>`<div data-act="toast" data-arg="Accent set to ${c}" style="width:22px;height:22px;border-radius:50%;background:${c};cursor:pointer;border:2px solid ${c==='#ff5a1f'?'white':'transparent'}" title="${c}"></div>`).join('')}
-                <input type="color" value="#ff5a1f" style="width:28px;height:28px;border:none;background:none;cursor:pointer;border-radius:4px" data-act="toast" data-arg="Custom colour picked">
+                ${ACCENT_PRESETS.map(a=>`<div data-act="accent" data-arg="${a.hex}" class="accent-swatch${curAccent===a.hex?' active':''}" data-hex="${a.hex}" style="width:22px;height:22px;border-radius:50%;background:${a.hex};cursor:pointer" title="${a.label}"></div>`).join('')}
+                <input type="color" value="${curAccent||'#ff5a1f'}" style="width:28px;height:28px;border:none;background:none;cursor:pointer;border-radius:4px" title="Custom accent" oninput="setAccentColor(this.value)">
               </div>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between">

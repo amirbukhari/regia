@@ -2,28 +2,39 @@
 
 /* ===== THEME MANAGER v2 ===== */
 const THEMES=[
-  {id:'ember',   name:'Ember',    dot:'#ff5a1f', desc:'Warm dark'},
-  {id:'midnight',name:'Midnight', dot:'#4a9eff', desc:'Ocean blue'},
-  {id:'forge',   name:'Forge',    dot:'#ffaa00', desc:'Molten amber'},
-  {id:'obsidian',name:'Obsidian', dot:'#a855f7', desc:'Violet shadow'},
-  {id:'dawn',    name:'Dawn',     dot:'#e0440f', desc:'Light mode'},
+  {id:'ember',   name:'Ember',    dot:'#ff5a1f', bg:'#0b0d12', desc:'Warm dark'},
+  {id:'midnight',name:'Midnight', dot:'#4a9eff', bg:'#07090f', desc:'Ocean blue'},
+  {id:'slate',   name:'Slate',    dot:'#22d3ee', bg:'#0d1117', desc:'Cool cyan'},
+  {id:'forge',   name:'Forge',    dot:'#ffaa00', bg:'#100a02', desc:'Molten amber'},
+  {id:'forest',  name:'Forest',   dot:'#3ecf7f', bg:'#0a120c', desc:'Deep green'},
+  {id:'obsidian',name:'Obsidian', dot:'#a855f7', bg:'#09090f', desc:'Violet shadow'},
+  {id:'rose',    name:'Rose',     dot:'#fb5c7d', bg:'#140a0f', desc:'Plum & rose'},
+  {id:'nord',    name:'Nord',     dot:'#88c0d0', bg:'#2e3440', desc:'Arctic frost'},
+  {id:'dawn',    name:'Dawn',     dot:'#e0440f', bg:'#f8f6f3', desc:'Light · warm'},
+  {id:'paper',   name:'Paper',    dot:'#4f46e5', bg:'#f5f6f8', desc:'Light · indigo'},
 ];
 const ACCENT_PRESETS=[
   {hex:'#ff5a1f',label:'Ember'},
-  {hex:'#4a9eff',label:'Midnight'},
-  {hex:'#ffaa00',label:'Forge'},
-  {hex:'#a855f7',label:'Obsidian'},
-  {hex:'#00c896',label:'Teal'},
-  {hex:'#f43f5e',label:'Rose'},
+  {hex:'#4a9eff',label:'Azure'},
+  {hex:'#22d3ee',label:'Cyan'},
+  {hex:'#3ecf7f',label:'Emerald'},
+  {hex:'#a855f7',label:'Violet'},
+  {hex:'#fb5c7d',label:'Rose'},
+  {hex:'#ffaa00',label:'Amber'},
   {hex:'#84cc16',label:'Lime'},
 ];
 
 function setTheme(id){
   const t=THEMES.find(x=>x.id===id)||THEMES[0];
-  document.documentElement.dataset.theme=t.id;
+  const root=document.documentElement;
+  root.dataset.theme=t.id;
   localStorage.setItem('dlx-theme',t.id);
-  // Sync all pickers
-  document.querySelectorAll('.theme-chip,.tp-chip').forEach(c=>{
+  // Picking a theme preset clears any custom accent override so the theme shows as designed
+  ['--ember','--ember-soft','--ember-deep','--ember-glow'].forEach(p=>root.style.removeProperty(p));
+  localStorage.removeItem('dlx-accent');
+  document.querySelectorAll('.accent-swatch').forEach(s=>s.classList.remove('active'));
+  // Sync all pickers (topbar popover + theme-manager page)
+  document.querySelectorAll('.theme-chip,.tp-chip,[data-act="theme"]').forEach(c=>{
     c.classList.toggle('active',c.dataset.arg===t.id);
   });
   const dot=document.getElementById('themeBtnDot');
@@ -35,6 +46,16 @@ function setTheme(id){
   const active=document.querySelector(`.tp-chip[data-arg="${t.id}"] .tp-check`);
   if(active)active.style.opacity='1';
   closeThemePopover();
+  repaintCharts();
+}
+
+/* Canvas charts read CSS vars once at draw time, so re-render the current view's
+   charts after a theme/accent change to recolor them. */
+function repaintCharts(){
+  requestAnimationFrame(()=>{
+    try{ if(typeof current!=='undefined' && typeof route==='function'){ route(current); } }
+    catch(e){}
+  });
 }
 
 function setAccentColor(hex){
@@ -48,9 +69,10 @@ function setAccentColor(hex){
   root.style.setProperty('--ember-glow',`rgba(${r},${g},${b},.18)`);
   localStorage.setItem('dlx-accent',hex);
   // Sync swatches
-  document.querySelectorAll('.accent-swatch').forEach(s=>s.classList.toggle('active',s.dataset.hex===hex));
+  document.querySelectorAll('.accent-swatch,[data-act="accent"]').forEach(s=>s.classList.toggle('active',s.dataset.hex===hex||s.dataset.arg===hex));
   const dot=document.getElementById('themeBtnDot');
   if(dot)dot.style.background=hex;
+  repaintCharts();
 }
 
 function setDensity(val){
