@@ -92,6 +92,12 @@ js/
 
 Drawers are the slide-in panels (New Invoice, Edit Plan, …).
 
+> **Granularity rule:** drawers are grouped one file per *domain*, not one file per
+> drawer. Keep it that way until a single domain file crosses **~40 KB or ~15
+> functions** — at that point split *that file* by sub-feature
+> (e.g. `invoicing.js` → `invoicing.js` + `invoicing-drafts.js`). Don't split
+> everything up front; react to actual growth.
+
 1. **Write the builder** in the matching `js/drawers/<domain>.js` (pick the domain by
    topic; if none fits, `settings.js` is the catch-all):
    ```js
