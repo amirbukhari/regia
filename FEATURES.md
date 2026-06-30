@@ -5,33 +5,33 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 ---
 
 ## Core Billing Engine
-- [x] Subscription management (create, modify, pause, resume, cancel)
-- [x] One-time / ad hoc charges
-- [x] Recurring billing (daily, weekly, monthly, quarterly, annual, custom cycles)
+- [ ] Subscription management (create, modify, pause, resume, cancel)
+- [ ] One-time / ad hoc charges
+- [ ] Recurring billing (daily, weekly, monthly, quarterly, annual, custom cycles)
 - [ ] Prorated billing on mid-cycle changes
-- [x] Metered / usage-based billing
-- [x] Tiered pricing (graduated & volume)
-- [x] Volume pricing
-- [x] Flat-rate pricing
-- [x] Per-seat / per-user pricing
-- [x] Hybrid pricing models (base + usage)
+- [ ] Metered / usage-based billing
+- [ ] Tiered pricing (graduated & volume)
+- [ ] Volume pricing
+- [ ] Flat-rate pricing
+- [ ] Per-seat / per-user pricing
+- [ ] Hybrid pricing models (base + usage)
 - [ ] Freemium plan support
 - [ ] Free trial management
 - [ ] Trial-to-paid conversion automation
 - [ ] Prepaid billing
 - [ ] Postpaid billing
 - [ ] Billing period alignment (first-of-month normalization)
-- [x] Mid-cycle plan changes with immediate or deferred effect
+- [ ] Mid-cycle plan changes with immediate or deferred effect
 - [ ] Backdating charges
 - [ ] Billing anchors / custom billing dates
-- [x] Minimum spend commitments
-- [x] Overage handling
+- [ ] Minimum spend commitments
+- [ ] Overage handling
 
 ---
 
 ## Pricing & Plans
-- [x] Plan catalog with versioning
-- [x] Price books (multiple, per segment or region)
+- [ ] Plan catalog with versioning
+- [ ] Price books (multiple, per segment or region)
 - [ ] Geographic / regional pricing
 - [ ] Custom pricing per customer
 - [ ] Pricing rules engine
@@ -42,32 +42,32 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] Discount management (percentage, fixed, duration-limited)
 - [ ] Coupons and redemption codes
 - [ ] Product bundling
-- [x] Add-ons and extras
-- [x] Entitlements per plan
-- [x] Feature flags tied to plan level
+- [ ] Add-ons and extras
+- [ ] Entitlements per plan
+- [ ] Feature flags tied to plan level
 - [ ] Price localization (currency + format)
 - [ ] Standalone selling price (SSP) configuration
 
 ---
 
 ## Invoice Management
-- [x] Automated invoice generation
+- [ ] Automated invoice generation
 - [ ] Invoice templates (customizable branding)
 - [ ] Custom invoice numbering / sequencing
 - [ ] Invoice scheduling and batching
 - [ ] Consolidated invoices (multiple subscriptions → one invoice)
-- [x] Invoice grouping by cost center or department
-- [x] Credit notes / credit memos
+- [ ] Invoice grouping by cost center or department
+- [ ] Credit notes / credit memos
 - [ ] Debit notes
 - [ ] Proforma invoices
 - [ ] Manual invoice creation
 - [ ] Invoice editing before finalization
-- [x] Invoice voiding and reissue
-- [x] Invoice approval workflows
+- [ ] Invoice voiding and reissue
+- [ ] Invoice approval workflows
 - [ ] Multi-language invoices
 - [ ] Invoice delivery (email, PDF, EDI 810, XML)
 - [ ] Invoice archiving with retention policies
-- [x] Invoice history and audit trail
+- [ ] Invoice history and audit trail
 - [ ] E-invoicing compliance (Peppol, ZUGFeRD, Factur-X, FatturaPA, etc.)
 - [ ] Invoice watermarking
 - [ ] Purchase order (PO) number capture and matching
@@ -75,9 +75,9 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 ---
 
 ## Payment Processing
-- [x] Credit/debit card (Visa, Mastercard, Amex, Discover)
-- [x] ACH / eCheck (US bank transfer)
-- [x] Wire transfers
+- [ ] Credit/debit card (Visa, Mastercard, Amex, Discover)
+- [ ] ACH / eCheck (US bank transfer)
+- [ ] Wire transfers
 - [ ] SEPA direct debit (EU)
 - [ ] BACS direct debit (UK)
 - [ ] Faster Payments (UK)
@@ -87,61 +87,61 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] Buy Now Pay Later (Klarna, Afterpay, Affirm)
 - [ ] Cryptocurrency payments
 - [ ] Check / cheque payments
-- [x] Net terms (Net 15, Net 30, Net 60, Net 90)
+- [ ] Net terms (Net 15, Net 30, Net 60, Net 90)
 - [ ] Payment links (one-click hosted checkout)
 - [ ] Hosted payment pages (white-labeled)
-- [x] Payment on file (stored tokenized methods)
+- [ ] Payment on file (stored tokenized methods)
 - [ ] Multiple payment methods per customer
 - [ ] Payment splitting across methods
-- [x] Auto-charge (card on file)
-- [x] Payment retry on failure
+- [ ] Auto-charge (card on file)
+- [ ] Payment retry on failure
 - [ ] Smart retry scheduling (ML-optimized timing)
 - [ ] 3D Secure (3DS2) / SCA compliance
 - [ ] Strong Customer Authentication (EU PSD2)
 - [ ] PCI DSS Level 1 compliance
 - [ ] Tokenization and vault management
-- [x] Partial payments
-- [x] Overpayment handling
+- [ ] Partial payments
+- [ ] Overpayment handling
 - [ ] Real-time payment confirmation
 
 ---
 
 ## Dunning Management
-- [x] Automated payment failure sequences
-- [x] Configurable dunning cadence (timing, channels)
+- [ ] Automated payment failure sequences
+- [ ] Configurable dunning cadence (timing, channels)
 - [ ] Soft vs. hard decline handling
 - [ ] Card updater (automatic card number refresh via Visa/Mastercard)
 - [ ] Smart retry using ML card success prediction
-- [x] Grace period configuration
-- [x] Account suspension / access revocation on non-payment
+- [ ] Grace period configuration
+- [ ] Account suspension / access revocation on non-payment
 - [ ] Escalation rules (email → call → collections)
-- [x] Reactivation workflows post-payment
-- [x] Dunning email templates per failure stage
-- [x] Dunning analytics (recovery rate, revenue recovered)
+- [ ] Reactivation workflows post-payment
+- [ ] Dunning email templates per failure stage
+- [ ] Dunning analytics (recovery rate, revenue recovered)
 - [ ] Pause dunning for specific customers
 
 ---
 
 ## Revenue Recognition
-- [x] ASC 606 compliance
+- [ ] ASC 606 compliance
 - [ ] IFRS 15 compliance
-- [x] Deferred revenue tracking and scheduling
-- [x] Revenue schedules (ratable, event-based, milestone)
-- [x] Performance obligation management
+- [ ] Deferred revenue tracking and scheduling
+- [ ] Revenue schedules (ratable, event-based, milestone)
+- [ ] Performance obligation management
 - [ ] Multi-element arrangement (MEA) handling
 - [ ] Contract modification and re-evaluation
 - [ ] Standalone selling price (SSP) calculation
-- [x] Revenue waterfall reports
-- [x] Recognized vs. deferred revenue split
-- [x] Revenue accrual entries
+- [ ] Revenue waterfall reports
+- [ ] Recognized vs. deferred revenue split
+- [ ] Revenue accrual entries
 - [ ] Variable consideration handling (refunds, discounts, rebates)
 - [ ] Forecasted revenue recognition
-- [x] Period-close controls
+- [ ] Period-close controls
 
 ---
 
 ## Tax Management
-- [x] Multi-jurisdiction tax calculation engine
+- [ ] Multi-jurisdiction tax calculation engine
 - [ ] US sales tax (all 50 states + local jurisdictions)
 - [ ] VAT (EU 27 member states, UK, Norway, Switzerland)
 - [ ] GST/HST (Canada)
@@ -150,7 +150,7 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] Digital Services Tax (DST)
 - [ ] Withholding tax
 - [ ] Reverse charge mechanism
-- [x] Economic nexus tracking and alerts
+- [ ] Economic nexus tracking and alerts
 - [ ] Tax exemptions (reseller, non-profit, government)
 - [ ] Tax exemption certificate management
 - [ ] Tax ID validation (VAT ID, EIN, ABN, GST, etc.)
@@ -166,36 +166,36 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 ---
 
 ## Customer & Account Management
-- [x] Customer profiles (individual and company)
-- [x] Account hierarchy (parent → child / subsidiary accounts)
+- [ ] Customer profiles (individual and company)
+- [ ] Account hierarchy (parent → child / subsidiary accounts)
 - [ ] Multiple contacts per account with roles
 - [ ] Multiple billing addresses
 - [ ] Shipping address management
 - [ ] Custom fields on customer records
-- [x] Customer segmentation and tagging
-- [x] Customer notes and internal annotations
-- [x] Communication history log
+- [ ] Customer segmentation and tagging
+- [ ] Customer notes and internal annotations
+- [ ] Communication history log
 - [ ] Account merge / deduplication
 - [ ] Bulk customer import / export
 - [ ] Customer credit limit management
 - [ ] Customer credit score / risk tier
-- [x] Account health score
-- [x] Customer lifecycle stage tracking
+- [ ] Account health score
+- [ ] Customer lifecycle stage tracking
 
 ---
 
 ## Subscription Lifecycle Management
-- [x] Upgrade and downgrade flows
+- [ ] Upgrade and downgrade flows
 - [ ] Immediate vs. end-of-period plan changes
 - [ ] Subscription cloning / templating
 - [ ] Bulk subscription operations
-- [x] Subscription pausing (with optional billing pause)
-- [x] Cancellation workflows with reason capture
+- [ ] Subscription pausing (with optional billing pause)
+- [ ] Cancellation workflows with reason capture
 - [ ] Cancellation surveys
 - [ ] Win-back / re-engagement flows
-- [x] Subscription reactivation
-- [x] Subscription renewal management
-- [x] Auto-renewal with configurable advance notice
+- [ ] Subscription reactivation
+- [ ] Subscription renewal management
+- [ ] Auto-renewal with configurable advance notice
 - [ ] Renewal quote generation
 - [ ] Co-term / alignment of multiple subscriptions
 - [ ] Subscription transfer between accounts
@@ -203,28 +203,28 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 ---
 
 ## Contract Management
-- [x] Contract creation and versioning
+- [ ] Contract creation and versioning
 - [ ] Multi-year contracts
-- [x] Contract terms and conditions capture
+- [ ] Contract terms and conditions capture
 - [ ] Custom contract start / end dates
 - [ ] Evergreen vs. fixed-term contracts
-- [x] Auto-renewal with notification windows
+- [ ] Auto-renewal with notification windows
 - [ ] Contract amendments and addenda
-- [x] Minimum commitment / floor ARR
-- [x] Contract performance obligation tracking
+- [ ] Minimum commitment / floor ARR
+- [ ] Contract performance obligation tracking
 - [ ] Electronic signature integration (DocuSign, Adobe Sign, HelloSign)
 - [ ] Quote-to-contract flow
-- [x] Contract repository and search
-- [x] Renewal pipeline management
+- [ ] Contract repository and search
+- [ ] Renewal pipeline management
 - [ ] Early termination fee calculation
 
 ---
 
 ## CPQ (Configure, Price, Quote)
-- [x] Product catalog for quoting
+- [ ] Product catalog for quoting
 - [ ] Guided selling / product configuration wizard
 - [ ] Rules-based pricing configuration
-- [x] Quote generation with line items
+- [ ] Quote generation with line items
 - [ ] Tiered discount approval workflows
 - [ ] Quote templates
 - [ ] Quote expiry and versioning
@@ -238,33 +238,33 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 ---
 
 ## Accounts Receivable
-- [x] Payment application to invoices
+- [ ] Payment application to invoices
 - [ ] Auto-application of payments
 - [ ] Unapplied payment management
 - [ ] Write-offs and bad debt
-- [x] Dispute management and resolution tracking
-- [x] Collections workflow management
-- [x] AR aging reports (30/60/90/120+)
+- [ ] Dispute management and resolution tracking
+- [ ] Collections workflow management
+- [ ] AR aging reports (30/60/90/120+)
 - [ ] Cash flow forecasting from AR
 - [ ] Customer credit holds
 - [ ] Balance forward invoices
-- [x] Statement of account generation
+- [ ] Statement of account generation
 - [ ] Integration with collections agencies
 - [ ] Promise-to-pay tracking
 
 ---
 
 ## Refunds & Credits
-- [x] Full refunds to original payment method
-- [x] Partial refunds
-- [x] Refund to credit balance
-- [x] Account credit balance management
+- [ ] Full refunds to original payment method
+- [ ] Partial refunds
+- [ ] Refund to credit balance
+- [ ] Account credit balance management
 - [ ] Credit expiry rules
 - [ ] Promotional credit issuance
-- [x] Credit application to future invoices
+- [ ] Credit application to future invoices
 - [ ] Prepaid credit / wallet management
 - [ ] Balance rollover configuration
-- [x] Refund reason tracking
+- [ ] Refund reason tracking
 - [ ] Refund approval workflows
 
 ---
@@ -288,19 +288,19 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] Download tax documents
 - [ ] Accept/decline quotes and contracts
 - [ ] View and accept renewal quotes
-- [x] Branded and embeddable portal (configuration UI)
+- [ ] Branded and embeddable portal (configuration UI)
 
 ---
 
 ## Reporting & Analytics
-- [x] MRR (Monthly Recurring Revenue)
-- [x] ARR (Annual Recurring Revenue)
-- [x] Net Revenue Retention (NRR)
+- [ ] MRR (Monthly Recurring Revenue)
+- [ ] ARR (Annual Recurring Revenue)
+- [ ] Net Revenue Retention (NRR)
 - [ ] Gross Revenue Retention (GRR)
 - [ ] Net Dollar Retention (NDR)
 - [ ] Customer Lifetime Value (LTV)
-- [x] Average Revenue Per User (ARPU)
-- [x] Churn rate (customer churn & revenue churn)
+- [ ] Average Revenue Per User (ARPU)
+- [ ] Churn rate (customer churn & revenue churn)
 - [ ] Logo churn vs. revenue churn
 - [ ] Expansion revenue
 - [ ] Contraction revenue
@@ -310,64 +310,64 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] Cohort analysis (monthly cohorts)
 - [ ] Trial conversion rates
 - [ ] Subscriber counts (new, active, churned, net)
-- [x] Cash flow reports
-- [x] Deferred revenue balance
-- [x] Revenue waterfall (beginning → end of period)
+- [ ] Cash flow reports
+- [ ] Deferred revenue balance
+- [ ] Revenue waterfall (beginning → end of period)
 - [ ] Bookings vs. billings vs. revenue
-- [x] Accounts receivable aging
+- [ ] Accounts receivable aging
 - [ ] Collections effectiveness
 - [ ] Payment success rates by method
 - [ ] Dashboard builder (drag-and-drop)
 - [ ] Custom report builder
 - [ ] Scheduled report delivery (email, Slack)
 - [ ] Report export (CSV, PDF, Excel, Google Sheets)
-- [x] Real-time dashboards
+- [ ] Real-time dashboards
 - [ ] Benchmark comparisons (industry averages)
 - [ ] Forecasting and projections
 
 ---
 
 ## Usage & Metering
-- [x] Real-time usage event ingestion (REST API)
+- [ ] Real-time usage event ingestion (REST API)
 - [ ] High-throughput event pipeline (millions of events/day)
-- [x] Usage aggregation (sum, max, unique count, percentile)
-- [x] Multiple concurrent usage meters per subscription
-- [x] Usage-based overages (hard cap vs. overage billing)
-- [x] Usage alerts and threshold notifications
-- [x] Usage caps / hard limits
+- [ ] Usage aggregation (sum, max, unique count, percentile)
+- [ ] Multiple concurrent usage meters per subscription
+- [ ] Usage-based overages (hard cap vs. overage billing)
+- [ ] Usage alerts and threshold notifications
+- [ ] Usage caps / hard limits
 - [ ] Rollover unused units to next period
-- [x] Usage history per customer
+- [ ] Usage history per customer
 - [ ] Usage rating engine
 - [ ] Idempotent event deduplication
-- [x] Usage report per invoice
-- [x] Usage debugging and audit log
+- [ ] Usage report per invoice
+- [ ] Usage debugging and audit log
 - [ ] Proration of usage within a billing period
 
 ---
 
 ## Multi-entity & Multi-tenancy
-- [x] Multiple legal entity support
-- [x] Inter-company billing
-- [x] Subsidiary management
+- [ ] Multiple legal entity support
+- [ ] Inter-company billing
+- [ ] Subsidiary management
 - [ ] Multi-brand billing (different logos/names per entity)
 - [ ] Multi-currency at entity level
-- [x] Consolidated cross-entity reporting
-- [x] Entity-level chart of accounts
-- [x] Separate GL per entity
+- [ ] Consolidated cross-entity reporting
+- [ ] Entity-level chart of accounts
+- [ ] Separate GL per entity
 - [ ] Shared customer database across entities
 
 ---
 
 ## Financial Controls & General Ledger
-- [x] GL account mapping per product / revenue type
-- [x] Chart of accounts management
-- [x] Journal entry generation (automated + manual)
-- [x] Revenue accrual entries
-- [x] Period-close controls (lock closed periods)
-- [x] Audit trail on all financial transactions
+- [ ] GL account mapping per product / revenue type
+- [ ] Chart of accounts management
+- [ ] Journal entry generation (automated + manual)
+- [ ] Revenue accrual entries
+- [ ] Period-close controls (lock closed periods)
+- [ ] Audit trail on all financial transactions
 - [ ] Approval limits by amount or type
 - [ ] Segregation of duties enforcement
-- [x] Intercompany eliminations
+- [ ] Intercompany eliminations
 - [ ] Foreign currency revaluation
 - [ ] Realized / unrealized FX gain/loss tracking
 
@@ -389,20 +389,20 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 ---
 
 ## Integrations
-- [x] Salesforce CRM
+- [ ] Salesforce CRM
 - [ ] HubSpot CRM
 - [ ] Microsoft Dynamics 365 CRM
 - [ ] Zoho CRM
 - [ ] Pipedrive CRM
 - [ ] SAP ERP
 - [ ] Oracle ERP Cloud
-- [x] NetSuite ERP
+- [ ] NetSuite ERP
 - [ ] Microsoft Dynamics Finance
-- [x] Xero accounting
+- [ ] Xero accounting
 - [ ] QuickBooks Online
 - [ ] Freshbooks
-- [x] Stripe payment gateway
-- [x] Adyen payment gateway
+- [ ] Stripe payment gateway
+- [ ] Adyen payment gateway
 - [ ] Braintree payment gateway
 - [ ] PayPal payment gateway
 - [ ] Square
@@ -438,23 +438,23 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] Workato
 - [ ] Boomi
 - [ ] Mulesoft
-- [x] Webhooks (configurable per event type with retry and signature verification)
-- [x] REST API (versioned, with full OpenAPI spec)
+- [ ] Webhooks (configurable per event type with retry and signature verification)
+- [ ] REST API (versioned, with full OpenAPI spec)
 - [ ] GraphQL API
 - [ ] Bulk data export (S3, GCS, SFTP)
 
 ---
 
 ## Developer Platform
-- [x] Versioned REST API
+- [ ] Versioned REST API
 - [ ] GraphQL API
-- [x] Webhooks with retry, dead-letter queue, and HMAC signatures
+- [ ] Webhooks with retry, dead-letter queue, and HMAC signatures
 - [ ] Event catalog (full list of subscribable events)
 - [ ] API sandbox / test mode with test clock
-- [x] API keys with scoped permissions
+- [ ] API keys with scoped permissions
 - [ ] OAuth 2.0 support
 - [ ] Official SDKs (Node.js, Python, Ruby, Java, PHP, Go, .NET)
-- [x] SDK documentation view
+- [ ] SDK documentation view
 - [ ] Postman / Insomnia collections
 - [ ] API reference docs
 - [ ] Changelog and deprecation policy
@@ -489,7 +489,7 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] Event-driven trigger engine
 - [ ] No-code workflow builder (if/then rules)
 - [ ] Billing lifecycle hooks (pre/post billing)
-- [x] Approval workflows (quotes, discounts, write-offs)
+- [ ] Approval workflows (quotes, discounts, write-offs)
 - [ ] Escalation rules
 - [ ] Scheduled tasks (e.g., aging review, renewal campaigns)
 - [ ] Automated onboarding billing sequences
@@ -519,7 +519,7 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] GDPR compliance (data processing agreements, consent, erasure)
 - [ ] CCPA compliance
 - [ ] HIPAA-eligible configuration (BAA available)
-- [x] Role-based access control (RBAC) with custom roles
+- [ ] Role-based access control (RBAC) with custom roles
 - [ ] Attribute-based access control (ABAC)
 - [ ] Multi-factor authentication (MFA / TOTP / hardware keys)
 - [ ] SSO via SAML 2.0 and OIDC
@@ -530,7 +530,7 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 - [ ] Data residency options (US, EU, APAC)
 - [ ] Right to erasure / anonymization
 - [ ] Data portability export
-- [x] Audit logs (immutable, exportable)
+- [ ] Audit logs (immutable, exportable)
 - [ ] Session management (timeout, concurrent sessions)
 - [ ] IP allowlisting / blocklisting
 - [ ] Anomaly detection on user activity
@@ -543,7 +543,7 @@ Checkbox is checked once the UI for that feature is **100% mocked out** in Delon
 ## Data Management & Operations
 - [ ] Bulk import (CSV, JSON, API)
 - [ ] Bulk export
-- [x] Data migration tooling and services
+- [ ] Data migration tooling and services
 - [ ] Sandbox environments (per team)
 - [ ] Test clock (simulate time travel for testing)
 - [ ] Data archiving and retention policies
