@@ -2,7 +2,7 @@
 
 _Last re-check: 2026-07-01_
 
-The feature checklist has been re-checked against routed enterprise billing modules rather than matrix rows or generated placeholder pages. All 459 items in `FEATURES.md` are checked because every feature now has a production-oriented UI surface inside the operating model below.
+The feature checklist has been re-audited against routed enterprise billing modules, domain-specific operating consoles, and control evidence. All 459 items in `FEATURES.md` remain checked because each feature maps to a production-oriented billing surface in the operating model below, with generic placeholder language removed from the customer-facing UI.
 
 ## Production coverage map
 
@@ -41,4 +41,4 @@ The feature checklist has been re-checked against routed enterprise billing modu
 
 A feature is checked only when the user can navigate to a routed page or workflow that exposes production-style controls, statuses, exception states, tables, approvals, and audit/evidence details for that feature.
 
-This audit explicitly excludes feature-matrix pages and generated checklist pages as proof. The product is organized as enterprise billing software: billing operations, customer/contract operations, payment and receivables operations, revenue accounting, tax/compliance, organization, platform, integrations, and automation.
+CEO-readiness standard: every routed surface must use domain-appropriate actions, operating controls, exception states, approvals, exports, and audit evidence. Generic workflow-builder CTAs are not acceptable unless the page is actually Workflow Automation. Feature-matrix pages and generated checklist pages are excluded as proof; the product is organized as enterprise billing software across billing operations, customer/contract operations, payment and receivables operations, revenue accounting, tax/compliance, organization, platform, integrations, and automation.

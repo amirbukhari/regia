@@ -64,7 +64,7 @@ VIEWS.billingruns = (v)=>{
 
     <div class="two-col" style="align-items:start;margin-top:16px">
       <div class="card panel">
-        <div class="panel-head"><h3>Scheduled runs</h3><span class="sub">Each row opens as a real billing operation, not a checklist item.</span></div>
+        <div class="panel-head"><h3>Scheduled runs</h3><span class="sub">Each row opens as a governed billing operation with approvals, control status and run evidence.</span></div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Run</th><th>Cadence</th><th>Window</th><th class="num">Accounts</th><th class="num">Amount</th><th>Status</th><th>Approvals</th></tr></thead>
