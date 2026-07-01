@@ -9,6 +9,8 @@ document.addEventListener('click',e=>{
   if(a==='signout') return signOut();
   if(a==='close') return closeDrawer();
   if(a==='toggle') return t.classList.toggle('on');
+  if(a==='featureflag') return toggleFeatureFlag(arg, t);
+  if(a==='resetflags') return resetFeatureFlagUI();
   if(a==='menu') return document.getElementById('app').classList.toggle('nav-open');
   if(a==='route'){ closeDrawer(); return route(arg); }
   if(a==='invoice') return openInvoice(arg);
@@ -16,6 +18,9 @@ document.addEventListener('click',e=>{
   if(a==='revsched') return openRevSchedule(arg);
   if(a==='subdetail') return openSubscription(arg);
   if(a==='paydetail') return openPayment(arg);
+  if(a==='retrypay') return openRetryPayment(arg);
+  if(a==='refund') return openRefund(arg);
+  if(a==='colldetail') return openCollectionDetail(arg);
   if(a==='lens') return setDashLens(arg, t);
   if(a==='invfilter') return setInvFilter(arg, t);
   if(a==='acctfilter') return setAcctFilter(arg, t);
@@ -149,5 +154,3 @@ window.addEventListener('resize',()=>{ if(current==='dashboard'){drawRevChart();
   if(current==='usage')drawUsageChart(); if(current==='reports')drawMrrChart(); });
 
 /* auto-enter if user just wants to look (still shows splash first) */
-
-

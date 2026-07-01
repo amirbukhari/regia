@@ -69,6 +69,7 @@ const NAV = [
     {id:'notifications', label:'Notifications', icon:'plug'},
     {id:'workflows', label:'Workflow Automation', icon:'settings'},
     {id:'partnerbilling', label:'Partner Billing', icon:'accounts'},
+    {id:'featurematrix', label:'Legacy Feature Workbench', icon:'settings'},
     {id:'thememanager',label:'Theme & Branding',        icon:'brush'},
     {id:'settings',    label:'Settings',              icon:'settings'},
   ]},

@@ -51,3 +51,9 @@ The enterprise workspace actions and Billing Runs controls were reworked so prim
 ## Workflow and brand remediation
 
 Workflow Automation now has concrete builder/test/detail/run/step drawers instead of click-only toast messages. The brand mark is restored as the original unboxed delonix SVG in the sidebar, top bar and splash screen, using a Delonix blue gradient and restrained shadow for visibility on the dark enterprise shell.
+
+## Feature-flagged rollout guardrail
+
+Optional, discovery, or less-polished surfaces are no longer removed when they are not part of the default CEO demo. They stay registered in the codebase and are controlled by client-side feature flags in `js/featureflags.js`. The default navigation hides only the legacy Feature Workbench; Settings exposes a Feature flags panel that can toggle hidden routes back on for audit, QA, or discovery without deleting the implementation.
+
+The rule for future cleanup is: hide questionable surfaces behind a named feature flag first, then either promote the flag into the default production navigation after CEO QA or leave it off for discovery. Do not delete feature surfaces just because they are not in the primary production information architecture.

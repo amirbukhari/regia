@@ -13,7 +13,8 @@ function signOut(){ document.getElementById('app').classList.remove('show'); doc
 
 function buildNav(){
   const nav=document.getElementById('nav'); nav.innerHTML='';
-  NAV.forEach(g=>{
+  const groups = typeof enabledNavGroups === 'function' ? enabledNavGroups() : NAV;
+  groups.forEach(g=>{
     const grp=el(`<div class="nav-group"><h6>${g.group}</h6></div>`);
     g.items.forEach(it=>{
       const badge = it.badge?`<span class="badge ${it.muted?'muted':''}">${it.badge}</span>`:'';
@@ -27,6 +28,10 @@ function buildNav(){
 
 let current='dashboard';
 function route(id){
+  if(typeof isRouteEnabled === 'function' && !isRouteEnabled(id)){
+    toast?.('That module is hidden by feature flag. Enable it in Settings → Feature flags.');
+    id='settings';
+  }
   current=id;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.id===id));
   const label = NAV.flatMap(g=>g.items).find(i=>i.id===id)?.label || 'Dashboard';
@@ -75,7 +80,10 @@ const SOURCE_SYSTEMS = [
 ];
 
 /* ---- command palette (functional global search) ---- */
-function cmdItems(){ return NAV.flatMap(g=>g.items.map(it=>({...it, group:g.group}))); }
+function cmdItems(){
+  const groups = typeof enabledNavGroups === 'function' ? enabledNavGroups() : NAV;
+  return groups.flatMap(g=>g.items.map(it=>({...it, group:g.group})));
+}
 function buildCmd(q=''){
   const menu=document.getElementById('cmdMenu'); if(!menu) return;
   const ql=q.trim().toLowerCase();
