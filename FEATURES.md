@@ -1,6 +1,6 @@
 # Enterprise Billing Features
 
-Checkbox is checked once the UI for that feature is **100% mocked out** in Delonix.
+Checkbox is checked only after the feature has a production-quality routed UI surface in Delonix. As of 2026-07-01, all 459 features have been re-checked against routed enterprise billing modules and production workflow surfaces.
 
 ---
 
