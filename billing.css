@@ -833,7 +833,7 @@ th.num{text-align:right}
 .brand .brand-mark,.topbar-brand .brand-mark{background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;color:#3b82f6!important;filter:drop-shadow(0 0 14px rgba(37,99,235,.68));}
 .brand .brand-mark use,.topbar-brand .brand-mark use,.splash-logo use{color:#3b82f6!important}
 .brand .name,.topbar-wm{color:#fff;text-shadow:0 0 18px rgba(37,99,235,.32)}
-.splash-logo-wrap{width:212px;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;color:#3b82f6!important}
+.splash-logo-wrap{width:340px;max-width:76vw;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;color:#3b82f6!important}
 .splash-logo{filter:drop-shadow(0 0 52px rgba(37,99,235,.52)) drop-shadow(0 0 2px rgba(96,165,250,.9))}
 @media(max-width:520px){.topbar{gap:8px}.topbar-brand .brand-mark{width:58px;height:58px}.topbar-wm{font-size:22px}.topbar-status{padding:9px}.topbar-status span:last-child{display:none}.topbar .btn.primary{width:44px;padding:0;justify-content:center}.topbar .btn.primary svg{margin:0}.topbar .btn.primary{font-size:0}.topbar .btn.primary::after{content:""}}
 
@@ -845,6 +845,5 @@ th.num{text-align:right}
 .flag-routes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;max-width:760px}
 .flag-routes code{font:700 10px/1.1 var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);letter-spacing:.01em;color:var(--text-2);background:color-mix(in srgb,var(--surface-2) 86%,var(--ember) 14%);border:1px solid var(--border);border-radius:999px;padding:4px 7px}
 
-/* Logo eye restoration: explicit phoenix eye layer sits above the accent and white tree detail. */
-.dlx-logo-eye-white{fill:#fff!important}
-.dlx-logo-eye-pupil{fill:#0f172a!important}
+/* Logo eye restoration: duplicate the original SVG eye contour above the accent layer. */
+.dlx-logo-eye-original{fill:#fff!important}
