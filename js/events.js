@@ -21,6 +21,11 @@ document.addEventListener('click',e=>{
   if(a==='acctfilter') return setAcctFilter(arg, t);
   if(a==='toast') return toast(arg);
   if(a==='featuredetail') return openFeatureDetail(arg);
+  if(a==='workspaceaction') return openWorkspaceAction(arg);
+  if(a==='workspacecard') return openWorkspaceCard(arg);
+  if(a==='billingrunaction') return openBillingRunAction(arg);
+  if(a==='billingrundetail') return openBillingRunDetail(arg);
+  if(a==='billingrunexception') return openBillingRunException(arg);
         if(a==='theme') return setTheme(arg);
         if(a==='density') return setDensity(arg);
         if(a==='newinvoice') return openNewInvoice();
