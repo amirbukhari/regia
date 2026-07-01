@@ -844,3 +844,7 @@ th.num{text-align:right}
 .feature-flag-row .toggle.locked{opacity:.62;cursor:not-allowed}
 .flag-routes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;max-width:760px}
 .flag-routes code{font:700 10px/1.1 var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);letter-spacing:.01em;color:var(--text-2);background:color-mix(in srgb,var(--surface-2) 86%,var(--ember) 14%);border:1px solid var(--border);border-radius:999px;padding:4px 7px}
+
+/* Logo eye restoration: explicit phoenix eye layer sits above the accent and white tree detail. */
+.dlx-logo-eye-white{fill:#fff!important}
+.dlx-logo-eye-pupil{fill:#0f172a!important}
