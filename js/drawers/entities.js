@@ -146,7 +146,7 @@ function openNewBizUnit(){
       <div class="fg"><label>GL export destination</label><select class="finput"><option>NetSuite-US</option><option>NetSuite-EU</option><option>QuickBooks</option><option>Xero</option></select></div>
       <div class="fg"><label>Invoice template</label><select class="finput"><option>Default</option><option>Minimal</option><option>Branded</option></select></div>
       <div class="fg"><label>Invoice grouping default</label><select class="finput"><option>One invoice per account</option><option>One per subscription</option><option>One per contract</option></select></div>
-      <div class="fg"><label>Brand accent color</label><div style="display:flex;gap:8px;align-items:center"><input class="finput" placeholder="#ff5a1f" style="font-family:monospace;max-width:110px"><div style="width:28px;height:28px;border-radius:6px;background:#888"></div></div></div>
+      <div class="fg"><label>Brand accent color</label><div style="display:flex;gap:8px;align-items:center"><input class="finput" placeholder="#2563eb" style="font-family:monospace;max-width:110px"><div style="width:28px;height:28px;border-radius:6px;background:#888"></div></div></div>
       <div class="fg"><label>Status</label><select class="finput"><option>Active</option><option>Draft</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:16px">

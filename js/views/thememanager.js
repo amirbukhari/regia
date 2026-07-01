@@ -83,7 +83,7 @@ VIEWS.thememanager = (v)=>{
             <div class="panel-title">Custom CSS</div>
             <span class="pill warn" style="font-size:10px">Enterprise only</span>
           </div>
-          <textarea class="input" style="width:100%;height:90px;font-family:monospace;font-size:11px;resize:vertical" placeholder=":root { --ember: #ff5a1f; }&#10;.sidebar { width: 220px; }"></textarea>
+          <textarea class="input" style="width:100%;height:90px;font-family:monospace;font-size:11px;resize:vertical" placeholder=":root { --ember: #2563eb; }&#10;.sidebar { width: 220px; }"></textarea>
           <div class="mut" style="font-size:11px;margin-top:6px">CSS applies to the main app and customer portal. Changes are validated before deployment.</div>
         </div>
       </div>
