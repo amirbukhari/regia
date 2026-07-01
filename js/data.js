@@ -69,10 +69,7 @@ const NAV = [
     {id:'notifications', label:'Notifications', icon:'plug'},
     {id:'workflows', label:'Workflow Automation', icon:'settings'},
     {id:'partnerbilling', label:'Partner Billing', icon:'accounts'},
-<<<<<<< HEAD
-=======
     {id:'featurematrix', label:'Legacy Feature Workbench', icon:'settings'},
->>>>>>> origin/codex/find-and-implement-ui-ux-master-skills
     {id:'thememanager',label:'Theme & Branding',        icon:'brush'},
     {id:'settings',    label:'Settings',              icon:'settings'},
   ]},

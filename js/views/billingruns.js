@@ -37,12 +37,7 @@ VIEWS.billingruns = (v)=>{
 
   v.appendChild(el(`<div class="view">
     ${pageHead('Billing Runs','Schedule, preview, validate and approve enterprise billing runs before invoices are finalized.',
-<<<<<<< HEAD
-      `<button class="btn ghost" data-act="download" data-arg="csv|Billing Run Schedule|4 scheduled runs · 1 blocked">${svg(I.download,15)} Export schedule</button><button class="btn primary" data-act="toast" data-arg="New billing run wizard opened">+ Schedule run</button>`)}
-=======
       `<button class="btn ghost" data-act="download" data-arg="csv|Billing Run Schedule|4 scheduled runs · 1 blocked">${svg(I.download,15)} Export schedule</button><button class="btn primary" data-act="billingrunaction" data-arg="schedule">+ Schedule run</button>`)}
->>>>>>> origin/codex/find-and-implement-ui-ux-master-skills
-
     <div class="grid kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
       ${kpi('Next run','Jul 01','00:30 UTC · monthly',{accent:true})}
       ${kpi('Run amount','$418,350','842 accounts in scope',{trend:4.2})}
@@ -56,12 +51,7 @@ VIEWS.billingruns = (v)=>{
         <h3>July monthly recurring run</h3>
         <p>Combines recurring billing, usage true-ups, one-time charges, proration, billing anchors, minimum commitments and overage handling into a controlled run calendar.</p>
         <div class="run-actions">
-<<<<<<< HEAD
-          <button class="btn primary" data-act="toast" data-arg="Run preview recalculated">Recalculate preview</button>
-=======
-          <button class="btn primary" data-act="billingrunaction" data-arg="preview">Recalculate preview</button>
->>>>>>> origin/codex/find-and-implement-ui-ux-master-skills
-          <button class="btn ghost" data-act="route" data-arg="invoices">Open draft invoices</button>
+          <button class="btn primary" data-act="billingrunaction" data-arg="preview">Recalculate preview</button>          <button class="btn ghost" data-act="route" data-arg="invoices">Open draft invoices</button>
           <button class="btn ghost" data-act="route" data-arg="usage">Review usage meters</button>
         </div>
       </div>
@@ -76,11 +66,7 @@ VIEWS.billingruns = (v)=>{
         <div class="table-wrap">
           <table>
             <thead><tr><th>Run</th><th>Cadence</th><th>Window</th><th class="num">Accounts</th><th class="num">Amount</th><th>Status</th><th>Approvals</th></tr></thead>
-<<<<<<< HEAD
-            <tbody>${runs.map(r=>`<tr data-act="toast" data-arg="Opened ${r.id}" style="cursor:pointer">
-=======
             <tbody>${runs.map(r=>`<tr data-act="billingrundetail" data-arg="${r.id}" style="cursor:pointer">
->>>>>>> origin/codex/find-and-implement-ui-ux-master-skills
               <td><span class="mono">${r.id}</span><br><span class="nm">${r.name}</span></td>
               <td>${r.cadence}</td>
               <td class="mut">${r.window}</td>
@@ -126,12 +112,7 @@ VIEWS.billingruns = (v)=>{
           <thead><tr><th>Scope</th><th>Exception</th><th>Impact</th><th>Owner</th><th>Action</th></tr></thead>
           <tbody>${exceptions.map(e=>`<tr>
             <td class="nm">${e[0]}</td><td>${e[1]}</td><td class="mut">${e[2]}</td><td>${e[3]}</td>
-<<<<<<< HEAD
-            <td><button class="btn ghost" style="padding:5px 10px;font-size:12px" data-act="toast" data-arg="Opened exception for ${e[0]}">Resolve</button></td>
-=======
-            <td><button class="btn ghost" style="padding:5px 10px;font-size:12px" data-act="billingrunexception" data-arg="${e[0]}|${e[1]}|${e[2]}|${e[3]}">Resolve</button></td>
->>>>>>> origin/codex/find-and-implement-ui-ux-master-skills
-          </tr>`).join('')}</tbody>
+            <td><button class="btn ghost" style="padding:5px 10px;font-size:12px" data-act="billingrunexception" data-arg="${e[0]}|${e[1]}|${e[2]}|${e[3]}">Resolve</button></td>          </tr>`).join('')}</tbody>
         </table>
       </div>
     </div>

@@ -2,12 +2,7 @@
 
 const workspaceStatus = (text, status='good') => pill(status, text);
 const workspaceTable = (rows) => `<div class="table-wrap"><table><thead><tr><th>Capability</th><th>Production surface</th><th>Controls visible</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="nm">${r[0]}</td><td>${r[1]}</td><td class="mut">${r[2]}</td><td>${workspaceStatus(r[3]||'Ready',r[4]||'good')}</td></tr>`).join('')}</tbody></table></div>`;
-<<<<<<< HEAD
-const workspaceCards = (cards) => `<div class="workspace-card-grid">${cards.map((c,i)=>`<div class="workspace-card"><i>${String(i+1).padStart(2,'0')}</i><b>${c[0]}</b><span>${c[1]}</span><button class="btn ghost" data-act="toast" data-arg="Opened ${c[0]}">Open</button></div>`).join('')}</div>`;
-=======
-const workspaceCards = (cards, id) => `<div class="workspace-card-grid">${cards.map((c,i)=>`<div class="workspace-card"><i>${String(i+1).padStart(2,'0')}</i><b>${c[0]}</b><span>${c[1]}</span><button class="btn ghost" data-act="workspacecard" data-arg="${id}|${c[0]}|${c[1]}">Open</button></div>`).join('')}</div>`;
->>>>>>> origin/codex/find-and-implement-ui-ux-master-skills
-const workspaceActionLabel = {
+const workspaceCards = (cards, id) => `<div class="workspace-card-grid">${cards.map((c,i)=>`<div class="workspace-card"><i>${String(i+1).padStart(2,'0')}</i><b>${c[0]}</b><span>${c[1]}</span><button class="btn ghost" data-act="workspacecard" data-arg="${id}|${c[0]}|${c[1]}">Open</button></div>`).join('')}</div>`;const workspaceActionLabel = {
   billingpolicies:'Configure policy', pricebooks:'Publish price book', invoiceops:'Schedule invoice batch',
   revaccounting:'Review revenue schedule', taxops:'Run tax review', customerops:'Open customer 360',
   subscriptionops:'Start lifecycle change', contractops:'Draft contract', cpqdesk:'Build quote',
@@ -18,20 +13,11 @@ const workspaceActionLabel = {
 function registerEnterpriseWorkspace(id, cfg){
   VIEWS[id] = (v)=>{
     v.appendChild(el(`<div class="view">
-<<<<<<< HEAD
-      ${pageHead(cfg.title,cfg.subtitle,`<button class="btn ghost" data-act="download" data-arg="csv|${cfg.title} Controls|Production controls export">${svg(I.download,14)} Export controls</button><button class="btn primary" data-act="toast" data-arg="${cfg.title} workbench opened">${workspaceActionLabel[id] || 'Open console'}</button>`)}
-      <div class="grid kpis" style="grid-template-columns:repeat(4,1fr)">${cfg.kpis.map((k,i)=>kpi(k[0],k[1],k[2],i===0?{accent:true}:{})).join('')}</div>
-      <div class="two-col" style="align-items:start">
-        <div class="card panel"><div class="panel-head"><h3>${cfg.primaryTitle}</h3><span class="sub">production controls, exceptions and evidence</span></div>${workspaceTable(cfg.rows)}</div>
-        <div class="card panel"><div class="panel-head"><h3>Operating console</h3><span class="sub">domain-specific actions and exception handling</span></div>${workspaceCards(cfg.cards)}</div>
-=======
       ${pageHead(cfg.title,cfg.subtitle,`<button class="btn ghost" data-act="download" data-arg="csv|${cfg.title} Controls|Production controls export">${svg(I.download,14)} Export controls</button><button class="btn primary" data-act="workspaceaction" data-arg="${id}">${workspaceActionLabel[id] || 'Open console'}</button>`)}
       <div class="grid kpis" style="grid-template-columns:repeat(4,1fr)">${cfg.kpis.map((k,i)=>kpi(k[0],k[1],k[2],i===0?{accent:true}:{})).join('')}</div>
       <div class="two-col" style="align-items:start">
         <div class="card panel"><div class="panel-head"><h3>${cfg.primaryTitle}</h3><span class="sub">production controls, exceptions and evidence</span></div>${workspaceTable(cfg.rows)}</div>
-        <div class="card panel"><div class="panel-head"><h3>Operating console</h3><span class="sub">domain-specific actions and exception handling</span></div>${workspaceCards(cfg.cards, id)}</div>
->>>>>>> origin/codex/find-and-implement-ui-ux-master-skills
-      </div>
+        <div class="card panel"><div class="panel-head"><h3>Operating console</h3><span class="sub">domain-specific actions and exception handling</span></div>${workspaceCards(cfg.cards, id)}</div>      </div>
       <div class="card panel" style="margin-top:16px"><div class="panel-head"><h3>Operating flow and control evidence</h3><span class="sub">how work moves from setup to approval, execution and audit</span></div><div class="workflow-canvas">${cfg.flow.map((f,i)=>`<div class="flow-node"><i>${i+1}</i><b>${f[0]}</b><span>${f[1]}</span></div>`).join('')}</div></div>
     </div>`));
   };

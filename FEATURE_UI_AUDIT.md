@@ -42,8 +42,6 @@ The feature checklist has been re-audited against routed enterprise billing modu
 A feature is checked only when the user can navigate to a routed page or workflow that exposes production-style controls, statuses, exception states, tables, approvals, and audit/evidence details for that feature.
 
 CEO-readiness standard: every routed surface must use domain-appropriate actions, operating controls, exception states, approvals, exports, and audit evidence. Generic workflow-builder CTAs are not acceptable unless the page is actually Workflow Automation. Feature-matrix pages and generated checklist pages are excluded as proof; the product is organized as enterprise billing software across billing operations, customer/contract operations, payment and receivables operations, revenue accounting, tax/compliance, organization, platform, integrations, and automation.
-<<<<<<< HEAD
-=======
 
 
 ## Hanging UI remediation
@@ -59,4 +57,3 @@ Workflow Automation now has concrete builder/test/detail/run/step drawers instea
 Optional, discovery, or less-polished surfaces are no longer removed when they are not part of the default CEO demo. They stay registered in the codebase and are controlled by client-side feature flags in `js/featureflags.js`. The default navigation hides only the legacy Feature Workbench; Settings exposes a Feature flags panel that can toggle hidden routes back on for audit, QA, or discovery without deleting the implementation.
 
 The rule for future cleanup is: hide questionable surfaces behind a named feature flag first, then either promote the flag into the default production navigation after CEO QA or leave it off for discovery. Do not delete feature surfaces just because they are not in the primary production information architecture.
->>>>>>> origin/codex/find-and-implement-ui-ux-master-skills
