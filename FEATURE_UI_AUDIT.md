@@ -50,4 +50,4 @@ The enterprise workspace actions and Billing Runs controls were reworked so prim
 
 ## Workflow and brand remediation
 
-Workflow Automation now has concrete builder/test/detail/run/step drawers instead of click-only toast messages. The brand mark is restored as the original unboxed delonix SVG in the sidebar, top bar and splash screen, with only a restrained blue shadow for visibility on the dark enterprise shell.
+Workflow Automation now has concrete builder/test/detail/run/step drawers instead of click-only toast messages. The brand mark is restored as the original unboxed delonix SVG in the sidebar, top bar and splash screen, using a Delonix blue gradient and restrained shadow for visibility on the dark enterprise shell.
