@@ -133,13 +133,13 @@ VIEWS.ar = (v)=>{
     ctx.beginPath();
     dso.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));
     const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
-    grad.addColorStop(0,'rgba(255,90,31,0.22)'); grad.addColorStop(1,'rgba(255,90,31,0.02)');
+    grad.addColorStop(0,'rgba(37,99,235,0.22)'); grad.addColorStop(1,'rgba(37,99,235,0.02)');
     ctx.lineTo(xp(5),pad.t+ch); ctx.lineTo(xp(0),pad.t+ch); ctx.closePath();
     ctx.fillStyle=grad; ctx.fill();
     ctx.beginPath(); dso.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));
-    ctx.strokeStyle='#ff5a1f'; ctx.lineWidth=2; ctx.stroke();
+    ctx.strokeStyle='#2563eb'; ctx.lineWidth=2; ctx.stroke();
     ctx.beginPath(); ctx.arc(xp(5),yp(dso[5]),4,0,Math.PI*2);
-    ctx.fillStyle='#ff5a1f'; ctx.fill();
+    ctx.fillStyle='#2563eb'; ctx.fill();
     ['Jan','Feb','Mar','Apr','May','Jun'].forEach((m,i)=>{
       ctx.fillStyle=textC; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
       ctx.fillText(m, xp(i), H-8);

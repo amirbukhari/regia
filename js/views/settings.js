@@ -9,6 +9,11 @@ VIEWS.settings = (v)=>{
   });
   v.appendChild(el(`<div class="view">
     ${pageHead('Settings','Billing configuration, payment gateways, team access and audit trail.','')}
+        <div class="card panel" style="margin-bottom:16px">
+          <div class="panel-head"><h3>Feature flags</h3><div class="right"><button class="btn ghost" style="padding:5px 10px" data-act="resetflags">Reset defaults</button></div></div>
+          <div class="feature-flag-note">Hide unfinished, optional, or discovery surfaces without deleting them. Hidden modules stay in the codebase, stay auditable, and can be toggled back on for review.</div>
+          ${(typeof featureFlagRows === 'function') ? featureFlagRows() : ''}
+        </div>
             <div class="card panel" style="margin-bottom:16px">
           <div class="panel-head"><h3>Appearance</h3></div>
           <div style="padding:0 18px 18px">

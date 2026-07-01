@@ -1,0 +1,11 @@
+/* delonix — security.js */
+
+VIEWS.security = (v)=>{
+  const policies=[['SAML SSO','Okta + Azure AD','Enforced','good'],['MFA','TOTP + hardware keys','Required for finance','good'],['SCIM provisioning','Okta groups','Syncing','good'],['BYOK encryption','AWS KMS customer key','Rotation due','warn'],['Data residency','US/EU/APAC partitions','Live','good'],['IP allowlisting','Finance admins','2 pending','warn']];
+  const requests=[['PRIV-391','Right to erasure','Solstice Media contact','Legal review'],['EXP-144','Data portability export','Aurora Health Group','Ready'],['AUD-882','SOC 2 evidence export','External auditor','Delivered']];
+  v.appendChild(el(`<div class="view">
+    ${pageHead('Security Center','Enterprise security and compliance operations for SSO, SCIM, MFA, keys, privacy requests, data residency and evidence exports.',`<button class="btn ghost" data-act="download" data-arg="zip|Compliance Evidence|SOC2 ISO PCI evidence">${svg(I.download,14)} Export evidence</button><button class="btn primary" data-act="toast" data-arg="Security policy wizard opened">+ Policy</button>`)}
+    <div class="grid kpis" style="grid-template-columns:repeat(4,1fr)">${kpi('Compliance','SOC 2 · ISO · PCI','evidence current',{accent:true})}${kpi('SSO coverage','97%','SCIM managed users',{})}${kpi('Open privacy requests','2','within SLA',{})}${kpi('Anomalies','3','1 high risk',{})}</div>
+    <div class="two-col" style="align-items:start"><div class="card panel"><div class="panel-head"><h3>Security policies</h3></div><div class="table-wrap"><table><thead><tr><th>Control</th><th>Configuration</th><th>Status</th></tr></thead><tbody>${policies.map(p=>`<tr><td class="nm">${p[0]}</td><td>${p[1]}</td><td>${pill(p[3],p[2])}</td></tr>`).join('')}</tbody></table></div></div><div class="card panel"><div class="panel-head"><h3>Privacy & evidence queue</h3></div><div class="table-wrap"><table><thead><tr><th>Request</th><th>Type</th><th>Subject</th><th>Status</th></tr></thead><tbody>${requests.map(r=>`<tr><td class="mono">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="mut">${r[3]}</td></tr>`).join('')}</tbody></table></div></div></div>
+  </div>`));
+};

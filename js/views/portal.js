@@ -15,7 +15,7 @@ VIEWS.portal = (v)=>{
     ['Fulcrum Labs','subscription_viewed','Business+ — 3 seats added','Jun 24, 16:19'],
     ['Bridgepoint','support_ticket','Payment failure query','Jun 24, 11:52'],
   ];
-  const actionColor={'payment_made':'#49c46e','support_ticket':'#e8b23f','login':'#6aa6ff','invoice_viewed':'#b07cff','invoice_downloaded':'#b07cff','payment_method_updated':'#ff8a4c','subscription_viewed':'#2dd4bf'};
+  const actionColor={'payment_made':'#49c46e','support_ticket':'#e8b23f','login':'#6aa6ff','invoice_viewed':'#b07cff','invoice_downloaded':'#b07cff','payment_method_updated':'#0891b2','subscription_viewed':'#2dd4bf'};
   v.appendChild(el(`<div class="view">
     ${pageHead('Customer portal','Self-service billing portal — activity, configuration and branding for your customers.',
       `<button class="btn ghost" data-act="toast" data-arg="Portal link copied to clipboard">${svg(I.send,15)} Copy portal link</button>
@@ -57,7 +57,7 @@ VIEWS.portal = (v)=>{
             <div><div class="t">Accent color</div><div class="d">Primary button and link color in the portal</div></div>
             <div class="spacer"></div>
             <div style="display:flex;gap:6px;align-items:center">
-              ${['#ff5a1f','#635bff','#0abf53','#00a1e0','#e8b23f'].map(c=>`<span style="width:20px;height:20px;border-radius:50%;background:${c};cursor:pointer;display:inline-block;flex-shrink:0" data-act="toast" data-arg="Portal accent set to ${c}"></span>`).join('')}
+              ${['#1e3a5f','#2563eb','#059669','#0891b2','#64748b'].map(c=>`<span style="width:20px;height:20px;border-radius:50%;background:${c};cursor:pointer;display:inline-block;flex-shrink:0" data-act="toast" data-arg="Portal accent set to ${c}"></span>`).join('')}
             </div>
           </div>
           <div class="set-row">

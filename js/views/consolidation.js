@@ -240,7 +240,7 @@ VIEWS.consolidation = (v)=>{
                 <span class="tnum" style="color:var(--text-2)">$60,800 · 14.5%</span>
               </div>
               <div style="height:8px;border-radius:4px;background:var(--surface-3);overflow:hidden">
-                <div style="height:100%;width:14.5%;border-radius:4px;background:#ff8a4c"></div>
+                <div style="height:100%;width:14.5%;border-radius:4px;background:#64748b"></div>
               </div>
             </div>
             <div>

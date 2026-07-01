@@ -83,9 +83,9 @@ VIEWS.revrec = (v)=>{
         <div class="legend" style="margin-top:10px">
           <span><i style="background:var(--ember)"></i>Pinnacle SaaS</span>
           <span><i style="background:var(--ember-soft)"></i>Stellar Systems</span>
-          <span><i style="background:#ff9152"></i>CloudBase Inc</span>
-          <span><i style="background:#ffa570"></i>Summit Digital</span>
-          <span><i style="background:#ffc4a0"></i>Apex Systems</span>
+          <span><i style="background:#059669"></i>CloudBase Inc</span>
+          <span><i style="background:#0891b2"></i>Summit Digital</span>
+          <span><i style="background:#64748b"></i>Apex Systems</span>
         </div>
         <div class="note info" style="margin-top:14px">${svg(I.revrec,15)}<div>Deferred revenue of <b>${money(totalDeferred)}</b> will be recognized over the remaining contract terms. Straight-line ratable recognition accounts for <b>82%</b> of contracts by value; milestone-based recognition is used for professional services where distinct deliverables define the performance obligation.</div></div>
       </div>
@@ -136,7 +136,7 @@ VIEWS.revrec = (v)=>{
   requestAnimationFrame(()=>{
     const wrap = document.getElementById('revrecWaterfall');
     if(!wrap) return;
-    const colors = ['var(--ember)','var(--ember-soft)','#ff9152','#ffa570','#ffc4a0'];
+    const colors = ['var(--ember)','var(--ember-soft)','#059669','#0891b2','#64748b'];
     wrap.innerHTML = wfMonths.map((mo,i)=>{
       const total = wfTotals[i];
       const segs = wfData.map((row,ri)=>{
