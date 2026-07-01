@@ -38,7 +38,6 @@ VIEWS.billingruns = (v)=>{
   v.appendChild(el(`<div class="view">
     ${pageHead('Billing Runs','Schedule, preview, validate and approve enterprise billing runs before invoices are finalized.',
       `<button class="btn ghost" data-act="download" data-arg="csv|Billing Run Schedule|4 scheduled runs · 1 blocked">${svg(I.download,15)} Export schedule</button><button class="btn primary" data-act="billingrunaction" data-arg="schedule">+ Schedule run</button>`)}
-
     <div class="grid kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
       ${kpi('Next run','Jul 01','00:30 UTC · monthly',{accent:true})}
       ${kpi('Run amount','$418,350','842 accounts in scope',{trend:4.2})}
@@ -52,8 +51,7 @@ VIEWS.billingruns = (v)=>{
         <h3>July monthly recurring run</h3>
         <p>Combines recurring billing, usage true-ups, one-time charges, proration, billing anchors, minimum commitments and overage handling into a controlled run calendar.</p>
         <div class="run-actions">
-          <button class="btn primary" data-act="billingrunaction" data-arg="preview">Recalculate preview</button>
-          <button class="btn ghost" data-act="route" data-arg="invoices">Open draft invoices</button>
+          <button class="btn primary" data-act="billingrunaction" data-arg="preview">Recalculate preview</button>          <button class="btn ghost" data-act="route" data-arg="invoices">Open draft invoices</button>
           <button class="btn ghost" data-act="route" data-arg="usage">Review usage meters</button>
         </div>
       </div>
@@ -114,8 +112,7 @@ VIEWS.billingruns = (v)=>{
           <thead><tr><th>Scope</th><th>Exception</th><th>Impact</th><th>Owner</th><th>Action</th></tr></thead>
           <tbody>${exceptions.map(e=>`<tr>
             <td class="nm">${e[0]}</td><td>${e[1]}</td><td class="mut">${e[2]}</td><td>${e[3]}</td>
-            <td><button class="btn ghost" style="padding:5px 10px;font-size:12px" data-act="billingrunexception" data-arg="${e[0]}|${e[1]}|${e[2]}|${e[3]}">Resolve</button></td>
-          </tr>`).join('')}</tbody>
+            <td><button class="btn ghost" style="padding:5px 10px;font-size:12px" data-act="billingrunexception" data-arg="${e[0]}|${e[1]}|${e[2]}|${e[3]}">Resolve</button></td>          </tr>`).join('')}</tbody>
         </table>
       </div>
     </div>
