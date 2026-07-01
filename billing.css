@@ -393,7 +393,7 @@ th.num{text-align:right}
   border:1px solid var(--border-2);background:var(--surface-2);cursor:pointer;font-size:12px;
   color:var(--text-2);font-weight:600;transition:border-color .12s,background .12s;position:relative;white-space:nowrap}
 .theme-btn:hover{border-color:var(--ember);background:var(--ember-glow);color:var(--text)}
-.topbar-status{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text-2);padding:9px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+.topbar-status{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text-2);padding:9px 12px;font-size:12px;font-weight:700;white-space:nowrap;flex:0 0 auto}
 .topbar-status .dotg{width:7px;height:7px;flex:none}
 .theme-btn .tdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .theme-popover{position:absolute;top:calc(100% + 8px);right:0;z-index:200;
@@ -590,10 +590,10 @@ th.num{text-align:right}
 
 /* ── Brand mark in sidebar ── */
 .brand{padding:16px 16px 14px;gap:10px}
-.brand-mark{width:44px;height:44px;flex:none;color:var(--ember);transition:transform .3s}
+.brand-mark{width:50px;height:50px;flex:none;color:var(--ember);transition:transform .3s}
 .brand:hover .brand-mark{transform:scale(1.05)}
 .brand-mark use{display:block}
-.brand .name{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.2px;line-height:1}
+.brand .name{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.2px;line-height:1}
 .brand-mark .brand-accent{transition:fill .35s ease}
 
 /* ── Splash / login mark ── */
@@ -638,9 +638,9 @@ th.num{text-align:right}
 .menu-btn:hover{color:var(--text);border-color:var(--text-3)}
 .nav-scrim{display:none;position:fixed;inset:0;z-index:38;background:rgba(0,0,0,.55);backdrop-filter:blur(2px)}
 /* topbar brand — only shown on mobile (desktop has it in the sidebar) */
-.topbar-brand{display:none;align-items:center;gap:8px}
-.topbar-brand .brand-mark{width:52px;height:52px;color:var(--ember);flex:none}
-.topbar-wm{font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:-.4px;color:var(--text)}
+.topbar-brand{display:none;align-items:center;gap:10px;min-width:0;flex:0 1 auto}
+.topbar-brand .brand-mark{width:64px;height:64px;color:var(--ember);flex:none}
+.topbar-wm{font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:-.4px;color:var(--text)}
 .topbar-wm b{color:var(--ember);font-weight:700}
 
 @media(max-width:760px){
@@ -661,10 +661,10 @@ th.num{text-align:right}
   .page-head h1{font-size:23px}
   .page-head{margin-bottom:22px}
   /* topbar: keep it from overflowing — drop secondary pills, show the brand */
-  .topbar{padding:11px 14px;gap:10px}
+  .topbar{padding:11px 14px;gap:10px;overflow:hidden}
   .topbar .search,.topbar .pill-select,.topbar .crumbs{display:none}
   .topbar-brand{display:inline-flex}
-  .topbar .spacer{flex:1}
+  .topbar .spacer{flex:1;min-width:4px}
   /* page-head actions + period strip: stack instead of cramming on a narrow row */
   .page-head .actions{margin-left:0;width:100%}
   .period-bar{flex-wrap:wrap}
@@ -830,8 +830,9 @@ th.num{text-align:right}
 
 /* Logo restoration: keep the actual delonix mark unboxed and untampered. */
 .brand{background:linear-gradient(180deg,rgba(37,99,235,.10),rgba(255,255,255,.012));}
-.brand .brand-mark,.topbar-brand .brand-mark{background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;filter:drop-shadow(0 0 12px rgba(37,99,235,.58));}
-.brand .brand-mark path,.topbar-brand .brand-mark path,.splash-logo path{fill:url(#dlx-logo-gradient)!important;opacity:1!important}
+.brand .brand-mark,.topbar-brand .brand-mark{background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;color:#3b82f6!important;filter:drop-shadow(0 0 14px rgba(37,99,235,.68));}
+.brand .brand-mark use,.topbar-brand .brand-mark use,.splash-logo use{color:#3b82f6!important}
 .brand .name,.topbar-wm{color:#fff;text-shadow:0 0 18px rgba(37,99,235,.32)}
-.splash-logo-wrap{width:184px;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;color:#fff}
-.splash-logo{filter:drop-shadow(0 0 44px rgba(37,99,235,.46))}
+.splash-logo-wrap{width:212px;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;color:#3b82f6!important}
+.splash-logo{filter:drop-shadow(0 0 52px rgba(37,99,235,.52)) drop-shadow(0 0 2px rgba(96,165,250,.9))}
+@media(max-width:520px){.topbar{gap:8px}.topbar-brand .brand-mark{width:58px;height:58px}.topbar-wm{font-size:22px}.topbar-status{padding:9px}.topbar-status span:last-child{display:none}.topbar .btn.primary{width:44px;padding:0;justify-content:center}.topbar .btn.primary svg{margin:0}.topbar .btn.primary{font-size:0}.topbar .btn.primary::after{content:""}}
