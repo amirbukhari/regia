@@ -26,6 +26,10 @@ document.addEventListener('click',e=>{
   if(a==='billingrunaction') return openBillingRunAction(arg);
   if(a==='billingrundetail') return openBillingRunDetail(arg);
   if(a==='billingrunexception') return openBillingRunException(arg);
+  if(a==='workflowaction') return openWorkflowAction(arg);
+  if(a==='workflowdetail') return openWorkflowDetail(arg);
+  if(a==='workflowrun') return openWorkflowRun(arg);
+  if(a==='workflowstep') return openWorkflowStep(arg);
         if(a==='theme') return setTheme(arg);
         if(a==='density') return setDensity(arg);
         if(a==='newinvoice') return openNewInvoice();

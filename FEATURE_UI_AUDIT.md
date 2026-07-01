@@ -47,3 +47,7 @@ CEO-readiness standard: every routed surface must use domain-appropriate actions
 ## Hanging UI remediation
 
 The enterprise workspace actions and Billing Runs controls were reworked so primary buttons and operating-console cards open governed drawers with owners, effective dates, validation state, approval routing, rollback/evidence details and exportable packets. Toast-only behavior is reserved for final submit/save confirmations after the user has already seen the operational context.
+
+## Workflow and brand remediation
+
+Workflow Automation now has concrete builder/test/detail/run/step drawers instead of click-only toast messages. The brand mark was also restyled with a high-contrast badge treatment in the sidebar, top bar and splash screen so the logo remains visible on the dark enterprise shell.

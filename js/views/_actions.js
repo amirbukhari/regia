@@ -302,3 +302,36 @@ function openBillingRunException(arg){
     <div class="drawer-head"><div><div class="mono mut">Billing run exception</div><div style="font-size:18px;font-weight:650">${exception||'Validation exception'}</div></div><button class="x" data-act="close">✕</button></div>
     <div class="drawer-body"><dl class="kv"><dt>Scope</dt><dd>${scope}</dd><dt>Impact</dt><dd>${impact}</dd><dt>Owner</dt><dd>${owner}</dd><dt>Resolution SLA</dt><dd>Before billing run approval cutoff</dd><dt>Audit requirement</dt><dd>Resolution comment and before/after validation output</dd></dl><div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" data-act="toast" data-arg="Exception assigned to ${owner}">Assign owner</button><button class="btn" data-act="download" data-arg="csv|Billing Exception|${scope} · ${exception}">Export exception</button></div></div>`);
 }
+function openWorkflowAction(kind){
+  const build = kind==='builder';
+  openDrawer(`
+    <div class="drawer-head"><div><div class="mono mut">Workflow Automation · ${build?'builder':'test harness'}</div><div style="font-size:18px;font-weight:650">${build?'Build workflow':'Test selected flow'}</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-body">
+      <div class="note info" style="margin-bottom:16px">${svg(I.settings,15)}<div><b>${build?'Workflow builder':'Workflow test'}:</b> configure the trigger, conditions, approval route, actions, retry policy and audit evidence before publishing.</div></div>
+      <div class="form-grid">
+        <div class="fg"><label>Trigger event</label><input class="finput" value="invoice.past_due"></div>
+        <div class="fg"><label>Entity scope</label><input class="finput" value="Delonix Inc · North America"></div>
+        <div class="fg"><label>Condition</label><input class="finput" value="Balance > $5,000 and risk tier is Watch"></div>
+        <div class="fg"><label>Approval route</label><input class="finput" value="Collections Manager → Controller"></div>
+        <div class="fg"><label>Retry policy</label><input class="finput" value="3 attempts · exponential backoff · DLQ on failure"></div>
+        <div class="fg"><label>Evidence retention</label><input class="finput" value="7 years · immutable audit log"></div>
+      </div>
+      <div class="sec-title">Execution preview</div>
+      <div class="dot-step">${[['Trigger','done'],['Evaluate','active'],['Approve',''],['Execute',''],['Audit','']].map((s,k)=>`<div class="ds ${s[1]}"><div class="c">${s[1]==='done'?'✓':k+1}</div><small>${s[0]}</small></div>`).join('')}</div>
+      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="Workflow ${build?'saved as draft':'test run queued'} with audit evidence">${build?'Save workflow draft':'Run test'}</button><button class="btn" data-act="download" data-arg="json|Workflow Definition|Trigger · conditions · actions">Export definition</button></div>
+    </div>`);
+}
+function openWorkflowDetail(arg){
+  const [name,trigger,route,status] = (arg||'').split('|');
+  openDrawer(`
+    <div class="drawer-head"><div><div class="mono mut">${trigger}</div><div style="font-size:18px;font-weight:650">${name}</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-body"><div style="display:flex;gap:8px;margin-bottom:14px">${pill(status==='Live'?'good':'muted',status||'Draft')}<span class="pill muted">${route}</span></div><dl class="kv"><dt>Trigger</dt><dd class="mono">${trigger}</dd><dt>Route</dt><dd>${route}</dd><dt>Actions</dt><dd>Email/SMS, approval task, CRM sync and audit event</dd><dt>Failure handling</dt><dd>3 retries, dead-letter queue, owner escalation</dd><dt>Evidence</dt><dd>Payload, decision path, approver, timestamp and delivery output retained</dd></dl><div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" data-act="workflowaction" data-arg="test">Test workflow</button><button class="btn" data-act="download" data-arg="json|${name} Workflow|Definition · history · evidence">Export definition</button></div></div>`);
+}
+function openWorkflowRun(arg){
+  const [id,flow,step,account,state] = (arg||'').split('|');
+  openDrawer(`<div class="drawer-head"><div><div class="mono mut">${id}</div><div style="font-size:18px;font-weight:650">${flow} run</div></div><button class="x" data-act="close">✕</button></div><div class="drawer-body"><dl class="kv"><dt>Current step</dt><dd>${step}</dd><dt>Account</dt><dd>${account}</dd><dt>State</dt><dd>${state}</dd><dt>Owner</dt><dd>Automation service + assigned business owner</dd><dt>Next action</dt><dd>Wait for timer or approval result, then execute configured action</dd></dl><div class="sec-title">Run evidence</div><div class="activity">${['Trigger payload captured','Conditions evaluated','Owner assignment recorded','Next retry scheduled'].map((x,i)=>`<div class="act"><div class="ai">${svg(I.audit,15)}</div><div><div class="at">${x}</div><div class="am">workflow runtime evidence</div></div><time>${i+1}m</time></div>`).join('')}</div></div>`);
+}
+function openWorkflowStep(arg){
+  const [n,label] = (arg||'').split('|');
+  openDrawer(`<div class="drawer-head"><div><div class="mono mut">Workflow step ${n}</div><div style="font-size:18px;font-weight:650">${label}</div></div><button class="x" data-act="close">✕</button></div><div class="drawer-body"><p class="mut">This step is configured with inputs, validation, failure handling, owner assignment and audit evidence.</p><dl class="kv"><dt>Input</dt><dd>Runtime payload from previous step</dd><dt>Validation</dt><dd>Required fields and risk thresholds checked</dd><dt>Failure path</dt><dd>Retry, dead-letter queue and owner escalation</dd><dt>Audit</dt><dd>Input, output and decision path retained</dd></dl></div>`);
+}
