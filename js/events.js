@@ -9,6 +9,8 @@ document.addEventListener('click',e=>{
   if(a==='signout') return signOut();
   if(a==='close') return closeDrawer();
   if(a==='toggle') return t.classList.toggle('on');
+  if(a==='featureflag') return toggleFeatureFlag(arg, t);
+  if(a==='resetflags') return resetFeatureFlagUI();
   if(a==='menu') return document.getElementById('app').classList.toggle('nav-open');
   if(a==='route'){ closeDrawer(); return route(arg); }
   if(a==='invoice') return openInvoice(arg);
@@ -16,11 +18,23 @@ document.addEventListener('click',e=>{
   if(a==='revsched') return openRevSchedule(arg);
   if(a==='subdetail') return openSubscription(arg);
   if(a==='paydetail') return openPayment(arg);
+  if(a==='retrypay') return openRetryPayment(arg);
+  if(a==='refund') return openRefund(arg);
+  if(a==='colldetail') return openCollectionDetail(arg);
   if(a==='lens') return setDashLens(arg, t);
   if(a==='invfilter') return setInvFilter(arg, t);
   if(a==='acctfilter') return setAcctFilter(arg, t);
   if(a==='toast') return toast(arg);
   if(a==='featuredetail') return openFeatureDetail(arg);
+  if(a==='workspaceaction') return openWorkspaceAction(arg);
+  if(a==='workspacecard') return openWorkspaceCard(arg);
+  if(a==='billingrunaction') return openBillingRunAction(arg);
+  if(a==='billingrundetail') return openBillingRunDetail(arg);
+  if(a==='billingrunexception') return openBillingRunException(arg);
+  if(a==='workflowaction') return openWorkflowAction(arg);
+  if(a==='workflowdetail') return openWorkflowDetail(arg);
+  if(a==='workflowrun') return openWorkflowRun(arg);
+  if(a==='workflowstep') return openWorkflowStep(arg);
         if(a==='theme') return setTheme(arg);
         if(a==='density') return setDensity(arg);
         if(a==='newinvoice') return openNewInvoice();
@@ -140,5 +154,3 @@ window.addEventListener('resize',()=>{ if(current==='dashboard'){drawRevChart();
   if(current==='usage')drawUsageChart(); if(current==='reports')drawMrrChart(); });
 
 /* auto-enter if user just wants to look (still shows splash first) */
-
-

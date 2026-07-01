@@ -185,7 +185,7 @@ function openLogoUpload(){
 function openPortalThemeEditor(){
   openDrawer('Customer Portal Theme', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg"><label>Primary accent color</label><div style="display:flex;gap:8px;align-items:center"><input class="finput" value="#ff5a1f" style="max-width:110px;font-family:monospace"><div style="width:28px;height:28px;border-radius:6px;background:#ff5a1f;flex-shrink:0"></div></div></div>
+      <div class="fg"><label>Primary accent color</label><div style="display:flex;gap:8px;align-items:center"><input class="finput" value="#2563eb" style="max-width:110px;font-family:monospace"><div style="width:28px;height:28px;border-radius:6px;background:#2563eb;flex-shrink:0"></div></div></div>
       <div class="fg"><label>Font family</label><select class="finput"><option selected>Inter (default)</option><option>System UI</option><option>DM Sans</option><option>Roboto</option></select></div>
       <div class="fg"><label>Border radius</label><select class="finput"><option>Sharp (0px)</option><option selected>Rounded (6px)</option><option>Pill (12px)</option></select></div>
       <div class="fg"><label>Logo position</label><select class="finput"><option selected>Top left</option><option>Top center</option></select></div>
@@ -194,7 +194,7 @@ function openPortalThemeEditor(){
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">PORTAL PREVIEW</div>
       <div style="padding:16px;border:1px solid var(--border);border-radius:8px;background:var(--bg-2)">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-          <div style="width:24px;height:24px;border-radius:4px;background:#ff5a1f"></div>
+          <div style="width:24px;height:24px;border-radius:4px;background:#2563eb"></div>
           <span style="font-weight:700;font-size:14px">delonix Billing</span>
         </div>
         <div style="font-size:12px;color:var(--text-2);margin-bottom:8px">Your invoices</div>

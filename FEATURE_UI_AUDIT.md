@@ -42,3 +42,21 @@ The feature checklist has been re-audited against routed enterprise billing modu
 A feature is checked only when the user can navigate to a routed page or workflow that exposes production-style controls, statuses, exception states, tables, approvals, and audit/evidence details for that feature.
 
 CEO-readiness standard: every routed surface must use domain-appropriate actions, operating controls, exception states, approvals, exports, and audit evidence. Generic workflow-builder CTAs are not acceptable unless the page is actually Workflow Automation. Feature-matrix pages and generated checklist pages are excluded as proof; the product is organized as enterprise billing software across billing operations, customer/contract operations, payment and receivables operations, revenue accounting, tax/compliance, organization, platform, integrations, and automation.
+<<<<<<< HEAD
+=======
+
+
+## Hanging UI remediation
+
+The enterprise workspace actions and Billing Runs controls were reworked so primary buttons and operating-console cards open governed drawers with owners, effective dates, validation state, approval routing, rollback/evidence details and exportable packets. Toast-only behavior is reserved for final submit/save confirmations after the user has already seen the operational context.
+
+## Workflow and brand remediation
+
+Workflow Automation now has concrete builder/test/detail/run/step drawers instead of click-only toast messages. The brand mark is restored as the original unboxed delonix SVG in the sidebar, top bar and splash screen, using a Delonix blue gradient and restrained shadow for visibility on the dark enterprise shell.
+
+## Feature-flagged rollout guardrail
+
+Optional, discovery, or less-polished surfaces are no longer removed when they are not part of the default CEO demo. They stay registered in the codebase and are controlled by client-side feature flags in `js/featureflags.js`. The default navigation hides only the legacy Feature Workbench; Settings exposes a Feature flags panel that can toggle hidden routes back on for audit, QA, or discovery without deleting the implementation.
+
+The rule for future cleanup is: hide questionable surfaces behind a named feature flag first, then either promote the flag into the default production navigation after CEO QA or leave it off for discovery. Do not delete feature surfaces just because they are not in the primary production information architecture.
+>>>>>>> origin/codex/find-and-implement-ui-ux-master-skills

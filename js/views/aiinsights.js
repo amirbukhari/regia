@@ -2,13 +2,13 @@
 
 VIEWS.aiinsights = (v)=>{
   v.appendChild(el(`<div class="view">
-  ${pageHead('AI Insights','Natural language analytics, anomaly detection and revenue forecasting — powered by Ember AI',
+  ${pageHead('AI Insights','Natural language analytics, anomaly detection and revenue forecasting — powered by Delonix Intelligence',
     `<button class="btn ghost" data-act="scheduledigest" data-arg="">Schedule digest</button>`
   )}
     <div style="margin-bottom:18px;display:flex;gap:10px;align-items:center">
       <div style="flex:1;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px">
         ${svg(I.ai,16)}<input class="finput" style="border:none;background:transparent;flex:1;font-size:14px;padding:0" placeholder="Ask your data… e.g. &quot;Which cohorts have net retention above 110%?&quot;" oninput="filterAIQuery(this.value)">
-        <button class="btn primary" style="padding:5px 14px;font-size:13px" data-act="aiquery">Ask Ember</button>
+        <button class="btn primary" style="padding:5px 14px;font-size:13px" data-act="aiquery">Ask AI</button>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px">
@@ -64,7 +64,7 @@ VIEWS.aiinsights = (v)=>{
 
     <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
       <div class="card panel">
-        <div class="panel-head"><h3>${svg(I.ai,14)} Ember recommendations</h3><span class="sub">Revenue-impacting · updated Jun 28</span></div>
+        <div class="panel-head"><h3>${svg(I.ai,14)} AI recommendations</h3><span class="sub">Revenue-impacting · updated Jun 28</span></div>
         <div style="display:flex;flex-direction:column;gap:0">
           ${[
             {tag:'Expansion',  tagc:'ok',   title:'Upgrade 14 usage-overrun accounts to Business+', impact:'+$18,400 MRR', effort:'Low — automated email sequence ready', action:'newsub'},
@@ -114,10 +114,10 @@ VIEWS.aiinsights = (v)=>{
     ctx.beginPath();
     pts.forEach((v,i)=>{ const lo=v-i*2.5,hi=v+i*2.5; if(i===0) ctx.moveTo(x(i),y(hi)); else ctx.lineTo(x(i),y(hi)); });
     [...pts].reverse().forEach((v,i)=>{ const ri=pts.length-1-i; ctx.lineTo(x(ri),y(v-ri*2.5)); });
-    ctx.closePath(); ctx.fillStyle='rgba(255,90,31,0.1)'; ctx.fill();
+    ctx.closePath(); ctx.fillStyle='rgba(37,99,235,0.10)'; ctx.fill();
     // actual / forecast line
     ctx.beginPath(); pts.forEach((v,i)=>{ i===0?ctx.moveTo(x(i),y(v)):ctx.lineTo(x(i),y(v)); });
-    ctx.strokeStyle='var(--ember,#ff5a1f)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.strokeStyle='var(--ember,#2563eb)'; ctx.lineWidth=2; ctx.stroke();
     // month labels
     ctx.fillStyle='#888'; ctx.font='10px sans-serif'; ctx.textAlign='center';
     ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'].forEach((m,i)=>ctx.fillText(m,x(i),180));

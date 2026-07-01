@@ -2,15 +2,15 @@
 
 /* ===== THEME MANAGER v2 ===== */
 const THEMES=[
-  {id:'ember',   name:'Ember',    dot:'#ff5a1f', bg:'#0b0d12', desc:'Warm dark'},
+  {id:'ember',   name:'Trust',    dot:'#2563eb', bg:'#0b1220', desc:'Executive navy'},
   {id:'midnight',name:'Midnight', dot:'#4a9eff', bg:'#07090f', desc:'Ocean blue'},
   {id:'slate',   name:'Slate',    dot:'#22d3ee', bg:'#0d1117', desc:'Cool cyan'},
-  {id:'forge',   name:'Forge',    dot:'#ffaa00', bg:'#100a02', desc:'Molten amber'},
+  {id:'forge',   name:'Ledger',   dot:'#d4af37', bg:'#111827', desc:'Boardroom gold'},
   {id:'forest',  name:'Forest',   dot:'#3ecf7f', bg:'#0a120c', desc:'Deep green'},
   {id:'obsidian',name:'Obsidian', dot:'#a855f7', bg:'#09090f', desc:'Violet shadow'},
   {id:'rose',    name:'Rose',     dot:'#fb5c7d', bg:'#140a0f', desc:'Plum & rose'},
   {id:'nord',    name:'Nord',     dot:'#88c0d0', bg:'#2e3440', desc:'Arctic frost'},
-  {id:'dawn',    name:'Dawn',     dot:'#e0440f', bg:'#f8f6f3', desc:'Light · warm'},
+  {id:'dawn',    name:'Daybook',  dot:'#2563eb', bg:'#f8fafc', desc:'Light · blue'},
   {id:'paper',   name:'Paper',    dot:'#4f46e5', bg:'#f5f6f8', desc:'Light · indigo'},
 ];
 

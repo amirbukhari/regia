@@ -163,7 +163,7 @@ function openReportArchive(){
 }
 
 function openAIQuery(q){
-  openDrawer('Ember AI — Query Results', `
+  openDrawer('Delonix Intelligence — Query Results', `
     <div style="background:var(--surface);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13px;display:flex;align-items:flex-start;gap:10px">
       ${svg(I.ai,15)}<span class="mut">${q||'Which cohorts have net retention above 110%?'}</span>
     </div>
@@ -193,7 +193,7 @@ function openAIQuery(q){
 function openScheduleDigest(){
   openDrawer('Schedule AI digest',`
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="mut" style="font-size:13px">Ember AI will analyse your revenue data and send a digest to selected recipients.</div>
+      <div class="mut" style="font-size:13px">Delonix Intelligence will analyse your revenue data and send a digest to selected recipients.</div>
       <div><label class="lbl">Frequency</label><select class="input" style="width:100%"><option>Weekly (every Monday 8am)</option><option>Daily (every day 8am)</option><option>Bi-weekly</option><option>Monthly (1st of month)</option></select></div>
       <div><label class="lbl">Recipients</label><input class="input" value="abukhari@delonix.com" style="width:100%"></div>
       <div><label class="lbl">Include sections</label>
