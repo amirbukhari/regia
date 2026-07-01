@@ -17,7 +17,7 @@ VIEWS.reports = (v)=>{
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:24px">
       <div class="card panel" style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.revrec,18)}</div>
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(37,99,235,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.revrec,18)}</div>
           <div style="font-weight:700;font-size:14px;color:var(--text-1)">Revenue Analytics</div>
         </div>
         <div style="font-size:12px;color:var(--text-2);line-height:1.5">MRR bridge, cohort ARR, expansion waterfall, and churn analysis across all entities.</div>
@@ -25,7 +25,7 @@ VIEWS.reports = (v)=>{
       </div>
       <div class="card panel" style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.ar,18)}</div>
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(37,99,235,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.ar,18)}</div>
           <div style="font-weight:700;font-size:14px;color:var(--text-1)">A/R Aging</div>
         </div>
         <div style="font-size:12px;color:var(--text-2);line-height:1.5">Aging buckets by customer, overdue exposure, DSO trend, and collection risk scoring.</div>
@@ -33,7 +33,7 @@ VIEWS.reports = (v)=>{
       </div>
       <div class="card panel" style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.subscriptions,18)}</div>
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(37,99,235,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.subscriptions,18)}</div>
           <div style="font-weight:700;font-size:14px;color:var(--text-1)">Subscription Cohorts</div>
         </div>
         <div style="font-size:12px;color:var(--text-2);line-height:1.5">Monthly cohort retention, expansion rates, and lifetime value by acquisition quarter.</div>
@@ -41,7 +41,7 @@ VIEWS.reports = (v)=>{
       </div>
       <div class="card panel" style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.reports,18)}</div>
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(37,99,235,.12);display:flex;align-items:center;justify-content:center;color:var(--ember);flex-shrink:0">${svg(I.reports,18)}</div>
           <div style="font-weight:700;font-size:14px;color:var(--text-1)">Executive Pack</div>
         </div>
         <div style="font-size:12px;color:var(--text-2);line-height:1.5">Board-ready PDF: KPI summary, variance to budget, forecast, and key commentary.</div>

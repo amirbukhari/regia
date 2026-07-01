@@ -18,7 +18,7 @@ VIEWS.payments = (v)=>{
     {id:'PAY-94188', acct:'NovaSpark',          amt:780,   net:762,   gw:'Stripe', method:'Visa ••1123',       date:'Jun 20',  status:'good',  sl:'Succeeded'},
     {id:'PAY-94187', acct:'Prism Networks',     amt:1100,  net:1075,  gw:'Other',  method:'Bank transfer',     date:'Jun 20',  status:'good',  sl:'Succeeded'},
   ];
-  const gwColors = {Stripe:'#635bff', Adyen:'#0abf53', Other:'#ff8a4c'};
+  const gwColors = {Stripe:'#635bff', Adyen:'#0abf53', Other:'#0891b2'};
   const gwShare = [{gw:'Stripe',pct:72,vol:'$237,170',status:'Healthy',s:'good'},{gw:'Adyen',pct:22,vol:'$72,468',status:'Operational',s:'good'},{gw:'Other',pct:6,vol:'$19,762',status:'Manual',s:'muted'}];
 
   v.appendChild(el(`<div class="view">

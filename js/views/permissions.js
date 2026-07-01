@@ -2,7 +2,7 @@
 
 VIEWS.permissions = (v)=>{
   const roles=[
-    {name:'Super Admin',desc:'Full platform access including billing & security',members:1,color:'#ff5a1f'},
+    {name:'Super Admin',desc:'Full platform access including billing & security',members:1,color:'#2563eb'},
     {name:'Admin',desc:'Full access except security settings & audit config',members:3,color:'#635bff'},
     {name:'Finance Manager',desc:'Revenue, invoicing, reports, GL export',members:5,color:'#0abf53'},
     {name:'Revenue Ops',desc:'Subscriptions, quotes, customers, usage',members:8,color:'#00a1e0'},
