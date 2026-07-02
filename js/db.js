@@ -8,7 +8,7 @@ const DEMO_TODAY = 'Jun 28';
 
 function dbSeed(){
   return {
-    v: 1,
+    v: 2,
     /* Invoices view ledger */
     invoices: [
       {id:'INV-2026-0847',acct:'Stellar Systems',   bu:'BU-002',buName:'Commercial',    amt:9200, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
@@ -26,6 +26,8 @@ function dbSeed(){
       {id:'INV-2026-0835',acct:'Ironside Tech',     bu:'BU-001',buName:'Residential',   amt:1650, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
       {id:'INV-2026-0834',acct:'TechFlow Inc',      bu:'BU-003',buName:'Ent. Platform', amt:1800, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Sent',     status:'muted',finalized:true,  validated:true},
       {id:'INV-2026-0833',acct:'Meridian Tech',     bu:'BU-002',buName:'Commercial',    amt:1450, issued:'May 15',due:'Jun 14',period:'May 2026',sl:'Void',     status:'muted',finalized:true,  validated:true},
+      {id:'INV-2026-0788',acct:'Meridian Tech',     bu:'BU-002',buName:'Commercial',    amt:3800, issued:'Apr 25',due:'May 25',period:'Apr 2026',sl:'Overdue',  status:'neg',  finalized:true,  validated:true},
+      {id:'INV-2026-0712',acct:'Cascade Analytics', bu:'BU-001',buName:'Residential',   amt:700,  issued:'Mar 01',due:'Mar 31',period:'Mar 2026',sl:'Overdue',  status:'neg',  finalized:true,  validated:true},
       {id:'INV-2026-DRAFT-2',acct:'NovaSpark',      bu:'BU-001',buName:'Residential',   amt:3820, issued:'Jun 28',due:'—',     period:'Jun 2026',sl:'Draft',    status:'warn', finalized:false, validated:false,validationErrors:['Missing tax address','Missing invoice contact']},
       {id:'INV-2026-DRAFT-3',acct:'Orbit Labs',     bu:'BU-001',buName:'Residential',   amt:620,  issued:'Jun 28',due:'—',     period:'Jun 2026',sl:'Draft',    status:'muted',finalized:false, validated:true},
     ],
@@ -120,7 +122,7 @@ function db(){
   if(DLX_DB_CACHE) return DLX_DB_CACHE;
   try{
     const raw = localStorage.getItem(DLX_DB_KEY);
-    if(raw){ const parsed = JSON.parse(raw); if(parsed && parsed.v === 1){ DLX_DB_CACHE = parsed; return DLX_DB_CACHE; } }
+    if(raw){ const parsed = JSON.parse(raw); if(parsed && parsed.v === 2){ DLX_DB_CACHE = parsed; return DLX_DB_CACHE; } }
   }catch(e){}
   DLX_DB_CACHE = dbSeed();
   return DLX_DB_CACHE;

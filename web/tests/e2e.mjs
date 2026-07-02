@@ -362,13 +362,13 @@ await test('DB-2', 'a fresh browser context gets fresh seed data', async () => {
   await p2.waitForSelector('#app.show');
   const n = await p2.evaluate(() => db().invoices.length);
   await other.close();
-  expect(n === 17, 'fresh context not seeded: ' + n);
+  expect(n === 19, 'fresh context not seeded: ' + n);
 });
 await test('DB-3', 'reset demo data restores seeds', async () => {
   await go('settings');
   await click('[data-act="resetdemo"]');
   await page.waitForTimeout(250);
-  expect(await dbEval(() => db().invoices.length) === 17, 'reset did not restore seeds');
+  expect(await dbEval(() => db().invoices.length) === 19, 'reset did not restore seeds');
 });
 await test('DB-4', 'audit log shows demo actions', async () => {
   await go('payments');

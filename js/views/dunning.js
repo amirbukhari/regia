@@ -11,14 +11,16 @@ VIEWS.dunning = (v)=>{
     {day:'Day 30', action:'Suspend account + legal referral',  done:false},
   ];
   const dayBarColor = (d) => d>=21?'var(--neg)':d>=7?'var(--warn)':'var(--mut)';
+  const dunTotal = DUN_DATA.reduce((s,r)=>s+r.amt,0);
+  const atRisk = DUN_DATA.filter(r=>r.day>=21).reduce((s,r)=>s+r.amt,0);
 
   v.appendChild(el(`<div class="view">
     ${pageHead('Dunning & Collections','Automated retry sequences, escalation rules and recovery tracking.',
       `<button class="btn ghost" data-act="dunningconfig">Sequence Rules</button><button class="btn primary" data-act="collectionssweep">Run Sweep</button>`)}
 
     <div class="grid kpis" style="grid-template-columns:repeat(4,1fr)">
-      ${kpi('In Dunning','23 accounts','$47,200 total exposure',{accent:true})}
-      ${kpi('At Risk','$47,200','31–60d overdue',{})}
+      ${kpi('In Dunning',DUN_DATA.length+' accounts',fmt(dunTotal)+' total exposure',{accent:true})}
+      ${kpi('At Risk',fmt(atRisk),'day 21+ in sequence',{})}
       ${kpi('Recovered MTD','$18,400','11 accounts cleared',{trend:8})}
       ${kpi('Success Rate','61%','failed → recovered MTD',{trend:4})}
     </div>
@@ -43,10 +45,10 @@ VIEWS.dunning = (v)=>{
 
     <div class="card" style="padding:0;overflow:hidden">
       <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        <span style="font-size:13px;font-weight:600">Active Dunning Sequences <span class="tnum" style="font-weight:400;color:var(--mut)">· 12 accounts</span></span>
+        <span style="font-size:13px;font-weight:600">Active Dunning Sequences <span class="tnum" style="font-weight:400;color:var(--mut)">· ${DUN_DATA.length} accounts</span></span>
         <div style="display:flex;gap:8px">
           <span class="chip">${svg(I.filter,13)} Stage</span>
-          <span class="chip" style="cursor:pointer" data-act="download" data-arg="xlsx|Dunning Report|23 sequences · $47,200 at risk">${svg(I.download,13)} Export</span>
+          <span class="chip" style="cursor:pointer" data-act="download" data-arg="xlsx|Dunning Report|${DUN_DATA.length} sequences · ${fmt(dunTotal)} exposure">${svg(I.download,13)} Export</span>
         </div>
       </div>
       <div class="table-wrap" style="border:none">
