@@ -1,0 +1,8 @@
+node_modules/
+.next/
+out/
+# generated from the mockup sources by scripts/sync-legacy.mjs
+src/legacy/generated/
+src/legacy/boot.js
+app/billing.css
+tests/.artifacts/
