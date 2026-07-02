@@ -285,7 +285,9 @@ function dbCreateSub(){
 function dbChangePlan(acct){
   const sel = document.querySelector('#drawer input[name="planchange"]:checked');
   const label = sel ? sel.closest('label') : null;
-  const newPlan = label ? label.querySelector('div div').textContent.trim() : 'Business+';
+  // div > div scopes to the plan-name node; 'div div' also matches the outer
+  // wrapper (ancestors outside the query root count in selector matching)
+  const newPlan = label ? label.querySelector('div > div').textContent.trim() : 'Business+';
   const prices = {'Enterprise+':12000,'Enterprise':9200,'Business+':4200,'Business':1800};
   const oldMrr = prices['Enterprise'], newMrr = prices[newPlan] ?? oldMrr;
   if(newMrr === oldMrr){ closeDrawer(); toast('No plan change — already on Enterprise'); return; }

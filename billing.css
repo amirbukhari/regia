@@ -300,6 +300,9 @@ th.num{text-align:right}
 .pill-select.ent{padding-left:11px}
 .ent-dot{width:7px;height:7px;border-radius:50%;background:var(--ember);box-shadow:0 0 7px var(--ember);flex:none}
 @media (max-width:1180px){.pill-select.ent{display:none}}
+/* tablet range: sidebar is still docked, so shed secondary topbar items before they overflow */
+@media (max-width:1320px){.topbar-status{display:none}}
+@media (max-width:1140px){.topbar .pill-select{display:none}.crumbs{display:none}.search{min-width:0}.search input{min-width:0}}
 
 
 

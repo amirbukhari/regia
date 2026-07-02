@@ -45,10 +45,16 @@ In sandboxed CI images pass `CHROMIUM_PATH=/opt/pw-browsers/chromium`.
 | Runtime audit | `npm run test:audit` | All dispatch handler functions exist; all 55 routes render; every unique action is clicked (~1,000+, views and open drawers); rendered HTML scanned for template bugs (`undefined`, `NaN`, `[object Object]`, unrendered `${…}`); no page/console errors | "runtime audit clean." |
 | Pixel parity | `npm run test:parity` | Mockup vs. Next.js export screenshot diff: all enabled routes plus drawer, command-palette, theme, and splash scenarios | All comparisons ≤ 2 px (tolerance for single-pixel compositor noise; real differences measure in the hundreds) |
 | Next.js build | `npm run build` | sync-legacy regeneration + static export compile | Build succeeds; `out/index.html` exists |
+| E2E (this plan, §5) | `npm run test:e2e` (`BASE_URL=` to target the export) | Every manual case in section 5 (SH/INV/PAY/ACC/SUB/CRD/DUN/CFG/DB/UX), executed headlessly and reported per test-plan ID | "40/40 test-plan cases passed" |
+| Deployment check (§7) | `npm run test:deploy` (`DEPLOY_URL=` for the live site) | Section 7 items 2–5 against a deployed URL | "Deployment verified." |
 
 Artifacts (screenshots and diff images) land in `web/tests/.artifacts/`.
 
+**Continuous integration:** `.github/workflows/tests.yml` runs the static audit, build, runtime audit, E2E (against both the mockup and the export) and pixel parity on every pull request and push to `main`, uploading screenshots/diffs on failure. The deployment check runs via the workflow's manual trigger (`workflow_dispatch`) after a release.
+
 ## 5. Manual test cases
+
+> **Automated:** every case in this section is implemented in `web/tests/e2e.mjs` and runs in CI. The tables below remain the human-readable specification (and the script's source of truth for IDs); use them for exploratory passes and for non-Chromium browsers.
 
 ### 5.1 Entry & shell
 
@@ -135,7 +141,7 @@ Chrome (primary — parity suites run on Chromium), plus a manual smoke of secti
 
 ## 8. Regression policy
 
-Any change to the mockup (`js/`, `billing.css`, `index.html`) or to `web/` must re-run: static audit → `npm run build` → runtime audit → parity suite, all green before merge. New interactive features should add a case to section 5 and, where practical, a scenario to `web/tests/parity.mjs`.
+CI (`.github/workflows/tests.yml`) enforces this automatically on every PR: static audit → `npm run build` → runtime audit → E2E on both builds → parity suite, all green before merge. New interactive features should add a case to section 5 and, where practical, a scenario to `web/tests/parity.mjs`.
 
 ## 9. Entry / exit criteria
 
