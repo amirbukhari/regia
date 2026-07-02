@@ -67,7 +67,7 @@ VIEWS.calculator = (v)=>{
                 <span class="mut" style="font-size:11px;cursor:pointer" data-act="toast" data-arg="Field settings for ${f.label}">⚙</span>
               </label>
               ${f.type==='slider'?`
-                <input type="range" class="finput" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.val}" style="padding:4px 0;height:auto">
+                <input type="range" class="finput" min="${f.min}" max="${f.max}" step="${f.step||1}" value="${f.val}" style="padding:4px 0;height:auto">
                 <div style="font-size:12px;color:var(--ember);font-weight:600">${f.prefix||''}${f.val}${f.suffix||''}</div>
               `:f.type==='select'?`
                 <select class="finput" style="font-size:12px">${f.opts.map(o=>`<option${o===f.val?' selected':''}>${o}</option>`).join('')}</select>

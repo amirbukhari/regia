@@ -22,8 +22,6 @@ document.addEventListener('click',e=>{
   if(a==='refund') return openRefund(arg);
   if(a==='colldetail') return openCollectionDetail(arg);
   if(a==='lens') return setDashLens(arg, t);
-  if(a==='invfilter') return setInvFilter(arg, t);
-  if(a==='acctfilter') return setAcctFilter(arg, t);
   if(a==='toast') return toast(arg);
   if(a==='featuredetail') return openFeatureDetail(arg);
   if(a==='workspaceaction') return openWorkspaceAction(arg);
@@ -51,7 +49,6 @@ document.addEventListener('click',e=>{
         if(a==='retrypayment') return openRetryPayment(arg);
         if(a==='refundpay') return openRefund(arg);
         if(a==='collectiondetail') return openCollectionDetail(arg);
-        if(a==='logcontact') return openLogContact(arg);
         if(a==='manualmatch') return openManualMatch(arg);
         if(a==='dunningconfig') return openDunningConfig();
         if(a==='approvalrules') return openApprovalRules();
