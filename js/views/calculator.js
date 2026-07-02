@@ -1,19 +1,19 @@
 /* delonix — calculator.js */
 
 VIEWS.calculator = (v)=>{
-  const CALCS = [
+  const CALCS = [...db().added.calculators, ...[
     {id:'CALC-001',name:'Enterprise ROI Calculator',status:'published',views:1284,leads:87,lastEdit:'Jun 22',url:'calc.delonix.io/enterprise-roi'},
     {id:'CALC-002',name:'API Pricing Estimator',status:'published',views:632,leads:41,lastEdit:'Jun 15',url:'calc.delonix.io/api-pricing'},
     {id:'CALC-003',name:'TCO vs Legacy System',status:'draft',views:0,leads:0,lastEdit:'Jun 27',url:'—'},
     {id:'CALC-004',name:'Multi-Site Property Manager',status:'published',views:319,leads:22,lastEdit:'May 30',url:'calc.delonix.io/property'},
-  ];
+  ]];
   v.appendChild(el(`<div class="view">
   ${pageHead('Pricing Calculator','Build and embed interactive pricing calculators for sales, website and customer portal',
-    `<button class="btn ghost" data-act="toast" data-arg="Opening template library…">Browse templates</button>
+    `<button class="btn ghost" data-act="newcalculator">Browse templates</button>
      <button class="btn primary" data-act="newcalculator">+ New calculator</button>`
   )}
     <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:18px;display:none">
-      <button class="btn ghost" data-act="toast" data-arg="Opening template library…">Browse templates</button>
+      <button class="btn ghost" data-act="newcalculator">Browse templates</button>
       <button class="btn primary" data-act="newcalculator">+ New calculator</button>
     </div>
 
@@ -43,8 +43,8 @@ VIEWS.calculator = (v)=>{
           </div>
           <div style="display:flex;gap:8px">
             <button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="editcalculator" data-arg="${c.id}">${svg(I.settings,13)} Edit</button>
-            ${c.status==='published'?`<button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="toast" data-arg="Copied embed code for ${c.name}">${svg(I.api,13)} Embed</button>`:''}
-            <button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="toast" data-arg="Opening preview for ${c.name}">${svg(I.portal,13)} Preview</button>
+            ${c.status==='published'?`<button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="copy" data-arg="&lt;script src=&quot;https://${c.url}/embed.js&quot;&gt;&lt;/script&gt;">${svg(I.api,13)} Embed</button>`:''}
+            <button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="editcalculator" data-arg="${c.id}">${svg(I.portal,13)} Preview</button>
           </div>
         </div>`).join('')}
     </div>
@@ -64,7 +64,7 @@ VIEWS.calculator = (v)=>{
             <div class="fg" style="margin-bottom:10px">
               <label style="font-size:12px;font-weight:600;display:flex;justify-content:space-between">
                 ${f.label}
-                <span class="mut" style="font-size:11px;cursor:pointer" data-act="toast" data-arg="Field settings for ${f.label}">⚙</span>
+                <span class="mut" style="font-size:11px;cursor:pointer" data-act="addcalcfield" data-arg="${f.label}" role="button" aria-label="Field settings for ${f.label}">${svg(I.settings,12)}</span>
               </label>
               ${f.type==='slider'?`
                 <input type="range" class="finput" min="${f.min}" max="${f.max}" step="${f.step||1}" value="${f.val}" style="padding:4px 0;height:auto">
@@ -103,7 +103,7 @@ VIEWS.calculator = (v)=>{
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end">
             <button class="btn ghost" data-act="editformulas" data-arg="">Edit formulas</button>
-            <button class="btn ghost" data-act="toast" data-arg="Copied embed code">Copy embed</button>
+            <button class="btn ghost" data-act="copy" data-arg="&lt;script src=&quot;https://calc.delonix.io/embed.js&quot;&gt;&lt;/script&gt;">Copy embed</button>
             <button class="btn primary" data-act="publishcalc" data-arg="enterprise-roi">Publish changes</button>
           </div>
         </div>

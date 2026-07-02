@@ -36,7 +36,7 @@ VIEWS.dashboard = (v)=>{
             <h3>Revenue trend</h3>
             <span class="sub">12-month net revenue · USD thousands</span>
             <div class="right">
-              <div class="seg"><button class="on">Net Rev</button><button data-act="toast" data-arg="Switching to MRR view">MRR</button></div>
+              <div class="seg" id="dashSeg"><button class="on" data-act="dashseries" data-arg="net">Net Rev</button><button data-act="dashseries" data-arg="mrr">MRR</button></div>
             </div>
           </div>
           <canvas id="revChart" style="width:100%;height:240px;display:block"></canvas>

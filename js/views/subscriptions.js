@@ -9,18 +9,7 @@ VIEWS.subscriptions = (v)=>{
     {tier:'Starter',     mrr:13550,  subs:694, pct:3.2,  color:'var(--text-3)'},
   ];
   const totalMrr = tiers.reduce((s,t)=>s+t.mrr,0);
-  const changes = [
-    {cust:'Pinnacle SaaS',    type:'Upgrade',   oldPlan:'Enterprise',  newPlan:'Enterprise+', delta:+2300, date:'Jun 24'},
-    {cust:'DataVault',        type:'Upgrade',   oldPlan:'Business',    newPlan:'Business+',   delta:+900,  date:'Jun 22'},
-    {cust:'Streamline Co',    type:'New',       oldPlan:'—',      newPlan:'Business',    delta:+2400, date:'Jun 21'},
-    {cust:'Cascade Analytics',type:'Downgrade', oldPlan:'Business+',   newPlan:'Business',    delta:-400,  date:'Jun 20'},
-    {cust:'Orbit Labs',       type:'Churn',     oldPlan:'Starter',     newPlan:'—',      delta:-620,  date:'Jun 19'},
-    {cust:'Meridian Tech',    type:'Upgrade',   oldPlan:'Starter',     newPlan:'Business',    delta:+830,  date:'Jun 17'},
-    {cust:'Bridgepoint',      type:'New',       oldPlan:'—',      newPlan:'Business',    delta:+2150, date:'Jun 15'},
-    {cust:'Ironside Tech',    type:'Downgrade', oldPlan:'Business+',   newPlan:'Business',    delta:-500,  date:'Jun 13'},
-    {cust:'NovaSpark',        type:'New',       oldPlan:'—',      newPlan:'Starter',     delta:+780,  date:'Jun 10'},
-    {cust:'Vertex IO',        type:'Churn',     oldPlan:'Starter',     newPlan:'—',      delta:-890,  date:'Jun 08'},
-  ];
+  const changes = db().subChanges;
   const changeType = t => t==='Upgrade'?pill('good','Upgrade'):t==='New'?pill('info','New'):t==='Downgrade'?pill('warn','Downgrade'):pill('crit','Churn');
   const deltaFmt = d => `<span class="tnum" style="color:${d>0?'var(--good)':'var(--crit)'};font-weight:600">${d>0?'+':''}${fmt(d)}</span>`;
   v.appendChild(el(`<div class="view">

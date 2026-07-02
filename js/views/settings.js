@@ -31,16 +31,17 @@ VIEWS.settings = (v)=>{
       <div>
         <div class="card panel" style="margin-bottom:16px">
           <div class="panel-head"><h3>Billing configuration</h3></div>
-          <div class="set-row"><div><div class="t">Auto-collection</div><div class="d">Automatically charge saved payment methods on due date</div></div><div class="spacer"></div><div class="toggle on" data-act="toggle"><i></i></div></div>
-          <div class="set-row"><div><div class="t">Smart dunning retries</div><div class="d">ML-optimized retry timing for failed payments</div></div><div class="spacer"></div><div class="toggle on" data-act="toggle"><i></i></div></div>
-          <div class="set-row"><div><div class="t">Proration</div><div class="d">Prorate mid-cycle upgrades and downgrades</div></div><div class="spacer"></div><div class="toggle on" data-act="toggle"><i></i></div></div>
-          <div class="set-row"><div><div class="t">Multi-currency invoicing</div><div class="d">Invoice in customer's local currency</div></div><div class="spacer"></div><div class="toggle on" data-act="toggle"><i></i></div></div>
-          <div class="set-row"><div><div class="t">Revenue recognition (ASC 606)</div><div class="d">Generate deferred revenue schedules</div></div><div class="spacer"></div><div class="toggle on" data-act="toggle"><i></i></div></div>
+          ${[['Auto-collection','Automatically charge saved payment methods on due date'],
+             ['Smart dunning retries','ML-optimized retry timing for failed payments'],
+             ['Proration','Prorate mid-cycle upgrades and downgrades'],
+             ['Multi-currency invoicing',"Invoice in customer's local currency"],
+             ['Revenue recognition (ASC 606)','Generate deferred revenue schedules']]
+            .map(([t,d])=>`<div class="set-row"><div><div class="t">${t}</div><div class="d">${d}</div></div><div class="spacer"></div>${tgl('settings-'+t.toLowerCase().replace(/[^a-z0-9]+/g,'-'), true, `aria-label="Toggle ${t}"`)}</div>`).join('')}
         </div>
         <div class="card panel">
           <div class="panel-head"><h3>Team & permissions</h3><div class="right"><button class="btn ghost" style="padding:5px 10px" data-act="inviteusr">+ Invite</button></div></div>
           <div class="table-wrap" style="border:none"><table style="min-width:0"><thead><tr><th>Member</th><th>Role</th><th>Access</th></tr></thead>
-          <tbody>${[['Amir Bukhari','Admin','Full'],['M. Reyes','Revenue Manager','Billing, A/R'],['D. Cho','Collections','A/R, Dunning'],['P. Anand','Sales Ops','Quotes'],['Auditor (read-only)','Viewer','Reports']]
+          <tbody>${[...db().added.members.map(m=>[m.name,m.role,'Invited · pending']), ['Amir Bukhari','Admin','Full'],['M. Reyes','Revenue Manager','Billing, A/R'],['D. Cho','Collections','A/R, Dunning'],['P. Anand','Sales Ops','Quotes'],['Auditor (read-only)','Viewer','Reports']]
             .map(r=>`<tr><td class="nm">${r[0]}</td><td>${pill(r[1]==='Admin'?'ember':'muted',r[1])}</td><td class="mut">${r[2]}</td></tr>`).join('')}</tbody></table></div>
         </div>
       </div>
@@ -52,11 +53,16 @@ VIEWS.settings = (v)=>{
               .map(g=>`<div class="gw"><div class="gi" style="background:${g[1]}22;color:${g[1]}">${g[0][0]}</div><div style="flex:1"><div class="nm">${g[0]}</div><div class="mut">${g[2]}</div></div>${pill(g[3],g[4])}</div>`).join('')}
           </div>
         </div>
+        <div class="card panel" style="margin-bottom:16px">
+          <div class="panel-head"><h3>Demo data</h3><div class="right"><button class="btn ghost" style="padding:5px 10px" data-act="resetdemo">Reset demo data</button></div></div>
+          <div class="feature-flag-note">Everything you change in this mock — invoices, payments, customers, contact logs and configuration — is stored locally in your browser (localStorage). Nothing leaves your machine. Reset restores the original sample data.</div>
+        </div>
         <div class="card panel">
           <div class="panel-head"><h3>Audit log</h3><span class="sub">immutable</span></div>
           <div class="activity">
-            ${[['Amir Bukhari','enabled smart dunning retries','2m'],['M. Reyes','voided INV-2026-1033','1h'],['System','closed May period','2d'],['D. Cho','refunded $400 to Solstice Media','3d'],['P. Anand','approved Q-2026-315','4d']]
-              .map(r=>`<div class="act"><div class="ai">${svg(I.settings,15)}</div><div><div class="at">${r[0]}</div><div class="am">${r[1]}</div></div><time>${r[2]}</time></div>`).join('')}
+            ${[...db().activity.map(a=>[a.who,a.what,a.when]),
+               ['M. Reyes','voided INV-2026-1033','1h'],['System','closed May period','2d'],['D. Cho','refunded $400 to Solstice Media','3d'],['P. Anand','approved Q-2026-315','4d']]
+              .slice(0,8).map(r=>`<div class="act"><div class="ai">${svg(I.settings,15)}</div><div><div class="at">${r[0]}</div><div class="am">${r[1]}</div></div><time>${r[2]}</time></div>`).join('')}
           </div>
         </div>
       </div>

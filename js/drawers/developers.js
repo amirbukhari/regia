@@ -28,8 +28,18 @@ function openIntegrationDetail(name){
         <tr><td style="font-size:12px">customer.updated</td><td class="mut tnum" style="font-size:11.5px">1h ago</td><td>${pill('good','OK')}</td></tr>
       </tbody></table></div>
     </div>
+    <div style="margin-bottom:16px">
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Sync settings</h4>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr">
+        <div class="fg"><label>Sync frequency</label><select class="finput"><option>Real-time (webhooks)</option><option>Every 15 minutes</option><option>Hourly</option><option>Nightly</option></select></div>
+        <div class="fg"><label>Failure alerts to</label><input class="finput" value="platform-ops@delonix.io"></div>
+        <div class="fg" style="display:flex;align-items:center;gap:10px"><label style="margin:0">Auto-sync enabled</label>${tgl('integ-'+name+'-auto', true, 'aria-label="Auto-sync enabled"')}</div>
+        <div class="fg" style="display:flex;align-items:center;gap:10px"><label style="margin:0">Retry failed syncs</label>${tgl('integ-'+name+'-retry', true, 'aria-label="Retry failed syncs"')}</div>
+      </div>
+    </div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="${name} sync triggered manually">Sync Now</button>
+      ${cfgSaveBtn('integ-'+name,name+' sync settings saved','Save settings')}
+      <button class="btn primary" data-act="demoact" data-arg="${name} sync triggered — run logged in the activity feed">Sync Now</button>
       <button class="btn ghost" data-act="integeventlogs">View Event Log</button>
       <button class="btn ghost" onclick="closeDrawer()">Close</button>
     </div>
@@ -37,21 +47,26 @@ function openIntegrationDetail(name){
 }
 
 function openWebhookDetail(endpoint){
-  openDrawer(`Webhook — ${endpoint||'/hooks/billing'}`, `
+  const ep = endpoint||'/hooks/billing';
+  const isTest = /staging|test/.test(ep);
+  const created = dlxPick(ep,['Jan 15, 2026','Feb 03, 2026','Mar 22, 2026','May 09, 2026']);
+  const lastOk = isTest ? '3 days ago · 200 OK' : `${dlxRange(ep,2,45)} min ago · 200 OK`;
+  const subscribed = new Set(isTest ? ['invoice.finalized','payment.failed'] : ['invoice.finalized','invoice.sent','payment.succeeded','payment.failed','subscription.created','subscription.cancelled','credit.issued','dunning.started'].filter((e,i)=>dlxHash(ep+e)%4!==0||i<3));
+  openDrawer(`Webhook — ${ep}`, `
     <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
-      <div class="fg" style="grid-column:1/-1"><label>Endpoint URL</label><input class="finput" value="${endpoint||'https://example.com/hooks/billing'}" style="font-family:monospace"></div>
-      <div class="fg"><label>Status</label>${pill('good','Active')}</div>
-      <div class="fg"><label>Created</label><div class="mut">Jan 15, 2026</div></div>
-      <div class="fg"><label>Secret</label><div class="mono mut" style="font-size:12px">whsec_••••••••••••••••</div><button class="btn ghost" style="font-size:11px;margin-top:4px;padding:3px 7px" data-act="rotatekey" data-arg="${endpoint}">Rotate</button></div>
-      <div class="fg"><label>Last delivery</label><div class="tnum">2 min ago · 200 OK</div></div>
+      <div class="fg" style="grid-column:1/-1"><label>Endpoint URL</label><input class="finput" value="${ep}" style="font-family:monospace"></div>
+      <div class="fg"><label>Status</label>${isTest?pill('muted','Test mode'):pill('good','Active')}</div>
+      <div class="fg"><label>Created</label><div class="mut">${created}</div></div>
+      <div class="fg"><label>Secret</label><div class="mono mut" style="font-size:12px">whsec_••••${dlxHash(ep).toString(36).slice(0,4)}••••</div><button class="btn ghost" style="font-size:11px;margin-top:4px;padding:3px 7px" data-act="rotatekey" data-arg="${ep}">Rotate</button></div>
+      <div class="fg"><label>Last delivery</label><div class="tnum">${lastOk}</div></div>
     </div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Subscribed Events</h4>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px">
-      ${['invoice.finalized','invoice.sent','payment.succeeded','payment.failed','subscription.created','subscription.cancelled','credit.issued','dunning.started'].map(e=>`<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer"><input type="checkbox" checked> ${e}</label>`).join('')}
+      ${['invoice.finalized','invoice.sent','payment.succeeded','payment.failed','subscription.created','subscription.cancelled','credit.issued','dunning.started'].map(e=>`<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer"><input type="checkbox" ${subscribed.has(e)?'checked':''}> ${e}</label>`).join('')}
     </div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="Webhook saved">Save</button>
-      <button class="btn ghost" data-act="toast" data-arg="Test event sent to endpoint">Send Test</button>
+      ${cfgSaveBtn('webhook-'+ep,'Webhook settings saved','Save')}
+      <button class="btn ghost" data-act="demoact" data-arg="Test event sent to ${ep} — delivery logged">Send Test</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -61,8 +76,8 @@ function openSDKDocs(lang){
   openDrawer(`${lang||'Node.js'} SDK Documentation`, `
     <div class="val-banner info" style="margin-bottom:14px">${svg(I.api,14)} Documentation opens in a new tab. The SDK reference is hosted at docs.delonix.io.</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      ${['Node.js / TypeScript','Python','Ruby','PHP','Go','REST API Reference'].map((s,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--surface)${lang===s?' border-color:var(--ember);background:var(--ember-glow)':''}" data-act="toast" data-arg="Opening ${s} docs">
-        <span style="font-size:18px">${['🟢','🐍','💎','🐘','🔵','📖'][i]}</span>
+      ${['Node.js / TypeScript','Python','Ruby','PHP','Go','REST API Reference'].map((s,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--surface)${lang===s?' border-color:var(--ember);background:var(--ember-glow)':''}" data-act="copy" data-arg="https://docs.delonix.io/sdk/${s.toLowerCase().replace(/[^a-z]+/g,'-')}">
+        <span style="display:inline-flex;color:var(--ember)">${svg(I.api,18)}</span>
         <div><div style="font-weight:600;font-size:13px">${s}</div><div class="mut" style="font-size:11.5px">docs.delonix.io/sdk/${s.toLowerCase().replace(/[^a-z]/g,'-')}</div></div>
         <span class="mut" style="margin-left:auto">${svg('<polyline points="9 18 15 12 9 6"/>',14)}</span>
       </div>`).join('')}
@@ -90,7 +105,7 @@ function openCustomDomain(){
     </div>
     <div class="val-banner info">${svg(I.check,14)} SSL certificate will be automatically provisioned via Let's Encrypt after DNS propagation (typically 24–48h).</div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Custom domain saved — verifying DNS propagation">Save & Verify</button>
+      ${cfgSaveBtn('custom-domain','Custom domain saved — DNS verification queued','Save & Verify')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -122,14 +137,14 @@ function openIntegrationEventLogs(){
 function openAPIKeyCreator(){
   openDrawer('Create API Key', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Key name</label><input class="finput" placeholder="e.g. Production · Billing Integration" autofocus></div>
-      <div class="fg"><label>Access level</label><select class="finput"><option>Read-only</option><option selected>Read + Write</option><option>Admin</option></select></div>
+      <div class="fg" style="grid-column:1/-1"><label>Key name</label><input class="finput" id="ak_name" placeholder="e.g. Production · Billing Integration" autofocus></div>
+      <div class="fg"><label>Access level</label><select class="finput" id="ak_scope"><option>Read-only</option><option selected>Read + Write</option><option>Admin</option></select></div>
       <div class="fg"><label>Expiry</label><select class="finput"><option>Never</option><option>30 days</option><option selected>1 year</option><option>Custom</option></select></div>
       <div class="fg" style="grid-column:1/-1"><label>Allowed IP ranges (optional)</label><input class="finput" placeholder="e.g. 192.168.1.0/24 — leave blank for any"></div>
     </div>
     <div class="val-banner info" style="margin-top:12px">${svg(I.api,14)} The secret key will only be shown once. Copy it immediately after creation — it cannot be retrieved again.</div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="API key created — copy it now, it won't be shown again">Create Key</button>
+      <button class="btn primary" data-act="createkey">Create Key</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -138,9 +153,9 @@ function openAPIKeyCreator(){
 function openRotateKey(keyId){
   openDrawer(`Rotate API Key — ${keyId||'sk_live_••••••'}`, `
     <div class="val-banner error" style="margin-bottom:16px">${svg(I.warning,15)} <strong>Key rotation immediately invalidates the old key.</strong> Update your systems before rotating to avoid downtime.</div>
-    <div style="font-size:13px;margin-bottom:14px">A new secret key will be generated. The current key <span class="mono" style="font-size:12px">${keyId||'sk_live_••••••'}</span> will stop working immediately after rotation.</div>
+    <div style="font-size:13px;margin-bottom:14px">A new secret key will be generated. The current key <span class="mono" style="font-size:12px">${keyId||'sk_live_••••••'}</span> (created ${dlxPick(keyId||'k',['Jan 12, 2026','Nov 03, 2025','Apr 28, 2026'])} · last used ${dlxRange(keyId||'k',1,50)} min ago) will stop working immediately after rotation.</div>
     <div class="form-actions">
-      <button class="btn" style="background:var(--warn);color:#1a0e00;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:600" data-act="toast" data-arg="API key rotated — new key ready, old key invalidated">Rotate Key</button>
+      <button class="btn" style="background:var(--warn);color:#1a0e00;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:600" data-act="rotatenow" data-arg="${keyId||'sk_live_••••••'}">Rotate Key</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

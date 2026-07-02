@@ -23,14 +23,14 @@ VIEWS.permissions = (v)=>{
     {cat:'API & Webhooks',sa:2,ad:2,fm:0,ro:0,vw:0,api:2},
     {cat:'User Mgmt',     sa:2,ad:1,fm:0,ro:0,vw:0,api:0},
   ];
-  const team=[
+  const team=[...db().added.members, ...[
     {name:'Amir Bukhari',email:'abukhari@delonix.com',role:'Super Admin',status:'active',last:'Just now',mfa:true},
     {name:'M. Reyes',email:'mreyes@delonix.com',role:'Revenue Ops',status:'active',last:'2h ago',mfa:true},
     {name:'D. Cho',email:'dcho@delonix.com',role:'Finance Manager',status:'active',last:'1d ago',mfa:true},
     {name:'P. Anand',email:'panand@delonix.com',role:'Admin',status:'active',last:'3d ago',mfa:false},
     {name:'L. Torres',email:'ltorres@delonix.com',role:'Viewer',status:'pending',last:'—',mfa:false},
     {name:'CI/CD Bot',email:'ci-bot@delonix.com',role:'API Service Account',status:'active',last:'5m ago',mfa:false},
-  ];
+  ]];
   const pCell=v=>{
     if(v===2) return `<span style="color:var(--good);font-size:14px" title="Full">●</span>`;
     if(v===1) return `<span style="color:var(--ember-soft);font-size:14px" title="Read-only">◑</span>`;
@@ -38,7 +38,7 @@ VIEWS.permissions = (v)=>{
   };
   v.appendChild(el(`<div class="view">
     ${pageHead('Roles & Permissions','Team access control, role definitions, permission matrix',`
-      <button class="btn ghost" data-act="toast" data-arg="SCIM provisioning settings">${svg(I.plug,15)} SCIM/SSO</button>
+      <button class="btn ghost" data-act="workspacecard" data-arg="security|SCIM provisioning|Directory sync, just-in-time provisioning and deprovisioning rules">${svg(I.plug,15)} SCIM/SSO</button>
       <button class="btn primary" data-act="inviteusr">${svg(I.team,15)} Invite member</button>
     `)}
 
@@ -89,7 +89,7 @@ VIEWS.permissions = (v)=>{
         <span style="font-weight:650;font-size:13px">Team Members</span>
         <div style="display:flex;gap:8px">
           <span class="mut" style="font-size:12px;align-self:center">6 members · 1 pending</span>
-          <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="Export team roster">Export</button>
+          <button class="btn ghost" style="font-size:12px" data-act="download" data-arg="csv|Team Roster|All members · roles · MFA status">Export</button>
         </div>
       </div>
       <table class="data-table">

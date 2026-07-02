@@ -35,7 +35,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   background-image:radial-gradient(1200px 700px at 100% -20%,rgba(37,99,235,.10),transparent 50%);background-attachment:fixed;}
 ::selection{background:var(--ember);color:#ffffff}
 a{color:inherit;text-decoration:none}
-button{font-family:inherit;cursor:pointer}
+button{font-family:inherit;cursor:pointer;touch-action:manipulation}
+[data-act],.nav-item{cursor:pointer} /* every delegated action target is clickable */
 :focus-visible{outline:2px solid var(--ember);outline-offset:2px;border-radius:5px}
 .tnum{font-variant-numeric:tabular-nums}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
@@ -299,6 +300,9 @@ th.num{text-align:right}
 .pill-select.ent{padding-left:11px}
 .ent-dot{width:7px;height:7px;border-radius:50%;background:var(--ember);box-shadow:0 0 7px var(--ember);flex:none}
 @media (max-width:1180px){.pill-select.ent{display:none}}
+/* tablet range: sidebar is still docked, so shed secondary topbar items before they overflow */
+@media (max-width:1320px){.topbar-status{display:none}}
+@media (max-width:1140px){.topbar .pill-select{display:none}.crumbs{display:none}.search{min-width:0}.search input{min-width:0}}
 
 
 

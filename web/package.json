@@ -10,7 +10,9 @@
     "build": "next build",
     "start": "next start",
     "test:parity": "node tests/parity.mjs",
-    "test:audit": "node tests/runtime-audit.mjs"
+    "test:audit": "node tests/runtime-audit.mjs",
+    "test:e2e": "node tests/e2e.mjs",
+    "test:deploy": "node tests/deploy-check.mjs"
   },
   "dependencies": {
     "next": "^15.3.4",

@@ -3,7 +3,7 @@
 function openPostJournals(){
   openDrawer('Post to General Ledger',`
     <div class="confirm-panel">
-      <div class="confirm-title">⚠ Irreversible action</div>
+      <div class="confirm-title">${svg(I.warning,14)} Irreversible action</div>
       <div class="confirm-body">This will post <b>847 journal entries</b> to NetSuite for the June 2026 period. Once posted, entries cannot be reversed without a manual correcting journal.</div>
     </div>
     <div class="card" style="margin:16px 0;padding:14px 16px">
@@ -30,7 +30,7 @@ function openPostJournals(){
 function openSignOff(){
   openDrawer('Sign Off — June 2026 Close',`
     <div class="card" style="margin-bottom:16px;padding:14px 16px">
-      <div class="inv-sum-row"><span>Tasks complete</span><span class="tnum" style="color:var(--pos);font-weight:700">20 / 20</span></div>
+      <div class="inv-sum-row"><span>Tasks complete</span><span class="tnum" style="color:var(--warn);font-weight:700">15 / 20 — 5 open</span></div>
       <div class="inv-sum-row"><span>Controller sign-off</span><span>${pill('good','Approved')} <span class="mut" style="font-size:11px">Jun 27 · R. Chen</span></span></div>
       <div class="inv-sum-row"><span>CFO sign-off</span><span>${pill('warn','Pending')}</span></div>
       <div class="inv-sum-row"><span>Journals posted</span><span>${pill('good','847 entries')}</span></div>
@@ -53,7 +53,7 @@ function openSignOff(){
       <input class="form-input" type="date" value="2026-06-28"></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="June 2026 close signed off by CFO — period locked, audit trail recorded">Submit sign-off</button>
+      <button class="btn primary" data-act="finalizeperiod">Submit sign-off</button>
     </div>`);
 }
 
@@ -94,7 +94,7 @@ function openAccountingExport(batchId){
 
 function openGLMappingEditor(buId){
   const bu = BUS.find(b=>b.id===buId)||BUS[0];
-  openDrawer(`GL Mappings — ${bu.name}`, `
+  openDrawer(`GL Mappings — ${bu.name} <span class="mono mut" style="font-size:12px;font-weight:400">${bu.id}</span>`, `
     <div class="mut" style="font-size:12.5px;margin-bottom:16px">GL account assignments control how revenue, AR, and tax entries are posted to ${bu.glDest}. Changes apply to new transactions only.</div>
     <div class="table-wrap"><table>
       <thead><tr><th>Revenue Category</th><th>GL Account</th><th>Department</th><th>Project Code</th></tr></thead>
@@ -118,7 +118,7 @@ function openGLMappingEditor(buId){
       </tbody>
     </table></div>
     <div class="form-actions" style="margin-top:12px">
-      <button class="btn primary" data-act="toast" data-arg="GL mappings saved — effective for next export batch">Save Mappings</button>
+      ${cfgSaveBtn('gl-'+bu.id,'GL mappings saved — effective for next export batch','Save Mappings')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -142,7 +142,7 @@ function openTreasurySweep(arg){
     </div>
     <div class="val-banner warn" style="margin-top:12px">${svg(I.warning,14)} FX rate is indicative. The executed rate will be confirmed by your banking partner at the time of settlement. Rate lock expires in 4 hours.</div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="FX sweep initiated — €${parseInt(amount).toLocaleString()} converting at ${rate} · settles T+1">Initiate Sweep</button>
+      <button class="btn primary" data-act="demoact" data-arg="FX sweep initiated — €${parseInt(amount).toLocaleString()} converting at ${rate} · settles T+1">Initiate Sweep</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -165,7 +165,7 @@ function openICEliminations(){
       <div class="mut" style="font-size:12px">Applied to consolidated revenue before external reporting. FX adjustment for EU B.V. will post after rate confirmation.</div>
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Intercompany eliminations posted — $84,200 eliminated across 3 entity pairs">Post Eliminations</button>
+      <button class="btn primary" data-act="demoact" data-arg="Intercompany eliminations posted — $84,200 eliminated across 3 entity pairs">Post Eliminations</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -189,7 +189,7 @@ function openConsolidationRun(){
       </div>
     </div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="Consolidation run started — estimated 2 minutes · 4 entities">Run Consolidation</button>
+      <button class="btn primary" data-act="demoact" data-arg="Consolidation run started — 4 entities · results post to the consolidation ledger">Run Consolidation</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

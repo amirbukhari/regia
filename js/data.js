@@ -124,4 +124,5 @@ const payments = [
 ];
 
 const revenueSeries = [218,232,241,238,256,270,265,284,301,312,308,329]; // monthly net revenue ($k)
+const mrrSeries     = [352,358,367,371,380,386,384,395,404,410,407,418]; // month-end MRR ($k)
 const months = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];

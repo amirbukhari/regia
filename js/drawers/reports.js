@@ -35,7 +35,7 @@ function openReportBuilder(){
         <div class="form-group"><label class="form-label">To</label>
         <input class="form-input" type="date" value="2026-06-28"></div></div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
-        ${['MTD','QTD','YTD','Last month','Last quarter'].map(l=>`<button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="toast" data-arg="Date range set to ${l}">${l}</button>`).join('')}
+        ${['MTD','QTD','YTD','Last month','Last quarter'].map(l=>`<button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="setrange" data-arg="${l}">${l}</button>`).join('')}
       </div>
     </div>
     <div class="form-section">
@@ -63,7 +63,7 @@ function openReportBuilder(){
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
       <button class="btn ghost" data-act="schedulereport">Schedule delivery</button>
-      <button class="btn primary" data-act="download" data-arg="xlsx|Custom Revenue Report|MRR · ARR · NRR · custom dimensions">Generate report</button>
+      <button class="btn primary" data-act="savereport" data-arg="Custom Revenue Report|XLSX">Generate report</button>
     </div>`);
 }
 
@@ -83,7 +83,7 @@ function openScheduleReport(){
       <input class="form-input" placeholder="amir@delonix.com, cfo@delonix.com"></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Scheduled report saved — first delivery on Jul 1">Save schedule</button>
+      <button class="btn primary" data-act="saveconfig" data-arg="report-schedule|Scheduled report saved — first delivery on Jul 1">Save schedule</button>
     </div>`);
 }
 
@@ -119,31 +119,30 @@ function openRatingDetail(lineId){
 }
 
 function openDateRangePicker(context){
+  const presets = [['This month','Jun 1 – Jun 28, 2026'],['Last month','May 1 – May 31, 2026'],['This quarter','Apr 1 – Jun 30, 2026'],['All periods','Everything in the demo dataset']];
+  const cur = window._invPeriod || 'All periods';
   openDrawer('Select Date Range', `
     <div style="margin-bottom:14px">
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">QUICK RANGES</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        ${[['This month','Jun 1 – Jun 28, 2026'],['Last month','May 1 – May 31, 2026'],['This quarter','Apr 1 – Jun 30, 2026'],['Last quarter','Jan 1 – Mar 31, 2026'],['YTD','Jan 1 – Jun 28, 2026'],['Last 12 months','Jul 2025 – Jun 2026']].map(([l,d])=>`<button class="btn ghost" style="text-align:left;font-size:12px;padding:8px 12px" data-act="toast" data-arg="Date range set to ${l}"><div style="font-weight:600">${l}</div><div class="mut" style="font-size:11px">${d}</div></button>`).join('')}
+        ${presets.map(([l,d])=>`<label style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border:1.5px solid ${l===cur?'var(--ember)':'var(--border)'};border-radius:8px;cursor:pointer;background:${l===cur?'var(--ember-glow)':'var(--surface)'}">
+          <input type="radio" name="dr_preset" value="${l}" ${l===cur?'checked':''} style="margin-top:2px">
+          <span><span style="font-size:13px;font-weight:600;display:block">${l}</span><span class="mut" style="font-size:11.5px">${d}</span></span>
+        </label>`).join('')}
       </div>
     </div>
-    <div style="margin-bottom:14px">
-      <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">CUSTOM RANGE</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div class="fg" style="margin:0"><label>From</label><input class="finput" type="date" value="2026-06-01"></div>
-        <div class="fg" style="margin:0"><label>To</label><input class="finput" type="date" value="2026-06-28"></div>
-      </div>
-    </div>
+    <div class="mut" style="font-size:12px;margin-bottom:14px">The demo dataset covers Mar–Jun 2026. Quick ranges filter the current view; custom calendar ranges are a production feature.</div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="Date range set to custom Jun 1–28">Apply Range</button>
+      <button class="btn primary" data-act="applyrange">Apply Range</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
 }
 
+
 function openReportArchive(){
   openDrawer('Report Archive', `
     <div class="toolbar" style="margin-bottom:12px">
-      <span class="chip">${svg(I.filter,13)} Report type</span>
       <span class="chip">${svg(I.filter,13)} Period</span>
       <div class="spacer"></div>
     </div>
@@ -163,28 +162,44 @@ function openReportArchive(){
 }
 
 function openAIQuery(q){
+  const query = q||'Which cohorts have net retention above 110%?';
+  const ANSWERS = [
+    {test:/nrr|retention/i, intro:'<strong>3 cohorts</strong> show net revenue retention above 110% in the trailing 12 months:',
+     head:['Cohort','NRR','Accounts','Avg MRR','Trend'],
+     rows:[['Q1 2023 · Enterprise','<b style="color:var(--pos)">118%</b>','24','$9,200','↑ +2pp QoQ'],['Q3 2023 · Enterprise+','<b style="color:var(--pos)">115%</b>','12','$14,800','↑ +1pp QoQ'],['Q2 2022 · Business+','<b style="color:var(--pos)">112%</b>','38','$3,900','→ flat']],
+     note:'Expansion revenue is the primary driver in all three cohorts. Q1 2023 Enterprise shows the highest seat expansion rate (avg 1.4 seats/account/quarter).'},
+    {test:/expansion|plan/i, intro:'<strong>Enterprise+ leads expansion</strong> across the trailing two quarters:',
+     head:['Plan','Expansion rate','Upgrades (90d)','Avg delta'],
+     rows:[['Enterprise+','<b style="color:var(--pos)">9.4%</b>','7','+$2,300'],['Enterprise','6.1%','11','+$1,480'],['Business+','4.8%','9','+$760'],['Business','2.2%','6','+$410']],
+     note:'Seat growth drives 71% of expansion; usage overages the remainder. Business tiers expand mainly at renewal.'},
+    {test:/churn|cohort/i, intro:'<strong>2024 cohorts churn less than 2023</strong> at every tenure checkpoint:',
+     head:['Cohort year','M6 gross churn','M12 gross churn','Trend'],
+     rows:[['2023','3.1%','5.8%','baseline'],['2024','<b style="color:var(--pos)">2.2%</b>','<b style="color:var(--pos)">4.1%</b>','↓ 29% better']],
+     note:'Improved onboarding and dunning recovery account for most of the reduction; Starter remains the highest-churn tier in both cohorts.'},
+    {test:/mrr|bridge|movement/i, intro:'<strong>MRR bridge, last 6 months</strong> (net +$24,150 across business units):',
+     head:['Component','Residential','Commercial','Ent. Platform'],
+     rows:[['New','+$9,400','+$6,100','+$3,800'],['Expansion','+$7,900','+$5,300','+$2,600'],['Contraction','−$2,100','−$1,700','−$900'],['Churn','−$3,600','−$2,300','−$450']],
+     note:'Residential contributes 47% of net growth; Enterprise Platform churn is near zero on annual contracts.'},
+  ];
+  const a = ANSWERS.find(x=>x.test.test(query)) || ANSWERS[0];
   openDrawer('Delonix Intelligence — Query Results', `
     <div style="background:var(--surface);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13px;display:flex;align-items:flex-start;gap:10px">
-      ${svg(I.ai,15)}<span class="mut">${q||'Which cohorts have net retention above 110%?'}</span>
+      ${svg(I.ai,15)}<span class="mut">${query}</span>
     </div>
     <div style="font-size:13px;line-height:1.7;margin-bottom:16px">
-      <p><strong>3 cohorts</strong> show net revenue retention above 110% in the trailing 12 months:</p>
+      <p>${a.intro}</p>
       <table class="tbl" style="width:100%;margin-top:8px">
-        <thead><tr><th>Cohort</th><th>NRR</th><th>Accounts</th><th>Avg MRR</th><th>Trend</th></tr></thead>
-        <tbody>
-          <tr><td>Q1 2023 · Enterprise</td><td style="color:var(--ok);font-weight:700">118%</td><td>24</td><td>$9,200</td><td style="color:var(--ok)">↑ +2pp QoQ</td></tr>
-          <tr><td>Q3 2023 · Enterprise+</td><td style="color:var(--ok);font-weight:700">115%</td><td>12</td><td>$14,800</td><td style="color:var(--ok)">↑ +1pp QoQ</td></tr>
-          <tr><td>Q2 2022 · Business+</td><td style="color:var(--ok);font-weight:700">112%</td><td>38</td><td>$3,900</td><td class="mut">→ flat</td></tr>
-        </tbody>
+        <thead><tr>${a.head.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${a.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
       </table>
-      <p style="margin-top:12px" class="mut">Expansion revenue is the primary driver in all three cohorts. Q1 2023 Enterprise shows the highest seat expansion rate (avg 1.4 seats/account/quarter).</p>
+      <p style="margin-top:12px" class="mut">${a.note}</p>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-      ${['Show expansion breakdown','Chart over time','Export to CSV','Add to report'].map(s=>`
-        <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="${s} — ${q||'NRR query'}">${s}</button>`).join('')}
+      ${['Show breakdown','Chart over time','Export to CSV','Add to report'].map(s=>`
+        <button class="btn ghost" style="font-size:12px" data-act="aiquery" data-arg="${s} for: ${query.slice(0,60)}">${s}</button>`).join('')}
     </div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="Report created from AI query">Save as report</button>
+      <button class="btn primary" data-act="savereport" data-arg="AI query — ${query.slice(0,40)}|CSV">Save as report</button>
       <button class="btn ghost" onclick="closeDrawer()">Close</button>
     </div>
   `);
@@ -206,7 +221,7 @@ function openScheduleDigest(){
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="AI digest scheduled">Save schedule</button>
+        <button class="btn primary" data-act="saveconfig" data-arg="ai-digest|AI digest scheduled — first delivery Monday 8am">Save schedule</button>
       </div>
     </div>
   `);

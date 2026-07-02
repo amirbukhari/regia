@@ -9,19 +9,19 @@ VIEWS.close = (v)=>{
     )}
 
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px">
-      ${kpi('Tasks Complete','17 / 20','June 2026',{accent:true})}
+      ${kpi('Tasks Complete','15 / 20','June 2026',{accent:true})}
       ${kpi('Period','Jun 2026','closes Jun 30',{})}
       ${kpi('Days Remaining','2','until hard close',{trend:-2})}
-      ${kpi('Open Issues','3','blocking sign-off',{})}
+      ${kpi('Open Issues','5','1 blocked · 2 in progress · 2 pending',{})}
     </div>
 
     <div style="margin-bottom:16px">
       <div class="card panel">
-        <div class="panel-head"><h3>Close progress</h3><span class="sub">June 2026 · 17 of 20 tasks complete</span></div>
+        <div class="panel-head"><h3>Close progress</h3><span class="sub">June 2026 · 15 of 20 tasks complete</span></div>
         <div style="height:8px;border-radius:4px;background:var(--surface-3);overflow:hidden;margin-bottom:6px">
-          <div style="height:100%;width:85%;border-radius:4px;background:var(--good)"></div>
+          <div style="height:100%;width:75%;border-radius:4px;background:var(--good)"></div>
         </div>
-        <div style="font-size:11px;color:var(--text-3);letter-spacing:.03em;margin-bottom:16px">85% complete — 3 tasks outstanding</div>
+        <div style="font-size:11px;color:var(--text-3);letter-spacing:.03em;margin-bottom:16px">75% complete — 5 tasks outstanding</div>
         <div class="table-wrap" style="border:none">
           <table>
             <thead><tr><th>#</th><th>Task</th><th>Owner</th><th>Due</th><th>Status</th><th>Notes</th></tr></thead>

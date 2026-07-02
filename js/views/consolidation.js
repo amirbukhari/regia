@@ -1,12 +1,19 @@
 /* delonix — consolidation.js */
 
 VIEWS.consolidation = (v)=>{
+  requestAnimationFrame(()=>{
+    const b = document.getElementById('consoBody');
+    if(!b) return;
+    window._consoEntityRows = b.innerHTML;
+    const rows = [...b.querySelectorAll('tr')];
+    window._consoGroupRows = rows.length ? rows[rows.length-1].outerHTML : b.innerHTML;
+  });
   v.appendChild(el(`<div class="view">
     ${pageHead('Consolidation',
       'Multi-entity consolidation · June 2026',
-      `<div class="seg" id="consViewSeg">
-        <button class="on" data-act="toast" data-arg="Showing consolidated view">Consolidated</button>
-        <button data-act="toast" data-arg="Switching to entity view">By entity</button>
+      `<div class="seg" id="consoSeg">
+        <button data-act="consoview" data-arg="group">Consolidated</button>
+        <button class="on" data-act="consoview" data-arg="entity">By entity</button>
       </div>
       <button class="btn ghost" data-act="download" data-arg="xlsx|Consolidated Statements|Q2 2026 · 3 entities">${svg(I.download,15)} Export</button>
       <button class="btn primary" data-act="eliminations">${svg(I.check,15)} Run Eliminations</button>`
@@ -25,7 +32,7 @@ VIEWS.consolidation = (v)=>{
         <div class="table-wrap" style="border:none">
           <table>
             <thead><tr><th>Entity</th><th>Country</th><th>Currency</th><th class="num">MRR (local)</th><th class="num">MRR (USD)</th><th class="num">ARR (USD)</th><th>Status</th></tr></thead>
-            <tbody>
+            <tbody id="consoBody">
               <tr>
                 <td class="nm">Delonix Inc</td>
                 <td class="mut">United States</td>

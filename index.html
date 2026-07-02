@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Plus+Jakarta+Sans:wght@300..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="billing.css?v=32">
+<link rel="stylesheet" href="billing.css?v=35">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 48'><path d='M20 44 C20 44 6 34 8 20 C9 12 16 6 22 4 C18 14 14 24 17 34 C18 38 20 41 23 44 Z' fill='white'/><path d='M23 44 C23 44 34 32 30 18 C28 10 20 5 14 4 C19 14 24 24 23 34 C22 39 21 41 19 44 Z' fill='%232563eb'/></svg>">
 </head>
 <body>
@@ -94,8 +94,8 @@
         <div class="cmd-menu" id="cmdMenu"></div>
       </div>
       <div class="spacer"></div>
-      <div class="pill-select ent" data-act="entityswitch"><span class="ent-dot"></span>Delonix Inc <b>North America</b><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
-      <div class="pill-select">Currency <b>USD $</b>
+      <div class="pill-select ent" data-act="entityswitch"><span class="ent-dot"></span><span id="entLabel">Delonix Inc <b>North America</b></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="pill-select" data-act="currencypanel">Currency <span id="curLabel"><b>USD $</b></span>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="topbar-status" title="Revenue operations status"><span class="dotg"></span><span>Ops healthy</span></div>
@@ -116,71 +116,72 @@
 <aside class="drawer" id="drawer"></aside>
 <div class="toast" id="toast"><span class="dotg"></span><span id="toastMsg"></span></div>
 
-<script src="js/utils.js?v=23"></script>
-  <script src="js/data.js?v=27"></script>
-  <script src="js/featureflags.js?v=1"></script>
-  <script src="js/helpers.js?v=21"></script>
-  <script src="js/views/_registry.js?v=21"></script>
-  <script src="js/views/enterpriseworkspaces.js?v=21"></script>
-  <script src="js/featureMatrixData.js?v=1"></script>
-  <script src="js/views/featurematrix.js?v=1"></script>
-  <script src="js/core/ui.js?v=21"></script>
-  <script src="js/views/accounts.js?v=21"></script>
-  <script src="js/views/aiinsights.js?v=21"></script>
-  <script src="js/views/ar.js?v=21"></script>
-  <script src="js/views/auditlog.js?v=21"></script>
-  <script src="js/views/bizunits.js?v=21"></script>
-  <script src="js/views/billingruns.js?v=22"></script>
-  <script src="js/views/calculator.js?v=22"></script>
-  <script src="js/views/cashflow.js?v=21"></script>
-  <script src="js/views/catalog.js?v=21"></script>
-  <script src="js/views/close.js?v=21"></script>
-  <script src="js/views/consolidation.js?v=21"></script>
-  <script src="js/views/controls.js?v=21"></script>
-  <script src="js/views/credits.js?v=21"></script>
-  <script src="js/views/customentities.js?v=21"></script>
-  <script src="js/views/dashboard.js?v=21"></script>
-  <script src="js/views/developers.js?v=21"></script>
-  <script src="js/views/dunning.js?v=21"></script>
-  <script src="js/views/integrations.js?v=22"></script>
-  <script src="js/views/notifications.js?v=21"></script>
-  <script src="js/views/workflows.js?v=22"></script>
-  <script src="js/views/partnerbilling.js?v=21"></script>
-  <script src="js/views/invoices.js?v=22"></script>
-  <script src="js/views/legalentity.js?v=21"></script>
-  <script src="js/views/localization.js?v=21"></script>
-  <script src="js/views/migration.js?v=22"></script>
-  <script src="js/views/dataops.js?v=21"></script>
-  <script src="js/views/payments.js?v=21"></script>
-  <script src="js/views/paymentops.js?v=21"></script>
-  <script src="js/views/permissions.js?v=21"></script>
-  <script src="js/views/security.js?v=21"></script>
-  <script src="js/views/portal.js?v=21"></script>
-  <script src="js/views/quotes.js?v=21"></script>
-  <script src="js/views/reports.js?v=22"></script>
-  <script src="js/views/revrec.js?v=21"></script>
-  <script src="js/views/settings.js?v=22"></script>
-  <script src="js/views/statements.js?v=22"></script>
-  <script src="js/views/subscriptions.js?v=21"></script>
-  <script src="js/views/tax.js?v=21"></script>
-  <script src="js/views/thememanager.js?v=21"></script>
-  <script src="js/views/usage.js?v=21"></script>
-  <script src="js/views/_actions.js?v=23"></script>
-  <script src="js/drawers/_intro.js?v=21"></script>
-  <script src="js/drawers/calculator.js?v=21"></script>
-  <script src="js/drawers/catalog.js?v=22"></script>
-  <script src="js/drawers/collections.js?v=21"></script>
-  <script src="js/drawers/customers.js?v=21"></script>
-  <script src="js/drawers/developers.js?v=21"></script>
-  <script src="js/drawers/entities.js?v=21"></script>
-  <script src="js/drawers/finance.js?v=21"></script>
-  <script src="js/drawers/invoicing.js?v=21"></script>
-  <script src="js/drawers/payments.js?v=21"></script>
-  <script src="js/drawers/reports.js?v=21"></script>
-  <script src="js/drawers/settings.js?v=21"></script>
-  <script src="js/drawers/subscriptions.js?v=21"></script>
-  <script src="js/events.js?v=25"></script>
-  <script src="js/theme.js?v=22"></script>
+<script src="js/utils.js?v=26"></script>
+  <script src="js/data.js?v=30"></script>
+  <script src="js/featureflags.js?v=4"></script>
+  <script src="js/db.js?v=7"></script>
+  <script src="js/helpers.js?v=24"></script>
+  <script src="js/views/_registry.js?v=24"></script>
+  <script src="js/views/enterpriseworkspaces.js?v=24"></script>
+  <script src="js/featureMatrixData.js?v=4"></script>
+  <script src="js/views/featurematrix.js?v=4"></script>
+  <script src="js/core/ui.js?v=25"></script>
+  <script src="js/views/accounts.js?v=26"></script>
+  <script src="js/views/aiinsights.js?v=24"></script>
+  <script src="js/views/ar.js?v=25"></script>
+  <script src="js/views/auditlog.js?v=100"></script>
+  <script src="js/views/bizunits.js?v=25"></script>
+  <script src="js/views/billingruns.js?v=25"></script>
+  <script src="js/views/calculator.js?v=26"></script>
+  <script src="js/views/cashflow.js?v=24"></script>
+  <script src="js/views/catalog.js?v=24"></script>
+  <script src="js/views/close.js?v=25"></script>
+  <script src="js/views/consolidation.js?v=24"></script>
+  <script src="js/views/controls.js?v=24"></script>
+  <script src="js/views/credits.js?v=25"></script>
+  <script src="js/views/customentities.js?v=24"></script>
+  <script src="js/views/dashboard.js?v=24"></script>
+  <script src="js/views/developers.js?v=24"></script>
+  <script src="js/views/dunning.js?v=27"></script>
+  <script src="js/views/integrations.js?v=25"></script>
+  <script src="js/views/notifications.js?v=24"></script>
+  <script src="js/views/workflows.js?v=25"></script>
+  <script src="js/views/partnerbilling.js?v=24"></script>
+  <script src="js/views/invoices.js?v=26"></script>
+  <script src="js/views/legalentity.js?v=25"></script>
+  <script src="js/views/localization.js?v=24"></script>
+  <script src="js/views/migration.js?v=25"></script>
+  <script src="js/views/dataops.js?v=24"></script>
+  <script src="js/views/payments.js?v=25"></script>
+  <script src="js/views/paymentops.js?v=24"></script>
+  <script src="js/views/permissions.js?v=24"></script>
+  <script src="js/views/security.js?v=24"></script>
+  <script src="js/views/portal.js?v=24"></script>
+  <script src="js/views/quotes.js?v=25"></script>
+  <script src="js/views/reports.js?v=25"></script>
+  <script src="js/views/revrec.js?v=24"></script>
+  <script src="js/views/settings.js?v=26"></script>
+  <script src="js/views/statements.js?v=25"></script>
+  <script src="js/views/subscriptions.js?v=25"></script>
+  <script src="js/views/tax.js?v=25"></script>
+  <script src="js/views/thememanager.js?v=24"></script>
+  <script src="js/views/usage.js?v=24"></script>
+  <script src="js/views/_actions.js?v=28"></script>
+  <script src="js/drawers/_intro.js?v=24"></script>
+  <script src="js/drawers/calculator.js?v=25"></script>
+  <script src="js/drawers/catalog.js?v=27"></script>
+  <script src="js/drawers/collections.js?v=26"></script>
+  <script src="js/drawers/customers.js?v=25"></script>
+  <script src="js/drawers/developers.js?v=26"></script>
+  <script src="js/drawers/entities.js?v=26"></script>
+  <script src="js/drawers/finance.js?v=27"></script>
+  <script src="js/drawers/invoicing.js?v=26"></script>
+  <script src="js/drawers/payments.js?v=26"></script>
+  <script src="js/drawers/reports.js?v=25"></script>
+  <script src="js/drawers/settings.js?v=26"></script>
+  <script src="js/drawers/subscriptions.js?v=26"></script>
+  <script src="js/events.js?v=30"></script>
+  <script src="js/theme.js?v=25"></script>
 
 </body>
 </html>

@@ -4,13 +4,13 @@ VIEWS.catalog = (v)=>{
   const ck  = (ok)=> ok ? `<span style="color:var(--good)">${svg(I.check,14)}</span>` : `<span style="color:var(--text-3);opacity:.4">—</span>`;
   const lim = (s) => `<span style="font-size:12px;color:var(--text-2)">${s}</span>`;
   const feat = (t)=>`<li>${svg(I.check,14)}<span>${t}</span></li>`;
-  const plans = [
+  const plans = [...db().added.plans, ...[
     {name:'Starter',    price:'$79',   unit:'/mo',            badge:'muted', blab:'Self-serve', subs:694},
     {name:'Business',   price:'$199',  unit:'/mo',            badge:'muted', blab:'Popular',    subs:88},
     {name:'Business+',  price:'$349',  unit:'/mo',            badge:'info',  blab:'Growing',    subs:22},
     {name:'Enterprise', price:'Custom',unit:'/ negotiated',   badge:'ember', blab:'Most MRR',   subs:26},
     {name:'Enterprise+',price:'Custom',unit:'/ negotiated',   badge:'ember', blab:'Top tier',   subs:12},
-  ];
+  ]];
   const planFeatures = [
     {name:'Starter',    users:'Up to 5',   api:'100k/mo',   storage:'10 GB',    sso:false, revrec:false, csmded:false, customdunning:false, multiCurr:false},
     {name:'Business',   users:'Up to 25',  api:'1M/mo',     storage:'100 GB',   sso:false, revrec:false, csmded:false, customdunning:false, multiCurr:false},

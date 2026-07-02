@@ -3,11 +3,14 @@
 function openDrawer(titleOrHtml, body){
   const d=document.getElementById('drawer');
   if(body !== undefined){
-    d.innerHTML = `<div class="drawer-head"><div style="font-size:18px;font-weight:650">${titleOrHtml}</div><button class="x" data-act="close">✕</button></div><div class="drawer-body">${body}</div>`;
+    d.innerHTML = `<div class="drawer-head"><div style="font-size:18px;font-weight:650">${titleOrHtml}</div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div><div class="drawer-body">${body}</div>`;
   } else {
     d.innerHTML = titleOrHtml;
   }
   d.classList.add('open'); document.getElementById('drawerBg').classList.add('open');
+  // drawers with a persisted-config save button restore their saved values on open
+  const sb = d.querySelector('[data-act="saveconfig"]');
+  if(sb && typeof restoreDrawerConfig === 'function') restoreDrawerConfig((sb.dataset.arg||'').split('|')[0]);
 }
 
 function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerBg').classList.remove('open'); }
@@ -28,7 +31,7 @@ function themeColors(){
 function drawRevChart(){
   const c=document.getElementById('revChart'); if(!c)return;
   const {x,w,h}=dpi(c); const pad={l:44,r:12,t:16,b:26};
-  const data=revenueSeries, prior=data.map((d,i)=>Math.round(d*(0.82-i*0.004))); // prior-year shadow
+  const data=(window._dashSeries==='mrr'&&typeof mrrSeries!=='undefined')?mrrSeries:revenueSeries, prior=data.map((d,i)=>Math.round(d*(0.82-i*0.004))); // prior-year shadow
   const max=Math.max(...data)*1.12, min=170;
   const X=i=>pad.l+(w-pad.l-pad.r)*i/(data.length-1);
   const Y=val=>pad.t+(h-pad.t-pad.b)*(1-(val-min)/(max-min));

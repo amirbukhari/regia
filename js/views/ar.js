@@ -1,33 +1,33 @@
 /* delonix — ar.js */
 
 VIEWS.ar = (v)=>{
-  const AGING = [
-    {acct:'Stellar Systems',   inv:'INV-2026-0847', amt:9200,  age:1,  bucket:'Current',  status:'good',  sl:'Current'},
-    {acct:'Pinnacle SaaS',     inv:'INV-2026-0846', amt:8500,  age:3,  bucket:'Current',  status:'good',  sl:'Current'},
-    {acct:'CloudBase Inc',     inv:'INV-2026-0844', amt:6400,  age:3,  bucket:'Current',  status:'good',  sl:'Current'},
-    {acct:'DataVault',         inv:'INV-2026-0839', amt:3100,  age:5,  bucket:'Current',  status:'good',  sl:'Current'},
-    {acct:'TechFlow Inc',      inv:'INV-2026-0834', amt:1800,  age:5,  bucket:'Current',  status:'good',  sl:'Current'},
-    {acct:'Streamline Co',     inv:'INV-2026-0837', amt:2400,  age:12, bucket:'Current',  status:'good',  sl:'Current'},
-    {acct:'Prism Networks',    inv:'INV-2026-0830', amt:1100,  age:18, bucket:'1–30d',    status:'warn',  sl:'1–30 days'},
-    {acct:'Ironside Tech',     inv:'INV-2026-0829', amt:1650,  age:22, bucket:'1–30d',    status:'warn',  sl:'1–30 days'},
-    {acct:'Bridgepoint',       inv:'INV-2026-0836', amt:2150,  age:28, bucket:'1–30d',    status:'warn',  sl:'1–30 days'},
-    {acct:'Apex Systems',      inv:'INV-2026-0843', amt:5800,  age:28, bucket:'1–30d',    status:'warn',  sl:'1–30 days'},
-    {acct:'Fulcrum Labs',      inv:'INV-2026-0840', amt:3400,  age:34, bucket:'31–60d',   status:'neg',   sl:'31–60 days'},
-    {acct:'Cascade Analytics', inv:'INV-2026-0821', amt:2950,  age:42, bucket:'31–60d',   status:'neg',   sl:'31–60 days'},
-  ];
+  /* aging derives from the live invoice ledger: pay or credit an invoice in
+     the demo and it leaves this view */
+  const ageOf = i => i.sl==='Sent' ? dlxRange(i.id,1,12)
+    : i.period==='Jun 2026' ? dlxRange(i.id,15,28)
+    : i.period==='May 2026' ? dlxRange(i.id,31,58)
+    : i.period==='Apr 2026' ? dlxRange(i.id,61,88)
+    : dlxRange(i.id,91,120);
+  const bucketOf = a => a<=14?'Current':a<=30?'1–30d':a<=60?'31–60d':a<=90?'61–90d':'90d+';
+  const AGING = db().invoices.filter(i=>i.sl==='Sent'||i.sl==='Overdue').map(i=>{
+    const age = ageOf(i), bucket = bucketOf(age);
+    return {acct:i.acct, inv:i.id, amt:i.amt, age, bucket,
+      status: bucket==='Current'?'good':bucket==='1–30d'?'warn':'neg',
+      sl: bucket==='Current'?'Current':bucket.replace('d',' days')};
+  }).sort((a,b)=>a.age-b.age);
   const BUCKETS = [
-    {label:'Current',  val:115700, sub:'0–30 days', color:'var(--good)'},
-    {label:'1–30d',    val:28400,  sub:'past due',   color:'var(--warn)'},
-    {label:'31–60d',   val:9200,   sub:'at risk',    color:'#f97316'},
-    {label:'61–90d',   val:3800,   sub:'escalate',   color:'var(--neg)'},
-    {label:'90d+',     val:700,    sub:'write-off?', color:'#9f1239'},
-  ];
+    {label:'Current',  sub:'0–14 days',  color:'var(--good)'},
+    {label:'1–30d',    sub:'past due',   color:'var(--warn)'},
+    {label:'31–60d',   sub:'at risk',    color:'#f97316'},
+    {label:'61–90d',   sub:'escalate',   color:'var(--neg)'},
+    {label:'90d+',     sub:'write-off?', color:'#9f1239'},
+  ].map(b=>({...b, val:AGING.filter(r=>r.bucket===b.label).reduce((s,r)=>s+r.amt,0)}));
   const total = BUCKETS.reduce((s,b)=>s+b.val,0);
   const UNAPPLIED = [
     {acct:'Vertex IO',       ref:'WIRE-2026-8821', amt:890,  date:'Jun 26', note:'No remittance data'},
     {acct:'NovaSpark',       ref:'ACH-2026-7740',  amt:780,  date:'Jun 25', note:'Invoice ref missing'},
     {acct:'Orbit Labs',      ref:'ACH-2026-7719',  amt:620,  date:'Jun 24', note:'Partial — short $120'},
-  ];
+  ].filter(u=>!db().matched.includes(u.ref));
   const bucketColor = (b) => ({Current:'var(--good)','1–30d':'var(--warn)','31–60d':'#f97316','61–90d':'var(--neg)','90d+':'#9f1239'}[b]||'var(--mut)');
 
   v.appendChild(el(`<div class="view">
@@ -54,8 +54,9 @@ VIEWS.ar = (v)=>{
         </div>
       </div>
       <div class="card" style="padding:16px 18px">
-        <div style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:12px">Unapplied Cash <span class="pill warn" style="margin-left:6px">3 to match</span></div>
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:12px">Unapplied Cash ${UNAPPLIED.length?`<span class="pill warn" style="margin-left:6px">${UNAPPLIED.length} to match</span>`:`<span class="pill good" style="margin-left:6px">All applied</span>`}</div>
         <div style="display:flex;flex-direction:column;gap:10px">
+          ${UNAPPLIED.length?'':'<div class="empty" style="padding:18px 6px">Every incoming payment is matched — new unapplied cash will appear here.</div>'}
           ${UNAPPLIED.map(u=>`<div style="padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;border-left:3px solid var(--warn)">`+
             `<div style="display:flex;justify-content:space-between;align-items:baseline">`+
               `<span style="font-size:13px;font-weight:600">${u.acct}</span>`+
@@ -72,7 +73,7 @@ VIEWS.ar = (v)=>{
     <div class="card" style="padding:0;overflow:hidden">
       <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
         <span style="font-size:13px;font-weight:600">Open Receivables <span class="tnum" style="font-weight:400;color:var(--mut)">· ${fmt(total)} total</span></span>
-        <span style="font-size:12px;color:var(--mut)">12 invoices · 96.2% collection rate</span>
+        <span style="font-size:12px;color:var(--mut)">${AGING.length} invoices · 96.2% collection rate</span>
       </div>
       <div class="table-wrap" style="border:none">
         <table>
@@ -85,7 +86,7 @@ VIEWS.ar = (v)=>{
             <th>Status</th>
             <th></th>
           </tr></thead>
-          <tbody>${AGING.map(r=>`<tr>`+
+          <tbody>${AGING.map(r=>`<tr data-act="invoice" data-arg="${r.inv}" style="cursor:pointer">`+
             `<td class="nm">${r.acct}</td>`+
             `<td class="mono mut" style="font-size:12px">${r.inv}</td>`+
             `<td class="num tnum">${fmt(r.amt)}</td>`+

@@ -1,20 +1,7 @@
 /* delonix — dunning.js */
 
 VIEWS.dunning = (v)=>{
-  const DUN_DATA = [
-    {acct:'Apex Systems',      amt:5800,  day:28, last:'Jun 25',  next:'Final notice',   status:'neg',   sl:'Day 28'},
-    {acct:'Fulcrum Labs',      amt:3400,  day:28, last:'Jun 25',  next:'Final notice',   status:'neg',   sl:'Day 28'},
-    {acct:'Bridgepoint',       amt:2150,  day:21, last:'Jun 22',  next:'Suspend Jun 30', status:'neg',   sl:'Day 21'},
-    {acct:'Cascade Analytics', amt:2950,  day:21, last:'Jun 22',  next:'Suspend Jun 30', status:'neg',   sl:'Day 21'},
-    {acct:'Prism Networks',    amt:1100,  day:14, last:'Jun 21',  next:'Call · Jun 28',  status:'warn',  sl:'Day 14'},
-    {acct:'NovaSpark',         amt:780,   day:14, last:'Jun 21',  next:'Call · Jun 28',  status:'warn',  sl:'Day 14'},
-    {acct:'Orbit Labs',        amt:620,   day:14, last:'Jun 21',  next:'Call · Jun 28',  status:'warn',  sl:'Day 14'},
-    {acct:'Vertex IO',         amt:890,   day:7,  last:'Jun 28',  next:'Email+SMS today', status:'warn',  sl:'Day 7'},
-    {acct:'TechFlow Inc',      amt:1800,  day:7,  last:'Jun 28',  next:'Email+SMS today', status:'warn',  sl:'Day 7'},
-    {acct:'Ironside Tech',     amt:1650,  day:3,  last:'Jun 27',  next:'Email · Jun 30', status:'muted', sl:'Day 3'},
-    {acct:'Meridian Tech',     amt:1450,  day:3,  last:'Jun 27',  next:'Email · Jun 30', status:'muted', sl:'Day 3'},
-    {acct:'Streamline Co',     amt:2400,  day:1,  last:'Jun 28',  next:'Email · Jul 01', status:'muted', sl:'Day 1'},
-  ];
+  const DUN_DATA = DUN_ROWS;
   const SEQ = [
     {day:'Day 1',  action:'Email · payment reminder',        done:true},
     {day:'Day 3',  action:'Email · second notice',             done:true},
@@ -24,14 +11,34 @@ VIEWS.dunning = (v)=>{
     {day:'Day 30', action:'Suspend account + legal referral',  done:false},
   ];
   const dayBarColor = (d) => d>=21?'var(--neg)':d>=7?'var(--warn)':'var(--mut)';
+  const dunTotal = DUN_DATA.reduce((s,r)=>s+r.amt,0);
+  const atRisk = DUN_DATA.filter(r=>r.day>=21).reduce((s,r)=>s+r.amt,0);
 
+  const stageCycle = ['All','Day 21+','Day 7–14','Day 1–3'];
+  const dunMatch = (r, s) => s==='All' ? true : s==='Day 21+' ? r.day>=21 : s==='Day 7–14' ? (r.day>=7&&r.day<21) : r.day<7;
+  const dunRowsFor = (s) => DUN_DATA.filter(r=>dunMatch(r,s)).map(r=>`<tr style="cursor:pointer" data-act="colldetail" data-arg="${r.acct}">`+
+    `<td class="nm">${r.acct}</td>`+
+    `<td class="num tnum">${fmt(r.amt)}</td>`+
+    `<td class="num tnum" style="color:${dayBarColor(r.day)};font-weight:700">${r.day}</td>`+
+    `<td class="mut">${r.last}</td>`+
+    `<td style="font-size:12px;color:${dayBarColor(r.day)}">${r.next}</td>`+
+    `<td>${pill(r.status,r.sl)}</td>`+
+    `<td style="text-align:right"><button class="btn ghost" style="font-size:11px;padding:4px 8px;height:auto" data-act="colldetail" data-arg="${r.acct}">Log contact</button></td>`+
+    `</tr>`).join('') || `<tr><td colspan="7" class="empty">No accounts in this stage.</td></tr>`;
+  window._dunStage = 'All';
+  window._cycleDunStage = (elBtn) => {
+    window._dunStage = stageCycle[(stageCycle.indexOf(window._dunStage)+1)%stageCycle.length];
+    elBtn.innerHTML = elBtn.innerHTML.replace(/Stage(: [^<]*)?/, 'Stage' + (window._dunStage==='All'?'':': '+window._dunStage));
+    elBtn.classList.toggle('on', window._dunStage!=='All');
+    document.getElementById('dunBody').innerHTML = dunRowsFor(window._dunStage);
+  };
   v.appendChild(el(`<div class="view">
     ${pageHead('Dunning & Collections','Automated retry sequences, escalation rules and recovery tracking.',
       `<button class="btn ghost" data-act="dunningconfig">Sequence Rules</button><button class="btn primary" data-act="collectionssweep">Run Sweep</button>`)}
 
     <div class="grid kpis" style="grid-template-columns:repeat(4,1fr)">
-      ${kpi('In Dunning','23 accounts','$47,200 total exposure',{accent:true})}
-      ${kpi('At Risk','$47,200','31–60d overdue',{})}
+      ${kpi('In Dunning',DUN_DATA.length+' accounts',fmt(dunTotal)+' total exposure',{accent:true})}
+      ${kpi('At Risk',fmt(atRisk),'day 21+ in sequence',{})}
       ${kpi('Recovered MTD','$18,400','11 accounts cleared',{trend:8})}
       ${kpi('Success Rate','61%','failed → recovered MTD',{trend:4})}
     </div>
@@ -56,10 +63,10 @@ VIEWS.dunning = (v)=>{
 
     <div class="card" style="padding:0;overflow:hidden">
       <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        <span style="font-size:13px;font-weight:600">Active Dunning Sequences <span class="tnum" style="font-weight:400;color:var(--mut)">· 12 accounts</span></span>
+        <span style="font-size:13px;font-weight:600">Active Dunning Sequences <span class="tnum" style="font-weight:400;color:var(--mut)">· ${DUN_DATA.length} accounts</span></span>
         <div style="display:flex;gap:8px">
-          <span class="chip">${svg(I.filter,13)} Stage</span>
-          <span class="chip" style="cursor:pointer" data-act="download" data-arg="xlsx|Dunning Report|23 sequences · $47,200 at risk">${svg(I.download,13)} Export</span>
+          <button class="chip" onclick="window._cycleDunStage(this)" title="Cycle stage filter">${svg(I.filter,13)} Stage</button>
+          <span class="chip" style="cursor:pointer" data-act="download" data-arg="xlsx|Dunning Report|${DUN_DATA.length} sequences · ${fmt(dunTotal)} exposure">${svg(I.download,13)} Export</span>
         </div>
       </div>
       <div class="table-wrap" style="border:none">
@@ -73,16 +80,7 @@ VIEWS.dunning = (v)=>{
             <th>Status</th>
             <th></th>
           </tr></thead>
-          <tbody>${DUN_DATA.map(r=>`<tr style="cursor:pointer" data-act="colldetail" data-arg="${r.acct}">`+
-            `<td class="nm">${r.acct}</td>`+
-            `<td class="num tnum">${fmt(r.amt)}</td>`+
-            `<td class="num tnum" style="color:${dayBarColor(r.day)};font-weight:700">${r.day}</td>`+
-            `<td class="mut">${r.last}</td>`+
-            `<td style="font-size:12px;color:${dayBarColor(r.day)}">${r.next}</td>`+
-            `<td>${pill(r.status,r.sl)}</td>`+
-            `<td style="text-align:right"><button class="btn ghost" style="font-size:11px;padding:4px 8px;height:auto" data-act="toast" data-arg="Manual contact logged for ${r.acct}">Log contact</button></td>`+
-            `</tr>`).join('')}
-          </tbody>
+          <tbody id="dunBody">${dunRowsFor('All')}</tbody>
         </table>
       </div>
     </div>

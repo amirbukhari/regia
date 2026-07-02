@@ -1,0 +1,84 @@
+# TEST_PLAN.md §8 regression policy: every change re-runs the static audit,
+# the build, the runtime audit, the E2E suite (both builds) and pixel parity.
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Static action audit
+        run: node scripts/audit-actions.mjs
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Build static export
+        working-directory: web
+        run: npm run build
+
+      - name: Install Playwright browser
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+
+      - name: Serve mockup and export
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 &
+          python3 -m http.server 8001 --bind 127.0.0.1 -d web/out &
+          sleep 1
+
+      - name: Runtime audit (every route + action, template-bug scan)
+        working-directory: web
+        run: npm run test:audit
+
+      - name: E2E — test plan §5 against the mockup
+        working-directory: web
+        run: npm run test:e2e
+
+      - name: E2E — test plan §5 against the Next.js export
+        working-directory: web
+        env:
+          BASE_URL: http://127.0.0.1:8001
+        run: npm run test:e2e
+
+      - name: Pixel parity (mockup vs export)
+        working-directory: web
+        run: npm run test:parity
+
+      - name: Upload screenshots/diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: web/tests/.artifacts/
+          retention-days: 7
+
+  # Manual post-release check against the live Pages URL (test plan §7)
+  deploy-check:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - working-directory: web
+        run: npm ci && npx playwright install --with-deps chromium
+      - working-directory: web
+        env:
+          DEPLOY_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: node tests/deploy-check.mjs

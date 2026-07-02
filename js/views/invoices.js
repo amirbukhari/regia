@@ -1,27 +1,15 @@
 /* delonix — invoices.js */
 
 VIEWS.invoices = (v)=>{
-  const INV_DATA = [
-    {id:'INV-2026-0847',acct:'Stellar Systems',   bu:'BU-002',buName:'Commercial',    amt:9200, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
-    {id:'INV-2026-0846',acct:'Pinnacle SaaS',     bu:'BU-002',buName:'Commercial',    amt:8500, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Sent',     status:'muted',finalized:true,  validated:true},
-    {id:'INV-2026-0845',acct:'CloudBase Inc',     bu:'BU-003',buName:'Ent. Platform', amt:7200, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
-    {id:'INV-2026-0844',acct:'Summit Digital',    bu:'BU-001',buName:'Residential',   amt:6400, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Sent',     status:'muted',finalized:true,  validated:true},
-    {id:'INV-2026-0843',acct:'Apex Systems',      bu:'BU-001',buName:'Residential',   amt:5800, issued:'Jun 01',due:'Jun 30',period:'Jun 2026',sl:'Overdue',  status:'neg',  finalized:true,  validated:true},
-    {id:'INV-2026-0842',acct:'Zenith Cloud',      bu:'BU-001',buName:'Residential',   amt:4750, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
-    {id:'INV-2026-0841',acct:'Acme Corp',         bu:'BU-001',buName:'Residential',   amt:4200, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
-    {id:'INV-2026-0840',acct:'Fulcrum Labs',      bu:'BU-003',buName:'Ent. Platform', amt:3400, issued:'Jun 01',due:'Jun 30',period:'Jun 2026',sl:'Overdue',  status:'neg',  finalized:true,  validated:true},
-    {id:'INV-2026-0839',acct:'DataVault',         bu:'BU-002',buName:'Commercial',    amt:3100, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Sent',     status:'muted',finalized:true,  validated:true},
-    {id:'INV-2026-0838',acct:'Cascade Analytics', bu:'BU-001',buName:'Residential',   amt:2950, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
-    {id:'INV-2026-0837',acct:'Streamline Co',     bu:'BU-001',buName:'Residential',   amt:2400, issued:'Jun 28',due:'—',     period:'Jun 2026',sl:'Draft',    status:'muted',finalized:false, validated:false},
-    {id:'INV-2026-0836',acct:'Bridgepoint',       bu:'BU-002',buName:'Commercial',    amt:2150, issued:'May 28',due:'Jun 27',period:'May 2026',sl:'Overdue',  status:'neg',  finalized:true,  validated:true},
-    {id:'INV-2026-0835',acct:'Ironside Tech',     bu:'BU-001',buName:'Residential',   amt:1650, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
-    {id:'INV-2026-0834',acct:'TechFlow Inc',      bu:'BU-003',buName:'Ent. Platform', amt:1800, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Sent',     status:'muted',finalized:true,  validated:true},
-    {id:'INV-2026-0833',acct:'Meridian Tech',     bu:'BU-002',buName:'Commercial',    amt:1450, issued:'May 15',due:'Jun 14',period:'May 2026',sl:'Void',     status:'muted',finalized:true,  validated:true},
-    {id:'INV-2026-DRAFT-2',acct:'NovaSpark',      bu:'BU-001',buName:'Residential',   amt:3820, issued:'Jun 28',due:'—',     period:'Jun 2026',sl:'Draft',    status:'warn', finalized:false, validated:false,validationErrors:['Missing tax address','Missing invoice contact']},
-    {id:'INV-2026-DRAFT-3',acct:'Orbit Labs',     bu:'BU-001',buName:'Residential',   amt:620,  issued:'Jun 28',due:'—',     period:'Jun 2026',sl:'Draft',    status:'muted',finalized:false, validated:true},
-  ];
+  const INV_DATA = db().invoices;
   const tabs = ['All','Draft','Sent','Paid','Overdue','Void'];
-  const matchTab = (inv, t) => t==='All' ? true : inv.sl===t;
+  window._invPeriod = window._invPeriod || 'All periods';
+  const matchPeriod = (inv) => window._invPeriod==='All periods' ? true
+    : window._invPeriod==='This month' ? inv.period==='Jun 2026'
+    : window._invPeriod==='Last month' ? inv.period==='May 2026'
+    : window._invPeriod==='This quarter' ? ['Apr 2026','May 2026','Jun 2026'].includes(inv.period)
+    : true;
+  const matchTab = (inv, t) => matchPeriod(inv) && (t==='All' ? true : inv.sl===t);
   const countTab = t => INV_DATA.filter(i=>matchTab(i,t)).length;
   const buColor = id => (BUS.find(b=>b.id===id)||{color:'#888'}).color;
   const rowsFor = t => INV_DATA.filter(i=>matchTab(i,t)).map(i=>{
@@ -45,23 +33,30 @@ VIEWS.invoices = (v)=>{
     </tr>`;
   }).join('') || `<tr><td colspan="9" class="empty">No ${t.toLowerCase()} invoices.</td></tr>`;
 
+  const totInv = INV_DATA.reduce((s,i)=>s+i.amt,0);
+  const totPaid = INV_DATA.filter(i=>i.sl==='Paid').reduce((s,i)=>s+i.amt,0);
+  const openInvs = INV_DATA.filter(i=>i.sl==='Sent'||i.sl==='Overdue');
+  const totOpen = openInvs.reduce((s,i)=>s+i.amt,0), nOpen = openInvs.length;
+  const overdue = INV_DATA.filter(i=>i.sl==='Overdue');
+  const totOver = overdue.reduce((s,i)=>s+i.amt,0), nOver = new Set(overdue.map(i=>i.acct)).size;
+  const nInvalid = INV_DATA.filter(i=>i.sl==='Draft'&&(!i.validated||i.validationErrors)).length;
+  const nDraft = INV_DATA.filter(i=>i.sl==='Draft').length;
   v.appendChild(el(`<div class="view">
-    ${pageHead('Invoices','June 2026 — $487,200 invoiced across 15 accounts.',
+    ${pageHead('Invoices',`June 2026 — ${fmt(totInv)} invoiced across ${new Set(INV_DATA.map(i=>i.acct)).size} accounts.`,
       `<button class="btn ghost" data-act="download" data-arg="csv|Invoice Export|47 invoices · $487,200">${svg(I.download,15)} Export CSV</button><button class="btn primary" data-act="newinvoice">+ New Invoice</button>`)}
-    <div class="period-bar draft">${svg(I.audit,15)} <strong>June 2026 billing period</strong> <span style="font-weight:400;opacity:.7">— Draft invoices generated · 3 require validation before finalization</span> <span style="margin-left:auto;display:flex;gap:8px"><button class="btn ghost" style="padding:4px 10px;font-size:12px" data-act="route" data-arg="billingruns">Billing run schedule</button><button class="btn ghost" style="padding:4px 10px;font-size:12px" data-act="draftvalidate" data-arg="all">Review all issues</button><button class="btn primary" style="padding:4px 10px;font-size:12px" data-act="signoffclose">Finalize period</button></span></div>
-    <div class="val-banner warn">${svg(I.warning,15)} <div><strong>3 draft invoices have validation issues</strong><ul class="val-issue-list"><li>${svg(I.warning,12)} INV-2026-DRAFT-2 — Missing tax address, missing invoice contact</li><li>${svg(I.warning,12)} 2 invoices pending GL mapping review</li></ul></div></div>
+    <div class="period-bar draft">${svg(I.audit,15)} <strong>June 2026 billing period</strong> <span style="font-weight:400;opacity:.7">— Draft invoices generated · ${INV_DATA.filter(i=>i.sl==='Draft'&&(!i.validated||i.validationErrors)).length} require validation before finalization</span> <span style="margin-left:auto;display:flex;gap:8px"><button class="btn ghost" style="padding:4px 10px;font-size:12px" data-act="route" data-arg="billingruns">Billing run schedule</button><button class="btn ghost" style="padding:4px 10px;font-size:12px" data-act="draftvalidate" data-arg="all">Review all issues</button><button class="btn primary" style="padding:4px 10px;font-size:12px" data-act="signoffclose">Finalize period</button></span></div>
+    ${nInvalid?`<div class="val-banner warn">${svg(I.warning,15)} <div><strong>${nInvalid} draft invoice${nInvalid===1?' has':'s have'} validation issues</strong><ul class="val-issue-list">${INV_DATA.filter(i=>i.validationErrors).map(i=>`<li>${svg(I.warning,12)} ${i.id} — ${i.validationErrors.join(', ')}</li>`).join('')}${nInvalid>1?`<li>${svg(I.warning,12)} 2 invoices pending GL mapping review</li>`:''}</ul></div></div>`:''}
     <div class="grid kpis" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px">
-      ${kpi('Invoiced (Jun)','$487,200','15 invoices',{accent:true})}
-      ${kpi('Collected','$312,450','64% collected',{trend:2.1})}
-      ${kpi('Outstanding','$174,750','7 open invoices',{})}
-      ${kpi('Overdue','$13,350','3 accounts',{trend:0})}
-      ${kpi('Draft','3','pending finalization',{})}
+      ${kpi('Invoiced (Jun)',fmt(totInv),INV_DATA.length+' invoices',{accent:true})}
+      ${kpi('Collected',fmt(totPaid),Math.round(totPaid/(totInv||1)*100)+'% collected',{trend:2.1})}
+      ${kpi('Outstanding',fmt(totOpen),nOpen+' open invoices',{})}
+      ${kpi('Overdue',fmt(totOver),nOver+' account'+(nOver===1?'':'s'),{trend:0})}
+      ${kpi('Draft',''+nDraft,'pending finalization',{})}
     </div>
     <div class="toolbar">
       <div class="tabs" id="invTabs">${tabs.map((t,i)=>`<button class="${i===0?'on':''}" onclick="(function(btn){document.querySelectorAll('#invTabs button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('invBody').innerHTML=rowsFor_inv('${t}');})(this)">${t}<span class="ct">${countTab(t)}</span></button>`).join('')}</div>
       <div class="spacer"></div>
-      <span class="chip" data-act="toast" data-arg="Showing consolidated view">${svg(I.filter,13)} Business Unit</span>
-      <span class="chip" data-act="daterange" data-arg="custom">${svg(I.filter,13)} Period</span>
+      <span class="chip" id="invPeriodChip" data-act="daterange" data-arg="invoices">${svg(I.filter,13)} Period${window._invPeriod==='All periods'?'':': '+window._invPeriod}</span>
     </div>
     <div class="table-wrap">
       <table>

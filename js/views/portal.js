@@ -18,7 +18,7 @@ VIEWS.portal = (v)=>{
   const actionColor={'payment_made':'#49c46e','support_ticket':'#e8b23f','login':'#6aa6ff','invoice_viewed':'#b07cff','invoice_downloaded':'#b07cff','payment_method_updated':'#0891b2','subscription_viewed':'#2dd4bf'};
   v.appendChild(el(`<div class="view">
     ${pageHead('Customer portal','Self-service billing portal — activity, configuration and branding for your customers.',
-      `<button class="btn ghost" data-act="toast" data-arg="Portal link copied to clipboard">${svg(I.send,15)} Copy portal link</button>
+      `<button class="btn ghost" data-act="copy" data-arg="https://billing.delonix.io/portal/delonix-inc">${svg(I.send,15)} Copy portal link</button>
        <button class="btn primary" data-act="portaltheme">Customize portal</button>`)}
     <div class="grid kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
       ${kpi('Portal logins (30d)','847','↑ 12% vs prior period',{trend:12})}
@@ -57,7 +57,7 @@ VIEWS.portal = (v)=>{
             <div><div class="t">Accent color</div><div class="d">Primary button and link color in the portal</div></div>
             <div class="spacer"></div>
             <div style="display:flex;gap:6px;align-items:center">
-              ${['#1e3a5f','#2563eb','#059669','#0891b2','#64748b'].map(c=>`<span style="width:20px;height:20px;border-radius:50%;background:${c};cursor:pointer;display:inline-block;flex-shrink:0" data-act="toast" data-arg="Portal accent set to ${c}"></span>`).join('')}
+              ${['#1e3a5f','#2563eb','#059669','#0891b2','#64748b'].map(c=>`<span data-act="portalaccent" data-arg="${c}" role="button" aria-label="Set portal accent ${c}" style="width:20px;height:20px;border-radius:50%;background:${c};cursor:pointer;outline:${(db().config['portal-accent']||'#2563eb')===c?'2px solid var(--text)':'none'};outline-offset:2px"></span>`).join('')}
             </div>
           </div>
           <div class="set-row">

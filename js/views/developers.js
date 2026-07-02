@@ -1,11 +1,11 @@
 /* delonix — developers.js */
 
 VIEWS.developers = (v)=>{
-  const apiKeys=[
+  const apiKeys=[...db().added.apikeys, ...[
     ['Live · publishable','pk_live_••••7Qx2','Read-only','Jun 28, 14:31','good','Active'],
     ['Live · secret','sk_live_••••a9Fd','Full access','Jun 28, 14:31','good','Active'],
     ['Test · secret','sk_test_••••0Tz1','Sandbox','Jun 25, 09:44','muted','Sandbox'],
-  ];
+  ]];
   const webhooks=[
     ['https://hooks.acme••••.com/billing','invoice.*, payment.*','Jun 28, 14:32','good','Healthy'],
     ['https://api.techfl••••.io/webhooks','subscription.*, usage.*','Jun 28, 11:47','good','Healthy'],

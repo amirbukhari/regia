@@ -13,8 +13,8 @@ function openNotifications(){
   ];
   openDrawer('Notifications',`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <span style="font-size:12px;color:var(--text-3)">8 unread</span>
-      <button class="btn ghost" style="padding:4px 10px;font-size:12px" data-act="toast" data-arg="All notifications marked as read">Mark all read</button>
+      <span style="font-size:12px;color:var(--text-3)" id="notifUnread">8 unread</span>
+      <button class="btn ghost" style="padding:4px 10px;font-size:12px" data-act="readall">Mark all read</button>
     </div>
     <div class="notif-list">
       ${notifs.map(n=>`<button class="notif-item" data-act="${n.act}" data-arg="${n.arg}">
@@ -37,7 +37,7 @@ function openCurrencyPanel(){
   ];
   openDrawer('Display Currency',`
     <p style="font-size:12px;color:var(--text-3);margin-bottom:14px">Display only — invoices are billed in their contract currency.</p>
-    ${currencies.map(c=>`<div class="entity-card${c.active?' active':''}" data-act="toast" data-arg="Display currency set to ${c.code}">
+    ${currencies.map(c=>`<div class="entity-card${c.active?' active':''}" data-act="setcurrency" data-arg="${c.code}">
       <span style="font-size:20px">${c.flag}</span>
       <div class="entity-info"><div class="entity-name">${c.name}</div>
         <div class="entity-meta">${c.code} · 1 USD = ${c.rate} ${c.code}</div></div>
@@ -61,10 +61,10 @@ function openApprovalRules(){
         <td class="mut">${r.sla}</td>
         <td><div class="toggle${r.active?' on':''}" data-act="toggle"><i></i></div></td></tr>`).join('')}
     </tbody></table></div>
-    <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="New approval rule added">+ Add rule</button>
+    <button class="btn ghost" style="font-size:12px" data-act="addrule">+ Add rule</button>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Approval rules saved">Save rules</button>
+      ${cfgSaveBtn('approval-rules','Approval rules saved','Save rules')}
     </div>`);
 }
 
@@ -73,16 +73,16 @@ function openApprovalRules(){
 function openInviteUser(){
   openDrawer('Invite Team Member',`
     <div class="form-group"><label class="form-label">Email address</label>
-      <input class="form-input" type="email" placeholder="colleague@company.com"></div>
+      <input class="form-input" id="iv_email" type="email" placeholder="colleague@company.com"></div>
     <div class="form-row" style="margin-top:12px"><div class="form-group"><label class="form-label">Role</label>
-      <select class="form-select"><option>Admin</option><option>Revenue Manager</option><option>Collections</option><option>Sales Ops</option><option>Viewer (read-only)</option></select></div>
+      <select class="form-select" id="iv_role"><option>Admin</option><option>Revenue Manager</option><option>Collections</option><option>Sales Ops</option><option>Viewer (read-only)</option></select></div>
       <div class="form-group"><label class="form-label">Team</label>
       <select class="form-select"><option>Finance</option><option>Billing</option><option>Sales</option><option>Executive</option></select></div></div>
     <div class="form-group" style="margin-top:10px"><label class="form-label">Personal message (optional)</label>
       <textarea class="form-textarea" placeholder="Add a note to the invitation email…" style="min-height:56px"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Invitation sent — they will receive an email to set up their account">Send invitation</button>
+      <button class="btn primary" data-act="invitemember">Send invitation</button>
     </div>`);
 }
 
@@ -100,10 +100,8 @@ function openAuditHistory(arg){
   ];
   openDrawer(`Audit History — ${objType} ${objId}`, `
     <div class="toolbar" style="margin-bottom:12px">
-      <span class="chip">${svg(I.filter,13)} Action type</span>
-      <span class="chip">${svg(I.filter,13)} User</span>
       <div class="spacer"></div>
-      <button class="btn ghost" style="font-size:12px;padding:5px 10px" data-act="toast" data-arg="Audit log exported">Export Log</button>
+      <button class="btn ghost" style="font-size:12px;padding:5px 10px" data-act="download" data-arg="csv|Audit History ${objId}|${auditData.length} events">Export Log</button>
     </div>
     <div>${auditData.map(a=>`<div class="audit-row">
       <span class="audit-ts">${a.ts}</span>
@@ -115,14 +113,45 @@ function openAuditHistory(arg){
 }
 
 function openMigrationDetail(id){
+  const ss = (typeof SOURCE_SYSTEMS!=='undefined') && SOURCE_SYSTEMS.find(s=>s.id===id);
+  if(ss){
+    const acquired = ss.type==='acquired';
+    openDrawer(`Source System — ${ss.name} <span class="mono mut" style="font-size:12px;font-weight:400">${ss.id}</span>`, `
+      <div class="val-banner ${acquired?'warn':'info'}" style="margin-bottom:16px">${svg(I.migration,15)} <strong>${acquired?'Acquisition migration in progress.':'Accounting export connection.'}</strong> ${acquired?'Legacy customers are being mapped into delonix accounts.':'Journal entries export on a scheduled sync.'}</div>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+        <div class="fg"><label>System</label><div>${ss.name}</div></div>
+        <div class="fg"><label>Type</label><div>${ss.type}</div></div>
+        ${acquired?`<div class="fg"><label>Legacy customers</label><div class="tnum">${ss.legacyCustomers}</div></div>
+        <div class="fg"><label>Mapped</label><div class="tnum">${ss.mapped} · ${ss.unresolved} unresolved</div></div>
+        <div class="fg"><label>Invoice total (legacy)</label><div class="tnum">${fmt(ss.invoiceTotal)}</div></div>
+        <div class="fg"><label>Variance</label><div class="tnum" style="color:var(--warn)">${fmt(ss.delta)} — within tolerance</div></div>`
+        :`<div class="fg"><label>Connection</label><div>${pill('good','Active')}</div></div>
+        <div class="fg"><label>Last sync</label><div class="tnum">${ss.lastSync}</div></div>
+        <div class="fg"><label>Records exported</label><div class="tnum">${ss.recordsExported}</div></div>
+        <div class="fg"><label>Status</label><div>${pill('good','Healthy')}</div></div>`}
+      </div>
+      <div class="form-actions" style="margin-top:16px">${acquired?`<button class="btn primary" data-act="route" data-arg="migration">Open mapping queue</button>`:`<button class="btn primary" data-act="demoact" data-arg="${ss.name} sync triggered — run logged in the activity feed">Sync now</button>`}<button class="btn ghost" onclick="closeDrawer()">Close</button></div>`);
+    return;
+  }
+  if(id==='bulk'){
+    openDrawer('Bulk Mapping — unresolved customers', `
+      <div class="val-banner warn" style="margin-bottom:16px">${svg(I.migration,15)} <strong>23 legacy customers need manual mapping.</strong> Suggested matches are ranked by name and billing-address similarity.</div>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+        <div class="fg"><label>Match strategy</label><select class="finput"><option>Name + address similarity</option><option>Tax ID exact match</option><option>Manual only</option></select></div>
+        <div class="fg"><label>Auto-accept threshold</label><select class="finput"><option>95% confidence</option><option>90% confidence</option><option>Manual review all</option></select></div>
+      </div>
+      <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="demoact" data-arg="Bulk mapping started — 23 customers queued for review">Run bulk mapping</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>`);
+    return;
+  }
+  const legacyName = dlxPick(id,['Riverfront Properties','Harborline Estates','Crestview Property Group','Lakeshore Rentals','Summit Property Co']);
   openDrawer('Migration Detail — ' + id, `
     <div class="val-banner warn" style="margin-bottom:16px">${svg(I.migration,15)} <strong>BuildStream acquisition migration in progress.</strong> This customer requires manual mapping before billing can proceed.</div>
     <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
       <div class="fg"><label>Legacy Customer ID</label><div class="mono">${id}</div></div>
-      <div class="fg"><label>Legacy Name</label><div>Riverfront Properties</div></div>
-      <div class="fg"><label>Legacy Product</label><div>BuildStream Pro</div></div>
-      <div class="fg"><label>Legacy MRR</label><div class="tnum">$4,800</div></div>
-      <div class="fg"><label>Migration Batch</label><div>BATCH-2026-06</div></div>
+      <div class="fg"><label>Legacy Name</label><div>${legacyName}</div></div>
+      <div class="fg"><label>Legacy Product</label><div>BuildStream ${dlxPick(id+'p',['Pro','Standard','Enterprise'])}</div></div>
+      <div class="fg"><label>Legacy MRR</label><div class="tnum">${fmt(dlxRange(id,800,6200))}</div></div>
+      <div class="fg"><label>Migration Batch</label><div>BATCH-2026-0${dlxRange(id+'b',4,6)}</div></div>
       <div class="fg"><label>Reconciliation Status</label><div>${pill('warn','Pending')}</div></div>
     </div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:10px">Map to delonix</h4>
@@ -132,18 +161,18 @@ function openMigrationDetail(id){
       <div class="fg"><label>Map to Product</label><select class="finput"><option>— select —</option><option>Enterprise Plan</option><option>Business Plan</option></select></div>
       <div class="fg"><label>Mapping Confidence</label><div>${pill('warn','Manual — low confidence')}</div></div>
     </div>
-    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Migration mapping saved — customer mapped to BU-001">Save Mapping</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="demoact" data-arg="Migration mapping saved — customer mapped to BU-001">Save Mapping</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
   `);
 }
 
 function openDownloadPanel(arg){
   const parts=(arg||'pdf|Document|').split('|');
   const fmt=parts[0]||'pdf', title=parts[1]||'Document', detail=parts[2]||'';
-  const fmtIcon = fmt==='pdf'?'📄':fmt==='xlsx'?'📊':fmt==='csv'?'📋':'📦';
+  const fmtIcon = `<span style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:14px;background:var(--ember-glow);color:var(--ember)">${svg(fmt==='xlsx'||fmt==='csv'?I.reports:I.invoices,30)}</span>`;
   const fmtLabel = fmt.toUpperCase();
   openDrawer(`Export — ${title}`, `
     <div style="text-align:center;padding:24px 0 16px">
-      <div style="font-size:48px;margin-bottom:12px">${fmtIcon}</div>
+      <div style="margin-bottom:12px">${fmtIcon}</div>
       <div style="font-weight:700;font-size:17px;margin-bottom:4px">${title}</div>
       <div class="mut" style="font-size:13px">${detail}</div>
     </div>
@@ -170,15 +199,16 @@ function openLogoUpload(){
   openDrawer('Brand Logo', `
     <div class="mut" style="font-size:12.5px;margin-bottom:14px">Logo appears on invoices, the customer portal, and email notifications. Separate logos can be set per Business Unit.</div>
     <div style="border:2px dashed var(--border-2);border-radius:8px;padding:28px;text-align:center;cursor:pointer;margin-bottom:14px" onclick="toast('File picker opened')">
-      <div style="font-size:36px;margin-bottom:8px">🖼</div>
+      <div style="margin-bottom:8px">${svg(I.brush,28)}</div>
       <div style="font-size:13px;font-weight:600">Upload logo</div>
       <div class="mut" style="font-size:12px;margin-top:4px">PNG or SVG · 200×200px minimum · transparent background recommended</div>
     </div>
     <div style="margin-bottom:14px">
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">BUSINESS UNIT OVERRIDES</div>
-      ${BUS.slice(0,3).map(b=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="bu-badge"><span class="bu-dot" style="background:${b.color}"></span>${b.name}</span><span class="mut" style="font-size:12px;flex:1">Using default logo</span><button class="btn ghost" style="font-size:11px;padding:3px 8px" data-act="toast" data-arg="Logo upload for ${b.name}">Upload</button></div>`).join('')}
+      ${BUS.slice(0,3).map(b=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="bu-badge"><span class="bu-dot" style="background:${b.color}"></span>${b.name}</span><span class="mut" style="font-size:12px;flex:1">Using default logo</span><button class="btn ghost" style="font-size:11px;padding:3px 8px" data-act="toast" data-arg="File uploads are disabled in this demo build">Upload</button></div>`).join('')}
     </div>
-    <div class="form-actions"><button class="btn primary" data-act="toast" data-arg="Logo uploaded and saved">Save</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="val-banner info" style="margin:2px 0 12px">${svg(I.warning,14)} File uploads are disabled in this demo build — logo changes require the production asset pipeline.</div>
+    <div class="form-actions"><button class="btn primary" disabled style="opacity:.45;cursor:not-allowed" aria-disabled="true" title="Uploads are disabled in the demo">Save</button><button class="btn ghost" onclick="closeDrawer()">Close</button></div>
   `);
 }
 
@@ -202,7 +232,7 @@ function openPortalThemeEditor(){
       </div>
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Portal theme saved and published">Save & Publish</button>
+      ${cfgSaveBtn('portal-theme','Portal theme saved and published','Save & Publish')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -225,35 +255,44 @@ function openEditRole(name){
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="Role '${name}' updated">Save changes</button>
+        ${cfgSaveBtn('role-'+name,`Role '${name}' updated`,'Save changes')}
       </div>
     </div>
   `);
 }
 
 function openEditMember(name){
+  const MEMBER_INFO = {
+    'Amir Bukhari':{email:'abukhari@delonix.com',role:'Super Admin',mfa:true,api:true},
+    'M. Reyes':{email:'mreyes@delonix.com',role:'Finance Manager',mfa:true,api:false},
+    'D. Cho':{email:'dcho@delonix.com',role:'Revenue Ops',mfa:true,api:false},
+    'P. Anand':{email:'panand@delonix.com',role:'Revenue Ops',mfa:false,api:false},
+    'L. Torres':{email:'ltorres@delonix.com',role:'Viewer',mfa:true,api:false},
+    'CI/CD Bot':{email:'cicd-bot@delonix.com',role:'API Service Account',mfa:false,api:true},
+  };
+  const m = MEMBER_INFO[name] || {email:(name||'user').toLowerCase().replace(/[^a-z0-9]+/g,'.')+'@delonix.com',role:'Viewer',mfa:false,api:false};
   openDrawer('Edit Member — '+name,`
     <div style="display:flex;flex-direction:column;gap:14px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div><label class="lbl">Name</label><input class="input" value="${name}" style="width:100%"></div>
-        <div><label class="lbl">Email</label><input class="input" value="${name.toLowerCase().replace(' ','.')}@delonix.com" style="width:100%"></div>
+        <div><label class="lbl">Email</label><input class="input" value="${m.email}" style="width:100%"></div>
       </div>
-      <div><label class="lbl">Role</label><select class="input" style="width:100%"><option>Super Admin</option><option>Admin</option><option selected>Finance Manager</option><option>Revenue Ops</option><option>Viewer</option><option>API Service Account</option></select></div>
+      <div><label class="lbl">Role</label><select class="input" style="width:100%">${['Super Admin','Admin','Finance Manager','Revenue Ops','Viewer','API Service Account'].map(r=>`<option${r===m.role?' selected':''}>${r}</option>`).join('')}</select></div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface-2);border-radius:var(--r-sm)">
           <span style="font-size:13px">Require MFA</span>
-          <div style="width:36px;height:20px;background:var(--good);border-radius:10px;cursor:pointer;position:relative"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;right:2px;top:2px"></div></div>
+          ${tgl('member-'+name+'-mfa', m.mfa, `aria-label="Require MFA for ${name}"`)}
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface-2);border-radius:var(--r-sm)">
           <span style="font-size:13px">API access</span>
-          <div style="width:36px;height:20px;background:var(--border);border-radius:10px;cursor:pointer;position:relative"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;left:2px;top:2px"></div></div>
+          ${tgl('member-'+name+'-api', m.api, `aria-label="API access for ${name}"`)}
         </div>
       </div>
       <div style="display:flex;gap:8px;justify-content:space-between;margin-top:4px">
-        <button class="btn ghost" style="color:var(--crit)" data-act="toast" data-arg="Removed ${name} from team">Remove member</button>
+        <button class="btn ghost" style="color:var(--crit)" data-act="removemember" data-arg="${name}">Remove member</button>
         <div style="display:flex;gap:8px">
           <button class="btn ghost" data-act="close">Cancel</button>
-          <button class="btn primary" data-act="toast" data-arg="Member '${name}' updated">Save</button>
+          ${cfgSaveBtn('member-'+name,`Member '${name}' updated`,'Save')}
         </div>
       </div>
     </div>
@@ -261,32 +300,35 @@ function openEditMember(name){
 }
 
 function openAuditDetail(eventType){
-  openDrawer('Audit event — '+eventType,`
+  const et = eventType||'Event';
+  const actor = dlxPick(et,['A. Bukhari (abukhari@delonix.com)','M. Reyes (mreyes@delonix.com)','D. Cho (dcho@delonix.com)','Finance Bot (system)']);
+  const sev = /delete|permission|role|export|key/i.test(et) ? pill('warn','HIGH') : /modif|void|credit/i.test(et) ? pill('ember','MEDIUM') : pill('muted','ROUTINE');
+  const target = /invoice/i.test(et) ? 'INV-2026-08'+dlxRange(et,10,47) : /price/i.test(et) ? '2026 Standard price book' : /permission|role/i.test(et) ? 'D. Cho — role change' : /export/i.test(et) ? 'Customer export (247 rows)' : 'Billing object '+dlxRange(et,100,999);
+  const ts = `2026-06-${dlxRange(et+'d',21,28)} ${String(dlxRange(et+'h',8,18)).padStart(2,'0')}:${String(dlxRange(et+'m',10,59))}:0${dlxRange(et+'s',1,9)} UTC`;
+  openDrawer('Audit event — '+et,`
     <div style="display:flex;flex-direction:column;gap:14px">
       <div class="kv-grid" style="display:grid;grid-template-columns:130px 1fr;gap:6px 14px">
         <span class="mut">Event type</span><span style="font-weight:600">${eventType}</span>
-        <span class="mut">Timestamp</span><span class="mono">2026-06-28 10:41:03 UTC</span>
-        <span class="mut">Actor</span><span>A. Bukhari (abukhari@delonix.com)</span>
-        <span class="mut">Session ID</span><span class="mono" style="font-size:11px">sess_01Jx4mQpR9v2Kn7cP</span>
+        <span class="mut">Timestamp</span><span class="mono">${ts}</span>
+        <span class="mut">Actor</span><span>${actor}</span>
+        <span class="mut">Session ID</span><span class="mono" style="font-size:11px">sess_${dlxHash(et).toString(36)}Qp${dlxHash(et+"x").toString(36).slice(0,6)}</span>
         <span class="mut">IP address</span><span class="mono">10.0.0.1 (internal)</span>
         <span class="mut">User agent</span><span style="font-size:12px">Chrome 126 · macOS 14.5</span>
-        <span class="mut">Resource</span><span>D. Cho — role change</span>
-        <span class="mut">Severity</span><span>${pill('warn','HIGH')}</span>
+        <span class="mut">Resource</span><span>${target}</span>
+        <span class="mut">Severity</span><span>${sev}</span>
       </div>
       <div style="border-top:1px solid var(--border);padding-top:12px">
         <div style="font-weight:600;margin-bottom:8px;font-size:13px">Event payload</div>
         <pre class="mono" style="font-size:11px;background:var(--surface-2);padding:12px;border-radius:var(--r-sm);overflow-x:auto;white-space:pre-wrap">{
-  "event": "${eventType}",
-  "actor": "user_ABK001",
-  "target": "user_DC042",
-  "before": { "role": "revenue_ops" },
-  "after":  { "role": "finance_manager" },
-  "reason": "promotion",
-  "approved_by": "user_ABK001"
+  "event": "${et.toLowerCase().replace(/[^a-z0-9]+/g,'_')}",
+  "actor": "${actor.split(' (')[0]}",
+  "target": "${target}",
+  "recorded_at": "${ts}",
+  "immutable": true
 }</pre>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn ghost" data-act="toast" data-arg="Audit event exported">Export JSON</button>
+        <button class="btn ghost" data-act="download" data-arg="json|Audit Event|full payload · immutable record">Export JSON</button>
         <button class="btn ghost" data-act="close">Close</button>
       </div>
     </div>
@@ -313,7 +355,7 @@ function openApplyTheme(){
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="Theme changes applied to all surfaces">Apply now</button>
+        <button class="btn primary" data-act="demoact" data-arg="Theme changes applied to all surfaces">Apply now</button>
       </div>
     </div>
   `);

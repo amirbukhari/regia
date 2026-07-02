@@ -8,7 +8,69 @@ document.addEventListener('click',e=>{
   if(a==='enter') return enterApp(e);
   if(a==='signout') return signOut();
   if(a==='close') return closeDrawer();
-  if(a==='toggle') return t.classList.toggle('on');
+  if(a==='toggle'){ t.classList.toggle('on'); return tglPersist(t); }
+  /* ---- local demo DB mutations (js/db.js) ---- */
+  if(a==='saveconfig') return saveDrawerConfig(arg);
+  if(a==='savedone'){ closeDrawer(); return toast(arg); }
+  if(a==='resetdemo') return dbResetDemo();
+  if(a==='createinvoice') return dbCreateInvoice(arg);
+  if(a==='revalidate') return dbValidateDraft(arg);
+  if(a==='submitcredit') return dbSubmitCreditRebill(arg);
+  if(a==='finalizeperiod') return dbFinalizePeriod();
+  if(a==='retrypaynow') return dbRetryPayment(arg);
+  if(a==='refundnow') return dbRefundPayment(arg);
+  if(a==='recordpayment') return dbRecordManualPayment();
+  if(a==='createcustomer') return dbCreateCustomer();
+  if(a==='createsub') return dbCreateSub();
+  if(a==='planchange') return dbChangePlan(arg);
+  if(a==='createcredit') return dbCreateCredit();
+  if(a==='logcontact') return dbLogContact(arg);
+  if(a==='suspendnow') return dbSuspendAccount(arg);
+  if(a==='setpricebookdefault') return dbSetDefaultPricebook(arg);
+  if(a==='applygrouping') return dbApplyGrouping(arg);
+  if(a==='demoact') return demoAct(arg);
+  if(a==='dashseries'){ window._dashSeries=arg; document.querySelectorAll('#dashSeg button').forEach(b=>b.classList.toggle('on',b===t)); return drawRevChart(); }
+  if(a==='consoview'){ document.querySelectorAll('#consoSeg button').forEach(b=>b.classList.toggle('on',b===t)); const b=document.getElementById('consoBody'); if(b) b.innerHTML = arg==='group' ? window._consoGroupRows : window._consoEntityRows; return; }
+  if(a==='auditpage') return auditPage(+arg);
+  if(a==='ignoreevent'){ const tr=t.closest('tr'); if(tr) tr.remove(); dbActivity('ignored usage event '+arg); dbSave(); return toast('Event '+arg+' ignored — removed from the failed queue'); }
+  if(a==='removemember') return dbRemoveMember(arg);
+  if(a==='addrule') return addApprovalRule(t);
+  if(a==='switchentity') return switchEntity(arg);
+  if(a==='setcurrency') return setCurrency(arg);
+  if(a==='portalaccent') return setPortalAccent(arg, t);
+  if(a==='ceswitch') return switchCustomEntity(arg, t);
+  if(a==='deletefield') return dbDeleteField(arg);
+  if(a==='readall'){
+    document.querySelectorAll('#drawer .notif-list > *').forEach(n=>n.style.opacity='.55');
+    const d=document.querySelector('[data-act="notifications"] .dot'); if(d) d.remove();
+    const u=document.getElementById('notifUnread'); if(u) u.textContent='0 unread';
+    dbActivity('marked all notifications read'); dbSave();
+    return toast('All notifications marked read');
+  }
+  if(a==='copy') return copyText(arg);
+  if(a==='addline') return addLineRow(t);
+  if(a==='removeline') return removeLineRow(t);
+  if(a==='voidnow') return dbVoidInvoice(arg);
+  if(a==='approvenow') return dbApproveInvoice(arg);
+  if(a==='applymatch') return dbApplyMatch(arg);
+  if(a==='runsweep') return dbRunSweep();
+  if(a==='sendpaylink') return dbSendPayLink(arg);
+  if(a==='createquote') return dbCreateQuote(arg);
+  if(a==='createrenewal') return dbCreateRenewal(arg);
+  if(a==='createplan') return dbCreatePlan();
+  if(a==='createmeter') return dbCreateMeter();
+  if(a==='invitemember') return dbInviteMember();
+  if(a==='createkey') return dbCreateKey();
+  if(a==='rotatenow') return dbRotateKeyNow(arg);
+  if(a==='createpricebook') return dbCreatePricebook();
+  if(a==='createbizunit') return dbCreateBizUnit();
+  if(a==='createlegalentity') return dbCreateLegalEntity();
+  if(a==='createentity') return dbCreateEntity();
+  if(a==='createfield') return dbCreateField();
+  if(a==='createcalculator') return dbCreateCalculator();
+  if(a==='applyrange') return applyDateRange();
+  if(a==='setrange') return setBuilderRange(arg, t);
+  if(a==='savereport') return dbSaveReport((arg||'').split('|')[0], (arg||'').split('|')[1]);
   if(a==='featureflag') return toggleFeatureFlag(arg, t);
   if(a==='resetflags') return resetFeatureFlagUI();
   if(a==='menu') return document.getElementById('app').classList.toggle('nav-open');
@@ -17,6 +79,7 @@ document.addEventListener('click',e=>{
   if(a==='account') return openAccount(arg);
   if(a==='revsched') return openRevSchedule(arg);
   if(a==='subdetail') return openSubscription(arg);
+  if(a==='quotedetail') return openQuoteDetail(arg);
   if(a==='paydetail') return openPayment(arg);
   if(a==='retrypay') return openRetryPayment(arg);
   if(a==='refund') return openRefund(arg);
@@ -120,6 +183,7 @@ document.addEventListener('click',e=>{
         if(a==='addcalcfield') return openAddCalcField();
         if(a==='scheduledigest') return openScheduleDigest();
 });
+document.addEventListener('input',e=>{ if(e.target.closest && e.target.closest('#lineItems')) recalcInvoiceForm(); });
 const _lf=document.getElementById('loginForm');
 if(_lf) _lf.addEventListener('submit',e=>{ e.preventDefault(); enterApp(e); });
 
@@ -146,6 +210,8 @@ document.addEventListener('click',e=>{ if(!e.target.closest('.search')) closeCmd
 document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault(); const ci=document.getElementById('cmdInput'); if(ci){ci.focus();ci.select();buildCmd('');}}
   if(e.key==='Escape')closeDrawer();
+  // switches are divs — make Enter/Space activate them for keyboard users
+  if((e.key==='Enter'||e.key===' ') && e.target.dataset && e.target.dataset.act==='toggle'){ e.preventDefault(); e.target.click(); }
 });
 window.addEventListener('resize',()=>{ if(current==='dashboard'){drawRevChart();drawSparks();}
   if(current==='usage')drawUsageChart(); if(current==='reports')drawMrrChart(); });

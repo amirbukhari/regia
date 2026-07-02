@@ -4,7 +4,7 @@ function openNewInvoice(){
   openDrawer('New Invoice',`
     <div class="form-section">
       <div class="form-row"><div class="form-group"><label class="form-label">Customer</label>
-        <select class="form-select"><option value="">— select —</option>${custOpts()}</select></div>
+        <select class="form-select" id="ni_customer"><option value="">— select —</option>${custOpts()}</select></div>
         <div class="form-group" style="max-width:140px"><label class="form-label">Invoice date</label>
         <input class="form-input" type="date" value="2026-06-28"></div>
         <div class="form-group" style="max-width:140px"><label class="form-label">Due date</label>
@@ -22,15 +22,15 @@ function openNewInvoice(){
       <div id="lineItems">
         <div class="line-item-row"><input class="form-input" placeholder="Platform subscription — Business plan" value="Platform subscription — Business plan">
           <input class="form-input" type="number" value="1"><input class="form-input" type="number" value="199.00">
-          <span class="line-item-total">$199.00</span><button class="li-del" data-act="toast" data-arg="Line item removed">×</button></div>
+          <span class="line-item-total">$199.00</span><button class="li-del" data-act="removeline" aria-label="Remove line item">×</button></div>
         <div class="line-item-row"><input class="form-input" placeholder="Additional seats (×5)" value="Additional seats (×5)">
           <input class="form-input" type="number" value="5"><input class="form-input" type="number" value="15.00">
-          <span class="line-item-total">$75.00</span><button class="li-del" data-act="toast" data-arg="Line item removed">×</button></div>
+          <span class="line-item-total">$75.00</span><button class="li-del" data-act="removeline" aria-label="Remove line item">×</button></div>
         <div class="line-item-row"><input class="form-input" placeholder="Onboarding & setup fee" value="Onboarding & setup fee">
           <input class="form-input" type="number" value="1"><input class="form-input" type="number" value="500.00">
-          <span class="line-item-total">$500.00</span><button class="li-del" data-act="toast" data-arg="Line item removed">×</button></div>
+          <span class="line-item-total">$500.00</span><button class="li-del" data-act="removeline" aria-label="Remove line item">×</button></div>
       </div>
-      <button class="btn ghost" style="margin-top:6px;font-size:12px" data-act="toast" data-arg="Line item added">+ Add line item</button>
+      <button class="btn ghost" style="margin-top:6px;font-size:12px" data-act="addline">+ Add line item</button>
     </div>
     <div class="invoice-summary">
       <div class="inv-sum-row"><span>Subtotal</span><span class="tnum">$774.00</span></div>
@@ -41,21 +41,22 @@ function openNewInvoice(){
     <div class="form-group" style="margin-top:16px"><label class="form-label">Notes / memo</label>
       <textarea class="form-textarea" placeholder="Internal notes or customer-facing memo…"></textarea></div>
     <div class="form-footer">
-      <button class="btn ghost" data-act="toast" data-arg="Draft INV-2026-0849 saved to drafts">Save draft</button>
-      <button class="btn primary" data-act="toast" data-arg="Invoice INV-2026-0849 sent to customer — $874.62 due Jul 28">Send invoice</button>
+      <button class="btn ghost" data-act="createinvoice" data-arg="draft">Save draft</button>
+      <button class="btn primary" data-act="createinvoice" data-arg="send">Send invoice</button>
     </div>`);
 }
 
 /* ── Notifications panel ── */
 
 function openApproveInvoice(id){
+  const inv = dbFindInvoice(id) || {id:id||'INV-2026-0847', acct:'Acme Corp', amt:4200, due:'Jul 15'};
   openDrawer('Approve Invoice',`
     <div class="card" style="margin-bottom:16px;padding:14px 16px">
       <div class="form-label" style="margin-bottom:8px">Invoice summary</div>
-      <div class="inv-sum-row"><span>Invoice</span><span class="tnum" style="font-weight:600">${id||'INV-2026-0847'}</span></div>
-      <div class="inv-sum-row"><span>Customer</span><span>Acme Corp</span></div>
-      <div class="inv-sum-row"><span>Amount</span><span class="tnum">$4,200.00</span></div>
-      <div class="inv-sum-row"><span>Due date</span><span>Jul 15, 2026</span></div>
+      <div class="inv-sum-row"><span>Invoice</span><span class="tnum" style="font-weight:600">${inv.id}</span></div>
+      <div class="inv-sum-row"><span>Customer</span><span>${inv.acct}</span></div>
+      <div class="inv-sum-row"><span>Amount</span><span class="tnum">${fmt2(inv.amt)}</span></div>
+      <div class="inv-sum-row"><span>Due date</span><span>${inv.due==='—'?'On finalization':inv.due+', 2026'}</span></div>
     </div>
     <div class="form-row"><div class="form-group"><label class="form-label">Approver</label>
       <select class="form-select"><option>Amir Bukhari (CFO)</option><option>M. Reyes (Revenue Manager)</option></select></div>
@@ -65,7 +66,7 @@ function openApproveInvoice(id){
       <textarea class="form-textarea" placeholder="Notes for audit trail…" style="min-height:56px"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Invoice approved — sent to customer for payment">Confirm approval</button>
+      <button class="btn primary" data-act="approvenow" data-arg="${inv.id}">Confirm approval</button>
     </div>`);
 }
 
@@ -74,7 +75,7 @@ function openApproveInvoice(id){
 function openVoidInvoice(id){
   openDrawer('Void Invoice',`
     <div class="confirm-panel">
-      <div class="confirm-title">⚠ This action cannot be undone</div>
+      <div class="confirm-title">${svg(I.warning,14)} This action cannot be undone</div>
       <div class="confirm-body">Voiding ${id||'this invoice'} will permanently cancel it. A credit note will be created if payment has already been collected. The invoice number will be retained in the audit log.</div>
     </div>
     <div class="form-group" style="margin-top:16px"><label class="form-label">Reason for voiding</label>
@@ -83,62 +84,69 @@ function openVoidInvoice(id){
       <textarea class="form-textarea" placeholder="Additional context for audit trail…"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Keep invoice</button>
-      <button class="btn primary" style="background:var(--neg)" data-act="toast" data-arg="Invoice voided — credit note CRD-2026-0042 created">Void invoice</button>
+      <button class="btn primary" style="background:var(--neg)" data-act="voidnow" data-arg="${id||''}">Void invoice</button>
     </div>`);
 }
 
 /* ── Send Payment Reminder ── */
 
 function openSendReminder(id){
+  const inv = dbFindInvoice(id) || {id:id||'INV-2026-0831', acct:'Acme Corp', amt:5800, due:'Jun 14'};
+  const email = 'billing@'+inv.acct.toLowerCase().replace(/[^a-z0-9]+/g,'')+'.com';
   openDrawer('Send Payment Reminder',`
     <div class="form-section-title">Email preview</div>
     <div class="card" style="padding:16px;margin-bottom:16px;border-radius:8px">
-      <div style="font-size:12px;color:var(--text-3);margin-bottom:8px">To: billing@acmecorp.com</div>
-      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Friendly reminder: Invoice ${id||'INV-2026-0831'} is overdue</div>
-      <div style="font-size:13px;color:var(--text-2);line-height:1.6">Hi Jane,<br><br>
-        This is a friendly reminder that invoice <b>${id||'INV-2026-0831'}</b> for <b>$5,800.00</b> was due on Jun 14, 2026 and remains outstanding.<br><br>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:8px">To: ${email}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Friendly reminder: Invoice ${inv.id} is overdue</div>
+      <div style="font-size:13px;color:var(--text-2);line-height:1.6">Hi,<br><br>
+        This is a friendly reminder that invoice <b>${inv.id}</b> for <b>${fmt2(inv.amt)}</b> was due on ${inv.due==='—'?'issue':inv.due}, 2026 and remains outstanding.<br><br>
         Please arrange payment at your earliest convenience. If you have any questions, reply to this email.<br><br>
         <a style="color:var(--ember)">Pay invoice →</a></div>
     </div>
     <div class="form-row"><div class="form-group"><label class="form-label">Send to</label>
-      <input class="form-input" value="billing@acmecorp.com"></div>
+      <input class="form-input" value="${email}"></div>
       <div class="form-group"><label class="form-label">CC</label>
       <input class="form-input" placeholder="Optional"></div></div>
     <div class="form-group"><label class="form-label">Add personal note</label>
       <textarea class="form-textarea" placeholder="Appended to the standard reminder template…" style="min-height:56px"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Payment reminder sent to billing@acmecorp.com">Send reminder</button>
+      <button class="btn primary" data-act="demoact" data-arg="Payment reminder for ${inv.id} sent to ${email}">Send reminder</button>
     </div>`);
 }
 
 /* ── Retry Payment ── */
 
 function openInvoiceGroupingPolicy(accountId){
-  openDrawer('Invoice Grouping — ' + (accountId||'Account'), `
+  const gpCust = db().customers.find(c=>c.id===accountId||c.name===accountId);
+  const gpSaved = db().config['grouping:'+accountId] ?? 1;
+  openDrawer('Invoice Grouping — ' + (gpCust?gpCust.name+' ('+gpCust.id+')':accountId||'Account'), `
     <div class="val-banner info" style="margin-bottom:16px">${svg(I.grouping,15)} <div><strong>Invoice grouping controls how charges are bundled into invoices.</strong> Client-selectable options apply immediately; custom policies require Finance approval and apply to the full open billing period.</div></div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Effective Policy (Inheritance)</h4>
     <div class="grouping-inherit" style="margin-bottom:20px">
       <div class="grouping-level"><span class="grouping-level-name">System Default</span><span class="grouping-level-value" style="color:var(--text-3)">Consolidated invoice</span><span class="grouping-level-source">Fallback</span></div>
-      <div class="grouping-level"><span class="grouping-level-name">BU Default</span><span class="grouping-level-value" style="color:var(--text-3)">Consolidated invoice</span><span class="grouping-level-source">BU-001 Residential</span></div>
-      <div class="grouping-level active"><span class="grouping-level-name">Account</span><span class="grouping-level-value">Split by Business Unit</span><span class="grouping-level-source">${pill('warn','Active override')}</span></div>
+      <div class="grouping-level"><span class="grouping-level-name">BU Default</span><span class="grouping-level-value" style="color:var(--text-3)">Consolidated invoice</span><span class="grouping-level-source">${gpCust?gpCust.bu+' '+gpCust.buName:'BU-001 Residential'}</span></div>
+      <div class="grouping-level ${gpCust&&gpCust.grouping!=='Consolidated'?'active':''}"><span class="grouping-level-name">Account</span><span class="grouping-level-value" ${gpCust&&gpCust.grouping!=='Consolidated'?'':'style="color:var(--text-3)"'}>${gpCust?gpCust.grouping:'Consolidated'}</span><span class="grouping-level-source">${gpCust&&gpCust.grouping!=='Consolidated'?pill('warn','Active override'):'Inherits BU'}</span></div>
       <div class="grouping-level"><span class="grouping-level-name">Subscription</span><span class="grouping-level-value" style="color:var(--text-3)">No override</span><span class="grouping-level-source">Inherits account</span></div>
     </div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:10px">Change Grouping</h4>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
-      ${GROUPING_POLICIES.map((p,i)=>`<label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid ${i===1?'var(--ember)':'var(--border)'};border-radius:8px;cursor:pointer;background:${i===1?'var(--ember-glow)':'var(--surface)'}">
-        <input type="radio" name="gp_radio" ${i===1?'checked':''} style="margin-top:2px">
+      ${GROUPING_POLICIES.map((p,i)=>`<label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid ${i===gpSaved?'var(--ember)':'var(--border)'};border-radius:8px;cursor:pointer;background:${i===gpSaved?'var(--ember-glow)':'var(--surface)'}">
+        <input type="radio" name="gp_radio" ${i===gpSaved?'checked':''} style="margin-top:2px">
         <div style="flex:1"><div style="font-weight:600;font-size:13px">${p.name}${p.requiresApproval?' <span style="font-size:11px;color:var(--warn)">(requires approval)</span>':''}</div><div class="mut" style="font-size:12px;margin-top:2px">${p.desc}</div></div>
         ${p.clientVisible?pill('muted','Client-visible'):''}
       </label>`).join('')}
     </div>
     <div class="val-banner warn">${svg(I.warning,14)} Changes apply to the entire open billing period (June 2026). After finalization, grouping changes require a credit/rebill correction.</div>
-    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Invoice grouping policy updated — applying to Jun 2026 open period">Apply Change</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="applygrouping" data-arg="${accountId||''}">Apply Change</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
   `);
 }
 
 function openCreditRebill(invoiceId){
   const inv = invoiceId && invoiceId!=='new' ? invoiceId : 'INV-2026-0843';
+  const rec = dbFindInvoice(inv) || db().credits.find(c=>c.id===inv);
+  const amt = rec ? rec.amt : 5800;
+  const fmtA = fmt2(amt), fmtTax = fmt2(Math.round(amt*0.0825*100)/100);
   openDrawer(`Credit / Rebill — ${inv}`, `
     <div class="val-banner error" style="margin-bottom:16px">${svg(I.warning,15)} <strong>Finalized invoices cannot be directly edited.</strong> Use credit/rebill to correct billing errors on finalized invoices. This creates an audit trail and triggers accounting entries.</div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:12px">Correction Type</h4>
@@ -154,13 +162,13 @@ function openCreditRebill(invoiceId){
     <div style="padding:12px 14px;border:1px solid var(--border);border-radius:8px;margin-top:12px;margin-bottom:16px">
       <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text-2)">Accounting Impact Preview</div>
       <div class="diff-pair">
-        <div class="diff-col before"><div class="diff-col-label">Will debit</div><div class="mono" style="font-size:12px">4000 · Revenue</div><div style="font-size:13px;font-weight:600;color:var(--neg);margin-top:2px">$5,800.00</div></div>
-        <div class="diff-col after"><div class="diff-col-label">Will credit</div><div class="mono" style="font-size:12px">1200 · Accounts Receivable</div><div style="font-size:13px;font-weight:600;color:var(--pos);margin-top:2px">$5,800.00</div></div>
+        <div class="diff-col before"><div class="diff-col-label">Will debit</div><div class="mono" style="font-size:12px">4000 · Revenue</div><div style="font-size:13px;font-weight:600;color:var(--neg);margin-top:2px">${fmtA}</div></div>
+        <div class="diff-col after"><div class="diff-col-label">Will credit</div><div class="mono" style="font-size:12px">1200 · Accounts Receivable</div><div style="font-size:13px;font-weight:600;color:var(--pos);margin-top:2px">${fmtA}</div></div>
       </div>
-      <div class="mut" style="font-size:11.5px;margin-top:8px">Tax reversal: −$478.50 will be credited against 2100 · Tax Payable</div>
+      <div class="mut" style="font-size:11.5px;margin-top:8px">Tax reversal: −${fmtTax} will be credited against 2100 · Tax Payable</div>
     </div>
-    <div class="val-banner warn">${svg(I.warning,14)} This correction requires Finance approval (amount &gt; $1,000). It will be queued for approval before the credit note is issued.</div>
-    <div class="form-actions"><button class="btn primary" data-act="toast" data-arg="Credit/rebill submitted for Finance approval — APR-2026-0115">Submit for Approval</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="val-banner warn">${svg(I.warning,14)} ${amt>1000?`This correction requires Finance approval (amount &gt; $1,000). It will be queued for approval before the credit note is issued.`:`Below the $1,000 approval threshold — the credit note is issued immediately on submit.`}</div>
+    <div class="form-actions"><button class="btn primary" data-act="submitcredit" data-arg="${inv}">Submit for Approval</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
   `);
 }
 
@@ -190,7 +198,7 @@ function openDraftValidation(invoiceId){
         <div class="mut" style="font-size:12.5px">2 product lines do not have confirmed GL account assignments for the Commercial BU. Invoices will export without GL codes until mappings are added.</div>
       </div>
     </div>
-    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Validation re-run started">Re-run Validation</button><button class="btn ghost" onclick="closeDrawer()">Close</button></div>
+    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="revalidate" data-arg="${invoiceId||'all'}">Re-run Validation</button><button class="btn ghost" onclick="closeDrawer()">Close</button></div>
   `);
 }
 
@@ -208,7 +216,7 @@ function openInvoiceFooterEditor(){
       ${BUS.slice(0,3).map(b=>`<div class="fg" style="margin-bottom:8px"><label>${b.name}</label><textarea class="finput" rows="2" placeholder="Leave blank to use default footer"></textarea></div>`).join('')}
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Invoice footer saved — applies to new invoices">Save Footer</button>
+      ${cfgSaveBtn('invoice-footer','Invoice footer saved — applies to new invoices','Save Footer')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
