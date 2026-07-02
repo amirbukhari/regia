@@ -38,7 +38,7 @@ VIEWS.permissions = (v)=>{
   };
   v.appendChild(el(`<div class="view">
     ${pageHead('Roles & Permissions','Team access control, role definitions, permission matrix',`
-      <button class="btn ghost" data-act="toast" data-arg="SCIM provisioning settings">${svg(I.plug,15)} SCIM/SSO</button>
+      <button class="btn ghost" data-act="workspacecard" data-arg="security|SCIM provisioning|Directory sync, just-in-time provisioning and deprovisioning rules">${svg(I.plug,15)} SCIM/SSO</button>
       <button class="btn primary" data-act="inviteusr">${svg(I.team,15)} Invite member</button>
     `)}
 
@@ -89,7 +89,7 @@ VIEWS.permissions = (v)=>{
         <span style="font-weight:650;font-size:13px">Team Members</span>
         <div style="display:flex;gap:8px">
           <span class="mut" style="font-size:12px;align-self:center">6 members · 1 pending</span>
-          <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="Export team roster">Export</button>
+          <button class="btn ghost" style="font-size:12px" data-act="download" data-arg="csv|Team Roster|All members · roles · MFA status">Export</button>
         </div>
       </div>
       <table class="data-table">

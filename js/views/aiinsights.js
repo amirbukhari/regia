@@ -98,7 +98,7 @@ VIEWS.aiinsights = (v)=>{
               ${svg(I.ai,13)}<span class="mut">${q}</span>
             </div>`).join('')}
         </div>
-        <button class="btn ghost" style="width:100%;margin-top:10px;justify-content:center" data-act="toast" data-arg="Opening AI query history">View all queries</button>
+        <button class="btn ghost" style="width:100%;margin-top:10px;justify-content:center" data-act="aiquery" data-arg="Which cohorts have net retention above 110%?">View all queries</button>
       </div>
     </div>
   </div>`));

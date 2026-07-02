@@ -39,7 +39,7 @@ function openIntegrationDetail(name){
     </div>
     <div class="form-actions">
       ${cfgSaveBtn('integ-'+name,name+' sync settings saved','Save settings')}
-      <button class="btn primary" data-act="toast" data-arg="${name} sync triggered manually">Sync Now</button>
+      <button class="btn primary" data-act="demoact" data-arg="${name} sync triggered — run logged in the activity feed">Sync Now</button>
       <button class="btn ghost" data-act="integeventlogs">View Event Log</button>
       <button class="btn ghost" onclick="closeDrawer()">Close</button>
     </div>
@@ -76,8 +76,8 @@ function openSDKDocs(lang){
   openDrawer(`${lang||'Node.js'} SDK Documentation`, `
     <div class="val-banner info" style="margin-bottom:14px">${svg(I.api,14)} Documentation opens in a new tab. The SDK reference is hosted at docs.delonix.io.</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      ${['Node.js / TypeScript','Python','Ruby','PHP','Go','REST API Reference'].map((s,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--surface)${lang===s?' border-color:var(--ember);background:var(--ember-glow)':''}" data-act="toast" data-arg="Opening ${s} docs">
-        <span style="font-size:18px">${['🟢','🐍','💎','🐘','🔵','📖'][i]}</span>
+      ${['Node.js / TypeScript','Python','Ruby','PHP','Go','REST API Reference'].map((s,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--surface)${lang===s?' border-color:var(--ember);background:var(--ember-glow)':''}" data-act="copy" data-arg="https://docs.delonix.io/sdk/${s.toLowerCase().replace(/[^a-z]+/g,'-')}">
+        <span style="display:inline-flex;color:var(--ember)">${svg(I.api,18)}</span>
         <div><div style="font-weight:600;font-size:13px">${s}</div><div class="mut" style="font-size:11.5px">docs.delonix.io/sdk/${s.toLowerCase().replace(/[^a-z]/g,'-')}</div></div>
         <span class="mut" style="margin-left:auto">${svg('<polyline points="9 18 15 12 9 6"/>',14)}</span>
       </div>`).join('')}

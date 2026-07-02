@@ -43,8 +43,8 @@ VIEWS.calculator = (v)=>{
           </div>
           <div style="display:flex;gap:8px">
             <button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="editcalculator" data-arg="${c.id}">${svg(I.settings,13)} Edit</button>
-            ${c.status==='published'?`<button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="toast" data-arg="Copied embed code for ${c.name}">${svg(I.api,13)} Embed</button>`:''}
-            <button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="toast" data-arg="Opening preview for ${c.name}">${svg(I.portal,13)} Preview</button>
+            ${c.status==='published'?`<button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="copy" data-arg="&lt;script src=&quot;https://${c.url}/embed.js&quot;&gt;&lt;/script&gt;">${svg(I.api,13)} Embed</button>`:''}
+            <button class="btn ghost" style="flex:1;justify-content:center;font-size:12px" data-act="editcalculator" data-arg="${c.id}">${svg(I.portal,13)} Preview</button>
           </div>
         </div>`).join('')}
     </div>
@@ -64,7 +64,7 @@ VIEWS.calculator = (v)=>{
             <div class="fg" style="margin-bottom:10px">
               <label style="font-size:12px;font-weight:600;display:flex;justify-content:space-between">
                 ${f.label}
-                <span class="mut" style="font-size:11px;cursor:pointer" data-act="toast" data-arg="Field settings for ${f.label}" role="button" aria-label="Field settings for ${f.label}">${svg(I.settings,12)}</span>
+                <span class="mut" style="font-size:11px;cursor:pointer" data-act="addcalcfield" data-arg="${f.label}" role="button" aria-label="Field settings for ${f.label}">${svg(I.settings,12)}</span>
               </label>
               ${f.type==='slider'?`
                 <input type="range" class="finput" min="${f.min}" max="${f.max}" step="${f.step||1}" value="${f.val}" style="padding:4px 0;height:auto">
@@ -103,7 +103,7 @@ VIEWS.calculator = (v)=>{
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end">
             <button class="btn ghost" data-act="editformulas" data-arg="">Edit formulas</button>
-            <button class="btn ghost" data-act="toast" data-arg="Copied embed code">Copy embed</button>
+            <button class="btn ghost" data-act="copy" data-arg="&lt;script src=&quot;https://calc.delonix.io/embed.js&quot;&gt;&lt;/script&gt;">Copy embed</button>
             <button class="btn primary" data-act="publishcalc" data-arg="enterprise-roi">Publish changes</button>
           </div>
         </div>

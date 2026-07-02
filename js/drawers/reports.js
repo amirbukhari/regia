@@ -196,7 +196,7 @@ function openAIQuery(q){
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       ${['Show breakdown','Chart over time','Export to CSV','Add to report'].map(s=>`
-        <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="${s} — ${query.slice(0,50)}">${s}</button>`).join('')}
+        <button class="btn ghost" style="font-size:12px" data-act="aiquery" data-arg="${s} for: ${query.slice(0,60)}">${s}</button>`).join('')}
     </div>
     <div class="form-actions">
       <button class="btn primary" data-act="savereport" data-arg="AI query — ${query.slice(0,40)}|CSV">Save as report</button>

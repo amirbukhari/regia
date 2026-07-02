@@ -48,7 +48,7 @@ function openEditCalculator(id){
     </div>
     <div class="form-actions" style="margin-top:16px">
       <button class="btn primary" data-act="demoact" data-arg="${c.name} changes published to ${c.url==='—'?'draft':c.url}">Publish changes</button>
-      <button class="btn ghost" data-act="toast" data-arg="Opening full builder editor">Open full editor</button>
+      <button class="btn ghost" data-act="route" data-arg="calculator">Open full editor</button>
       <button class="btn ghost" onclick="closeDrawer()">Close</button>
     </div>
   `);

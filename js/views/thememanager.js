@@ -36,7 +36,7 @@ VIEWS.thememanager = (v)=>{
           <div class="panel-title" style="margin-bottom:14px">Typography</div>
           <div style="display:flex;flex-direction:column;gap:8px">
             ${fonts.map(f=>`
-              <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r-sm);border:1px solid var(--border);cursor:pointer" data-act="toast" data-arg="Font set to ${f.label}">
+              <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r-sm);border:1px solid var(--border);cursor:pointer" data-act="toast" data-arg="${f.label} ships with the production font pack — the demo uses Plus Jakarta Sans">
                 <div style="width:34px;height:34px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">Aa</div>
                 <div style="flex:1"><div style="font-weight:600;font-size:12px">${f.label}</div><div class="mut" style="font-size:11px">${f.note}</div></div>
                 <span class="mut" style="font-size:12px;font-style:italic">${f.preview}</span>
@@ -49,12 +49,12 @@ VIEWS.thememanager = (v)=>{
         <div class="card panel" style="margin-bottom:16px">
           <div class="panel-title" style="margin-bottom:14px">Logo & wordmark</div>
           <div style="display:flex;gap:12px;margin-bottom:14px">
-            <div style="flex:1;border:1px dashed var(--border);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer" data-act="toast" data-arg="Logo upload dialog">
+            <div style="flex:1;border:1px dashed var(--border);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer" data-act="toast" data-arg="File uploads are disabled in this demo build">
               <div style="font-size:24px;margin-bottom:4px">⬆</div>
               <div style="font-size:12px;font-weight:600">Upload logo</div>
               <div class="mut" style="font-size:11px">SVG, PNG · max 512KB</div>
             </div>
-            <div style="flex:1;border:1px dashed var(--border);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer" data-act="toast" data-arg="Favicon upload dialog">
+            <div style="flex:1;border:1px dashed var(--border);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer" data-act="toast" data-arg="File uploads are disabled in this demo build">
               <div style="font-size:24px;margin-bottom:4px">⬆</div>
               <div style="font-size:12px;font-weight:600">Upload favicon</div>
               <div class="mut" style="font-size:11px">ICO, PNG 32×32</div>

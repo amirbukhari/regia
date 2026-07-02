@@ -74,8 +74,6 @@ VIEWS.usage = (v)=>{
       </div>`,
     'Event Explorer': `
       <div class="toolbar" style="margin-bottom:12px">
-        <span class="chip" data-act="toast" data-arg="Filter by source">${svg(I.filter,13)} Source</span>
-        <span class="chip" data-act="toast" data-arg="Filter by status">${svg(I.filter,13)} Status</span>
         <span class="chip" data-act="daterange" data-arg="custom">${svg(I.filter,13)} Time range</span>
         <div class="spacer"></div>
         <span class="mut" style="font-size:12px">Showing last 500 events</span>
@@ -103,7 +101,7 @@ VIEWS.usage = (v)=>{
           <td class="mut">${e.src}</td><td>${e.acct}</td><td>${e.product}</td>
           <td style="color:var(--neg);font-size:12px">${e.reason}</td>
           <td class="mut tnum" style="font-size:11.5px">${e.received}</td>
-          <td style="display:flex;gap:6px"><button class="btn ghost" style="padding:4px 9px;font-size:11px" data-act="migrationdetail" data-arg="${e.id}">Fix Mapping</button><button class="btn ghost" style="padding:4px 9px;font-size:11px" data-act="toast" data-arg="Event ${e.id} ignored">Ignore</button></td>
+          <td style="display:flex;gap:6px"><button class="btn ghost" style="padding:4px 9px;font-size:11px" data-act="migrationdetail" data-arg="${e.id}">Fix Mapping</button><button class="btn ghost" style="padding:4px 9px;font-size:11px" data-act="ignoreevent" data-arg="${e.id}">Ignore</button></td>
         </tr>`).join('')}</tbody>
         </table>
       </div>`,

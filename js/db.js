@@ -657,6 +657,88 @@ function setBuilderRange(label, t){
   toast(`Date range set to ${label}`);
 }
 
+function auditPage(dir){
+  window._auditPage = Math.max(1, Math.min(2, (window._auditPage||1) + dir));
+  if(typeof window._renderAuditRows === 'function') window._renderAuditRows();
+}
+function dbRemoveMember(name){
+  const idx = db().added.members.findIndex(m=>m.name===name);
+  if(idx >= 0){
+    db().added.members.splice(idx,1);
+    dbActivity(`removed invited member ${name}`);
+    closeDrawer();
+    dbRefresh(`${name} removed from the team`);
+  } else {
+    toast('Seed team members can\'t be removed in the demo — invited members can.');
+  }
+}
+function addApprovalRule(t){
+  const tbody = document.querySelector('#drawer table tbody');
+  if(!tbody) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input class="finput" value="Invoice > $25,000" style="font-size:12px;padding:5px 8px"></td>
+    <td><input class="finput" value="VP Finance" style="font-size:12px;padding:5px 8px"></td>
+    <td><input class="finput" value="24h" style="font-size:12px;padding:5px 8px;max-width:64px"></td>
+    <td><div class="toggle on" data-act="toggle"><i></i></div></td>`;
+  tbody.appendChild(tr);
+  toast('Rule row added — set the threshold and save');
+}
+function switchEntity(arg){
+  const [name, region] = (arg||'').split('|');
+  db().config['shell-entity'] = arg;
+  dbActivity(`switched workspace to ${name}`);
+  dbSave();
+  const el = document.getElementById('entLabel');
+  if(el) el.innerHTML = `${name} <b>${region}</b>`;
+  closeDrawer();
+  toast(`Workspace switched to ${name} — ${region}`);
+}
+function setCurrency(code){
+  const sym = {USD:'$',EUR:'€',GBP:'£',SGD:'S$',CAD:'C$'}[code] || '';
+  db().config['shell-currency'] = code;
+  dbActivity(`set display currency to ${code}`);
+  dbSave();
+  const el = document.getElementById('curLabel');
+  if(el) el.innerHTML = `<b>${code} ${sym}</b>`;
+  closeDrawer();
+  toast(`Display currency set to ${code} — figures convert at daily reference rates`);
+}
+function dbRestoreShell(){
+  const ent = db().config['shell-entity'];
+  if(ent){ const [name, region] = ent.split('|'); const el = document.getElementById('entLabel'); if(el) el.innerHTML = `${name} <b>${region}</b>`; }
+  const cur = db().config['shell-currency'];
+  if(cur){ const sym = {USD:'$',EUR:'€',GBP:'£',SGD:'S$',CAD:'C$'}[cur]||''; const el = document.getElementById('curLabel'); if(el) el.innerHTML = `<b>${cur} ${sym}</b>`; }
+}
+function setPortalAccent(color, t){
+  db().config['portal-accent'] = color;
+  dbSave();
+  const prev = document.getElementById('portalPreview');
+  if(prev) prev.style.setProperty('--portal-accent', color);
+  document.querySelectorAll('[data-act="portalaccent"]').forEach(s=>s.style.outline = s===t ? '2px solid var(--text)' : 'none');
+  toast(`Portal accent set to ${color} — preview updated`);
+}
+function switchCustomEntity(name, t){
+  window._ceActive = name;
+  document.querySelectorAll('[data-act="ceswitch"]').forEach(el=>el.classList.toggle('active', el===t));
+  const title = document.getElementById('ceFieldsTitle');
+  if(title) title.textContent = `Fields — ${name}`;
+  const body = document.getElementById('ceFieldsBody');
+  if(body && typeof window._ceFieldsRows === 'function') body.innerHTML = window._ceFieldsRows(name);
+  toast(`Showing ${name} entity`);
+}
+
+function dbDeleteField(name){
+  const idx = db().added.fields.findIndex(f=>f.name===name);
+  if(idx >= 0){
+    db().added.fields.splice(idx,1);
+    dbActivity(`deleted field ${name} from Property entity`);
+    closeDrawer();
+    dbRefresh(`Field ${name} deleted`);
+  } else {
+    toast(`${name} is part of the seed schema — only fields you added can be deleted in the demo`);
+  }
+}
+
 function dbResetDemo(){
   dbReset();
   toast('Demo data reset to defaults');

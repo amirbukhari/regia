@@ -15,12 +15,44 @@ VIEWS.auditlog = (v)=>{
     {ts:'2026-06-27 11:05:33',type:'Invoice voided',user:'D. Cho',resource:'INV-2026-0788',ip:'10.0.0.8',sev:'high',detail:'$39,750 voided — disputed'},
     {ts:'2026-06-26 09:44:21',type:'Revenue rec. rule modified',user:'P. Anand',resource:'ASC-606 SaaS',ip:'10.0.0.4',sev:'high',detail:'Recognition start offset: 0 → 30 days'},
   ];
+  const olderEvents=[
+    {ts:'2026-06-27 17:22:41',type:'Invoice sent',user:'M. Reyes',resource:'INV-2026-0838',ip:'10.0.0.12',sev:'low',detail:'$2,950 to Cascade Analytics'},
+    {ts:'2026-06-27 16:04:19',type:'Refund issued',user:'D. Cho',resource:'PAY-94186',ip:'10.0.0.8',sev:'medium',detail:'$400 refund to Solstice Media'},
+    {ts:'2026-06-27 14:47:52',type:'Login',user:'P. Anand',resource:'Web session',ip:'10.0.0.4',sev:'low',detail:'SSO · SAML assertion verified'},
+    {ts:'2026-06-27 11:31:08',type:'API key used',user:'CI/CD Bot',resource:'sk_live_••••a9Fd',ip:'10.0.2.14',sev:'low',detail:'812 requests · 0 errors'},
+    {ts:'2026-06-26 18:09:33',type:'Dunning escalation',user:'System',resource:'Apex Systems',ip:'—',sev:'medium',detail:'Sequence advanced to day 14'},
+    {ts:'2026-06-26 15:44:27',type:'Credit note issued',user:'M. Reyes',resource:'CN-2026-112',ip:'10.0.0.12',sev:'medium',detail:'$4,200 service credit — Apex Systems'},
+    {ts:'2026-06-26 10:12:55',type:'Config change',user:'A. Bukhari',resource:'Dunning sequence',ip:'10.0.0.1',sev:'high',detail:'Day-21 suspension warning enabled'},
+    {ts:'2026-06-25 19:38:14',type:'Data export',user:'Auditor',resource:'Audit log CSV',ip:'10.0.3.7',sev:'medium',detail:'Q2 events exported for review'},
+    {ts:'2026-06-25 13:26:49',type:'Invoice voided',user:'M. Reyes',resource:'INV-2026-0833',ip:'10.0.0.12',sev:'medium',detail:'Duplicate — credit note CN-2026-105'},
+    {ts:'2026-06-25 09:15:22',type:'Payment failed',user:'System',resource:'PAY-94197',ip:'—',sev:'medium',detail:'Card declined — insufficient funds'},
+    {ts:'2026-06-24 16:58:37',type:'Role created',user:'A. Bukhari',resource:'Auditor (read-only)',ip:'10.0.0.1',sev:'high',detail:'Scoped to Reports · no PII'},
+    {ts:'2026-06-24 08:41:11',type:'Billing run',user:'System',resource:'RUN-2026-06-USAGE',ip:'—',sev:'low',detail:'318 accounts rated · 0 blocking errors'},
+  ];
+  const allEvents=[...events, ...olderEvents];
+
   const sevStyle={critical:'var(--crit)',high:'var(--warn)',medium:'var(--ember-soft)',low:'var(--text-3)'};
   const sevPill=s=>`<span class="pill ${s==='critical'?'crit':s==='high'?'warn':'muted'}" style="font-size:10px">${s}</span>`;
+  const auditRowsFor = (page) => allEvents.slice((page-1)*12, page*12).map(e=>`<tr>
+              <td class="mono mut" style="font-size:11px">${e.ts}</td>
+              <td style="font-weight:500;font-size:12px">${e.type}</td>
+              <td style="font-size:12px">${e.user}</td>
+              <td class="mut" style="font-size:12px">${e.resource}</td>
+              <td class="mono mut" style="font-size:11px">${e.ip}</td>
+              <td>${sevPill(e.sev)}</td>
+              <td style="text-align:right"><button class="btn ghost" style="font-size:11px;padding:3px 8px" data-act="auditdetail" data-arg="${e.type}">View</button></td>
+            </tr>`).join('');
+  window._auditPage = 1;
+  window._renderAuditRows = () => {
+    const body = document.getElementById('auditBody');
+    if(body) body.innerHTML = auditRowsFor(window._auditPage||1);
+    const info = document.getElementById('auditPageInfo');
+    if(info) info.textContent = `Page ${window._auditPage||1} of 2 · 24 events loaded of 4,218 · Retention: 2 years`;
+  };
   v.appendChild(el(`<div class="view">
     ${pageHead('Audit Log','Complete activity record across the platform — immutable, tamper-evident',`
-      <button class="btn ghost" data-act="toast" data-arg="Configuring SIEM export…">${svg(I.plug,15)} SIEM export</button>
-      <button class="btn ghost" data-act="toast" data-arg="Downloading audit log CSV…">${svg(I.download,15)} Export CSV</button>
+      <button class="btn ghost" data-act="workspacecard" data-arg="security|SIEM export|Streaming destination, event filter, format and delivery guarantees">${svg(I.plug,15)} SIEM export</button>
+      <button class="btn ghost" data-act="download" data-arg="csv|Audit Log|24 events · Jun 2026">${svg(I.download,15)} Export CSV</button>
     `)}
 
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
@@ -49,24 +81,16 @@ VIEWS.auditlog = (v)=>{
             <th style="width:90px">Severity</th>
             <th></th>
           </tr></thead>
-          <tbody>
-            ${events.map(e=>`<tr>
-              <td class="mono mut" style="font-size:11px">${e.ts}</td>
-              <td style="font-weight:500;font-size:12px">${e.type}</td>
-              <td style="font-size:12px">${e.user}</td>
-              <td class="mut" style="font-size:12px">${e.resource}</td>
-              <td class="mono mut" style="font-size:11px">${e.ip}</td>
-              <td>${sevPill(e.sev)}</td>
-              <td style="text-align:right"><button class="btn ghost" style="font-size:11px;padding:3px 8px" data-act="auditdetail" data-arg="${e.type}">View</button></td>
-            </tr>`).join('')}
+          <tbody id="auditBody">
+            ${auditRowsFor(1)}
           </tbody>
         </table>
       </div>
       <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        <span class="mut" style="font-size:12px">Showing 12 of 4,218 events · Retention: 2 years</span>
+        <span class="mut" style="font-size:12px" id="auditPageInfo">Page 1 of 2 · 24 events loaded of 4,218 · Retention: 2 years</span>
         <div style="display:flex;gap:8px">
-          <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="Previous page">← Prev</button>
-          <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="Next page">Next →</button>
+          <button class="btn ghost" style="font-size:12px" data-act="auditpage" data-arg="-1">← Prev</button>
+          <button class="btn ghost" style="font-size:12px" data-act="auditpage" data-arg="1">Next →</button>
         </div>
       </div>
     </div>

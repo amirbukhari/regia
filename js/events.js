@@ -29,6 +29,24 @@ document.addEventListener('click',e=>{
   if(a==='setpricebookdefault') return dbSetDefaultPricebook(arg);
   if(a==='applygrouping') return dbApplyGrouping(arg);
   if(a==='demoact') return demoAct(arg);
+  if(a==='dashseries'){ window._dashSeries=arg; document.querySelectorAll('#dashSeg button').forEach(b=>b.classList.toggle('on',b===t)); return drawRevChart(); }
+  if(a==='consoview'){ document.querySelectorAll('#consoSeg button').forEach(b=>b.classList.toggle('on',b===t)); const b=document.getElementById('consoBody'); if(b) b.innerHTML = arg==='group' ? window._consoGroupRows : window._consoEntityRows; return; }
+  if(a==='auditpage') return auditPage(+arg);
+  if(a==='ignoreevent'){ const tr=t.closest('tr'); if(tr) tr.remove(); dbActivity('ignored usage event '+arg); dbSave(); return toast('Event '+arg+' ignored — removed from the failed queue'); }
+  if(a==='removemember') return dbRemoveMember(arg);
+  if(a==='addrule') return addApprovalRule(t);
+  if(a==='switchentity') return switchEntity(arg);
+  if(a==='setcurrency') return setCurrency(arg);
+  if(a==='portalaccent') return setPortalAccent(arg, t);
+  if(a==='ceswitch') return switchCustomEntity(arg, t);
+  if(a==='deletefield') return dbDeleteField(arg);
+  if(a==='readall'){
+    document.querySelectorAll('#drawer .notif-list > *').forEach(n=>n.style.opacity='.55');
+    const d=document.querySelector('[data-act="notifications"] .dot'); if(d) d.remove();
+    const u=document.getElementById('notifUnread'); if(u) u.textContent='0 unread';
+    dbActivity('marked all notifications read'); dbSave();
+    return toast('All notifications marked read');
+  }
   if(a==='copy') return copyText(arg);
   if(a==='addline') return addLineRow(t);
   if(a==='removeline') return removeLineRow(t);

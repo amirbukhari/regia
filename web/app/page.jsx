@@ -84,8 +84,8 @@ function Topbar() {
         <div className="cmd-menu" id="cmdMenu"></div>
       </div>
       <div className="spacer"></div>
-      <div className="pill-select ent" data-act="entityswitch"><span className="ent-dot"></span>Delonix Inc <b>North America</b><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg></div>
-      <div className="pill-select">Currency <b>USD $</b>{' '}
+      <div className="pill-select ent" data-act="entityswitch"><span className="ent-dot"></span><span id="entLabel">Delonix Inc <b>North America</b></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg></div>
+      <div className="pill-select" data-act="currencypanel">Currency <span id="curLabel"><b>USD $</b></span>{' '}
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>{' '}
       </div>
       <div className="topbar-status" title="Revenue operations status"><span className="dotg"></span><span>Ops healthy</span></div>

@@ -7,7 +7,7 @@ function openEntitySwitch(){
     {flag:'🇸🇬',name:'Delonix APAC',sub:'Asia-Pacific · SGD',subs:88,mrr:'S$54,200',active:false},
   ];
   openDrawer('Switch Workspace',`
-    ${entities.map(e=>`<div class="entity-card${e.active?' active':''}" data-act="${e.active?'toast':'toast'}" data-arg="${e.active?'Already on '+e.name:'Switched to '+e.name}">
+    ${entities.map(e=>`<div class="entity-card${e.active?' active':''}" data-act="switchentity" data-arg="${e.name}|${e.sub.split(' · ')[0]}">
       <div class="entity-flag">${e.flag}</div>
       <div class="entity-info"><div class="entity-name">${e.name}</div>
         <div class="entity-meta">${e.sub} · ${e.subs} subscriptions · MRR ${e.mrr}</div></div>
@@ -244,7 +244,7 @@ function openEditField(name){
     </div>
     <div class="form-actions" style="margin-top:16px">
       ${cfgSaveBtn('field-'+(name||'property_class'),`Field ${name||'property_class'} updated`,'Save changes')}
-      <button class="btn crit" style="margin-left:auto" data-act="toast" data-arg="Field deletion requires confirmation — ${name} will be removed from all records">Delete field</button>
+      <button class="btn crit" style="margin-left:auto" data-act="deletefield" data-arg="${name}">Delete field</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -268,7 +268,7 @@ function openAddCalcField(){
       <div><label class="lbl">Tooltip help text</label><input class="input" placeholder="Explain what this field means…" style="width:100%"></div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="Input field added">Add field</button>
+        <button class="btn primary" data-act="demoact" data-arg="Input field added to the calculator draft">Add field</button>
       </div>
     </div>
   `);

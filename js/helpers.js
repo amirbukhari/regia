@@ -8,6 +8,7 @@ function enterApp(e){ if(e) e.preventDefault();
   document.getElementById('splash').classList.add('hide');
   const app=document.getElementById('app'); app.classList.add('show');
   buildNav(); route('dashboard');
+  if(typeof dbRestoreShell==='function') dbRestoreShell();
 }
 function signOut(){ document.getElementById('app').classList.remove('show'); document.getElementById('splash').classList.remove('hide'); }
 

@@ -1,13 +1,25 @@
 /* delonix — reports.js */
 
 VIEWS.reports = (v)=>{
+  const REP_SNAP = {
+    MTD: {sub:'June 2026 · MTD', rows:[['Net Revenue','$329,400','MTD collected',6.8],['Gross Revenue','$487,200','invoiced MTD',5.1],['MRR','$418,350','Jun 2026',4.2],['ARR','$5.02M','run rate',6.1],['Gross Churn','1.8%','revenue churn',-0.4],['Expansion MRR','$28,400','upsell & seat adds',12.3],['DSO','28 days','days sales outstanding',-3.1],['Collection Rate','96.2%','MTD payments',0.6],['Invoice Count','172','issued MTD',2.4],['Avg Invoice','$2,840','per issued invoice',2.6],['CAC','$4,100','blended, Jun',-5.0],['LTV:CAC','8.4×','trailing cohort',3.1]]},
+    QTD: {sub:'Q2 2026 · QTD', rows:[['Net Revenue','$948,700','QTD collected',5.9],['Gross Revenue','$1.41M','invoiced QTD',4.8],['MRR','$418,350','Jun 2026',4.2],['ARR','$5.02M','run rate',6.1],['Gross Churn','2.1%','revenue churn',-0.2],['Expansion MRR','$81,200','upsell & seat adds',10.8],['DSO','29 days','days sales outstanding',-2.2],['Collection Rate','95.8%','QTD payments',0.4],['Invoice Count','501','issued QTD',2.1],['Avg Invoice','$2,815','per issued invoice',1.9],['CAC','$4,240','blended, Q2',-3.8],['LTV:CAC','8.1×','trailing cohort',2.6]]},
+    YTD: {sub:'2026 · YTD', rows:[['Net Revenue','$1.86M','YTD collected',6.4],['Gross Revenue','$2.74M','invoiced YTD',5.5],['MRR','$418,350','Jun 2026',4.2],['ARR','$5.02M','run rate',6.1],['Gross Churn','2.3%','revenue churn',-0.5],['Expansion MRR','$156,800','upsell & seat adds',11.4],['DSO','30 days','days sales outstanding',-1.8],['Collection Rate','95.4%','YTD payments',0.5],['Invoice Count','987','issued YTD',2.8],['Avg Invoice','$2,776','per issued invoice',1.6],['CAC','$4,380','blended, YTD',-2.9],['LTV:CAC','7.9×','trailing cohort',2.2]]},
+  };
+  const repSnapFor = (range) => REP_SNAP[range].rows.map(([l,vv,s,tr])=>kpi(l,vv,s,{trend:tr,accent:l==='MRR'})).join('');
+  window._setRepRange = (range, btn) => {
+    document.querySelectorAll('#reportRangeSeg button').forEach(b=>b.classList.toggle('on', b===btn));
+    document.getElementById('repSnapGrid').innerHTML = repSnapFor(range);
+    document.getElementById('repSnapSub').textContent = REP_SNAP[range].sub;
+    countUpKPIs();
+  };
   v.appendChild(el(`<div class="view">
     ${pageHead('Reports & analytics',
       'Board-ready financial reporting, SaaS metrics and data exports — June 2026',
       `<div class="seg" id="reportRangeSeg">
-        <button class="on" data-act="toast" data-arg="Showing month-to-date data">MTD</button>
-        <button data-act="toast" data-arg="Switching to quarter-to-date">QTD</button>
-        <button data-act="toast" data-arg="Switching to year-to-date">YTD</button>
+        <button class="on" onclick="window._setRepRange('MTD',this)">MTD</button>
+        <button onclick="window._setRepRange('QTD',this)">QTD</button>
+        <button onclick="window._setRepRange('YTD',this)">YTD</button>
         <button data-act="daterange" data-arg="custom">Custom</button>
       </div>
       <button class="btn ghost" data-act="schedulereport">${svg(I.settings,15)} Schedule</button>
@@ -100,21 +112,9 @@ VIEWS.reports = (v)=>{
     <div class="two-col" style="margin-bottom:16px;align-items:start">
       <div>
         <div class="card panel">
-          <div class="panel-head"><h3>Metric snapshot</h3><span class="sub">June 2026 · MTD unless noted</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            ${kpi('Net Revenue','$329,400','MTD collected',{trend:6.8})}
-            ${kpi('Gross Revenue','$487,200','invoiced MTD',{trend:5.1})}
-            ${kpi('MRR','$418,350','Jun 2026',{trend:4.2,accent:true})}
-            ${kpi('ARR','$5.02M','run rate',{trend:6.1})}
-            ${kpi('Gross Churn','1.8%','revenue churn',{trend:-0.4})}
-            ${kpi('Expansion MRR','$28,400','upsell & seat adds',{trend:12.3})}
-            ${kpi('DSO','28 days','days sales outstanding',{trend:-3.1})}
-            ${kpi('Collection Rate','96.2%','MTD payments',{trend:0.6})}
-            ${kpi('Invoice Count','172','issued MTD',{trend:2.4})}
-            ${kpi('Avg Invoice','$2,840','per issued invoice',{trend:2.6})}
-            ${kpi('CAC','$4,100','blended, Jun',{trend:-5.0})}
-            ${kpi('LTV','$17,220','blended, trailing',{trend:3.2})}
-          </div>
+          <div class="panel-head"><h3>Metric snapshot</h3><span class="sub" id="repSnapSub">June 2026 · MTD</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="repSnapGrid">${repSnapFor('MTD')}
+          </div>iv>
         </div>
       </div>
 

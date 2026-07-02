@@ -65,7 +65,7 @@ function openQuoteDetail(arg){
       <div style="display:flex;gap:8px;margin-top:22px">
         ${stage==='Signed'
           ? `<button class="btn primary" style="flex:1;justify-content:center" data-act="subdetail" data-arg="${acct}">View subscription</button>`
-          : `<button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="${id} sent to ${acct} for signature">${stage==='Negotiation'?'Send for signature':'Send to customer'}</button>`}
+          : `<button class="btn primary" style="flex:1;justify-content:center" data-act="demoact" data-arg="${id} sent to ${acct} for signature — delivery logged">${stage==='Negotiation'?'Send for signature':'Send to customer'}</button>`}
         <button class="btn" data-act="download" data-arg="pdf|${id} Quote|${acct} · ${fmt(value)}">${svg(I.download,15)} PDF</button>
       </div>
     </div>`);

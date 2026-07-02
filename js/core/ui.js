@@ -31,7 +31,7 @@ function themeColors(){
 function drawRevChart(){
   const c=document.getElementById('revChart'); if(!c)return;
   const {x,w,h}=dpi(c); const pad={l:44,r:12,t:16,b:26};
-  const data=revenueSeries, prior=data.map((d,i)=>Math.round(d*(0.82-i*0.004))); // prior-year shadow
+  const data=(window._dashSeries==='mrr'&&typeof mrrSeries!=='undefined')?mrrSeries:revenueSeries, prior=data.map((d,i)=>Math.round(d*(0.82-i*0.004))); // prior-year shadow
   const max=Math.max(...data)*1.12, min=170;
   const X=i=>pad.l+(w-pad.l-pad.r)*i/(data.length-1);
   const Y=val=>pad.t+(h-pad.t-pad.b)*(1-(val-min)/(max-min));

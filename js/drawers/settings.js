@@ -13,8 +13,8 @@ function openNotifications(){
   ];
   openDrawer('Notifications',`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <span style="font-size:12px;color:var(--text-3)">8 unread</span>
-      <button class="btn ghost" style="padding:4px 10px;font-size:12px" data-act="toast" data-arg="All notifications marked as read">Mark all read</button>
+      <span style="font-size:12px;color:var(--text-3)" id="notifUnread">8 unread</span>
+      <button class="btn ghost" style="padding:4px 10px;font-size:12px" data-act="readall">Mark all read</button>
     </div>
     <div class="notif-list">
       ${notifs.map(n=>`<button class="notif-item" data-act="${n.act}" data-arg="${n.arg}">
@@ -37,7 +37,7 @@ function openCurrencyPanel(){
   ];
   openDrawer('Display Currency',`
     <p style="font-size:12px;color:var(--text-3);margin-bottom:14px">Display only — invoices are billed in their contract currency.</p>
-    ${currencies.map(c=>`<div class="entity-card${c.active?' active':''}" data-act="toast" data-arg="Display currency set to ${c.code}">
+    ${currencies.map(c=>`<div class="entity-card${c.active?' active':''}" data-act="setcurrency" data-arg="${c.code}">
       <span style="font-size:20px">${c.flag}</span>
       <div class="entity-info"><div class="entity-name">${c.name}</div>
         <div class="entity-meta">${c.code} · 1 USD = ${c.rate} ${c.code}</div></div>
@@ -61,7 +61,7 @@ function openApprovalRules(){
         <td class="mut">${r.sla}</td>
         <td><div class="toggle${r.active?' on':''}" data-act="toggle"><i></i></div></td></tr>`).join('')}
     </tbody></table></div>
-    <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="New approval rule added">+ Add rule</button>
+    <button class="btn ghost" style="font-size:12px" data-act="addrule">+ Add rule</button>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
       ${cfgSaveBtn('approval-rules','Approval rules saved','Save rules')}
@@ -130,7 +130,7 @@ function openMigrationDetail(id){
         <div class="fg"><label>Records exported</label><div class="tnum">${ss.recordsExported}</div></div>
         <div class="fg"><label>Status</label><div>${pill('good','Healthy')}</div></div>`}
       </div>
-      <div class="form-actions" style="margin-top:16px">${acquired?`<button class="btn primary" data-act="route" data-arg="migration">Open mapping queue</button>`:`<button class="btn primary" data-act="toast" data-arg="${ss.name} sync triggered">Sync now</button>`}<button class="btn ghost" onclick="closeDrawer()">Close</button></div>`);
+      <div class="form-actions" style="margin-top:16px">${acquired?`<button class="btn primary" data-act="route" data-arg="migration">Open mapping queue</button>`:`<button class="btn primary" data-act="demoact" data-arg="${ss.name} sync triggered — run logged in the activity feed">Sync now</button>`}<button class="btn ghost" onclick="closeDrawer()">Close</button></div>`);
     return;
   }
   if(id==='bulk'){
@@ -205,7 +205,7 @@ function openLogoUpload(){
     </div>
     <div style="margin-bottom:14px">
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">BUSINESS UNIT OVERRIDES</div>
-      ${BUS.slice(0,3).map(b=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="bu-badge"><span class="bu-dot" style="background:${b.color}"></span>${b.name}</span><span class="mut" style="font-size:12px;flex:1">Using default logo</span><button class="btn ghost" style="font-size:11px;padding:3px 8px" data-act="toast" data-arg="Logo upload for ${b.name}">Upload</button></div>`).join('')}
+      ${BUS.slice(0,3).map(b=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="bu-badge"><span class="bu-dot" style="background:${b.color}"></span>${b.name}</span><span class="mut" style="font-size:12px;flex:1">Using default logo</span><button class="btn ghost" style="font-size:11px;padding:3px 8px" data-act="toast" data-arg="File uploads are disabled in this demo build">Upload</button></div>`).join('')}
     </div>
     <div class="val-banner info" style="margin:2px 0 12px">${svg(I.warning,14)} File uploads are disabled in this demo build — logo changes require the production asset pipeline.</div>
     <div class="form-actions"><button class="btn primary" disabled style="opacity:.45;cursor:not-allowed" aria-disabled="true" title="Uploads are disabled in the demo">Save</button><button class="btn ghost" onclick="closeDrawer()">Close</button></div>
@@ -289,10 +289,10 @@ function openEditMember(name){
         </div>
       </div>
       <div style="display:flex;gap:8px;justify-content:space-between;margin-top:4px">
-        <button class="btn ghost" style="color:var(--crit)" data-act="toast" data-arg="Removed ${name} from team">Remove member</button>
+        <button class="btn ghost" style="color:var(--crit)" data-act="removemember" data-arg="${name}">Remove member</button>
         <div style="display:flex;gap:8px">
           <button class="btn ghost" data-act="close">Cancel</button>
-          <button class="btn primary" data-act="toast" data-arg="Member '${name}' updated">Save</button>
+          ${cfgSaveBtn('member-'+name,`Member '${name}' updated`,'Save')}
         </div>
       </div>
     </div>
@@ -328,7 +328,7 @@ function openAuditDetail(eventType){
 }</pre>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn ghost" data-act="toast" data-arg="Audit event exported">Export JSON</button>
+        <button class="btn ghost" data-act="download" data-arg="json|Audit Event|full payload · immutable record">Export JSON</button>
         <button class="btn ghost" data-act="close">Close</button>
       </div>
     </div>

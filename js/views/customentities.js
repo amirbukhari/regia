@@ -18,6 +18,16 @@ VIEWS.customentities = (v)=>{
     {name:'annual_revenue',type:'Currency',required:false,indexed:false,system:false,display:'Annual revenue'},
     {name:'portal_enabled',type:'Boolean',required:false,indexed:false,system:false,display:'Portal enabled'},
   ]];
+  const fieldRow = f => `<tr><td class="nm" style="font-size:13px">${f.display}</td><td class="mono mut" style="font-size:12px">${f.name}</td><td class="mut">${f.type}</td><td>${f.required?'Yes':'—'}</td><td>${f.indexed?'Yes':'—'}</td><td>${f.system?'':`<button class="btn ghost" style="font-size:11px;padding:2px 8px" data-act="editfield" data-arg="${f.name}">Edit</button>`}</td></tr>`;
+  window._ceFieldsRows = (name) => {
+    const ent = ENTITIES.find(e=>e.name===name) || ENTITIES[0];
+    const sub = document.getElementById('ceFieldsSub');
+    if(sub) sub.textContent = `Custom entity · ${name==='Property'?FIELDS.length:ent.fields} fields · ${ent.records} records`;
+    const desc = document.getElementById('ceFieldsDesc');
+    if(desc) desc.textContent = ent.desc;
+    if(name === 'Property') return FIELDS.map(fieldRow).join('');
+    return `<tr><td colspan="6" class="empty">Field definitions for ${name} aren't loaded in this demo — the schema lives in the production metadata service. Property is fully browsable.</td></tr>`;
+  };
   v.appendChild(el(`<div class="view">
   ${pageHead('Custom Entities','Define custom object types, fields and relationships to extend the billing data model',
     `<button class="btn primary" data-act="newentity">+ New entity</button>`
@@ -29,7 +39,7 @@ VIEWS.customentities = (v)=>{
           <button class="btn ghost" style="font-size:11px;padding:3px 9px" data-act="newentity">+ New</button>
         </div>
         ${ENTITIES.map((e,i)=>`
-          <div class="nav-item${i===0?' active':''}" style="margin-bottom:2px;cursor:pointer" data-act="toast" data-arg="Switched to ${e.name} entity">
+          <div class="nav-item${i===0?' active':''}" style="margin-bottom:2px;cursor:pointer" data-act="ceswitch" data-arg="${e.name}">
             <span style="font-size:16px">${svg(I[e.icon]||I.entity2,20)}</span>
             <div style="flex:1">
               <div style="font-size:13px;font-weight:600">${e.name}</div>
@@ -50,26 +60,18 @@ VIEWS.customentities = (v)=>{
       <div>
         <div class="card panel" style="margin-bottom:14px">
           <div class="panel-head">
-            <div><h3>🏢 Property</h3><div class="sub">Custom entity · ${FIELDS.length} fields · 312 records</div></div>
+            <div><h3 id="ceFieldsTitle">Property</h3><div class="sub" id="ceFieldsSub">Custom entity · ${FIELDS.length} fields · 312 records</div></div>
             <div class="right" style="gap:8px">
-              <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="Exporting Property schema as JSON">Export schema</button>
+              <button class="btn ghost" style="font-size:12px" data-act="download" data-arg="json|Property Schema|${FIELDS.length} fields · relationships · indexes">Export schema</button>
               <button class="btn primary" style="font-size:12px" data-act="newfield">+ Add field</button>
             </div>
           </div>
-          <div class="mut" style="font-size:13px;margin-bottom:14px">${ENTITIES[0].desc}</div>
+          <div class="mut" style="font-size:13px;margin-bottom:14px" id="ceFieldsDesc">${ENTITIES.find(e=>e.name==='Property')?.desc||''}</div>
 
           <table class="tbl" style="width:100%">
             <thead><tr><th>Field name</th><th>API key</th><th>Type</th><th>Required</th><th>Indexed</th><th></th></tr></thead>
-            <tbody>
-              ${FIELDS.map(f=>`
-                <tr>
-                  <td style="font-weight:600">${f.display}</td>
-                  <td><code class="mono" style="font-size:11.5px;background:var(--surface);padding:2px 6px;border-radius:4px">${f.name}</code></td>
-                  <td><span class="pill muted" style="font-size:11px">${f.type}</span></td>
-                  <td>${f.required?`<span style="color:var(--ok)">${svg(I.check,13)}</span>`:'<span class="mut">—</span>'}</td>
-                  <td>${f.indexed?`<span style="color:var(--ok)">${svg(I.check,13)}</span>`:'<span class="mut">—</span>'}</td>
-                  <td>${f.system?'':`<button class="btn ghost" style="font-size:11px;padding:2px 8px" data-act="editfield" data-arg="${f.name}">Edit</button>`}</td>
-                </tr>`).join('')}
+            <tbody id="ceFieldsBody">
+              ${FIELDS.map(fieldRow).join('')}
             </tbody>
           </table>
         </div>
@@ -92,7 +94,7 @@ VIEWS.customentities = (v)=>{
                 <code class="mono" style="font-size:10.5px;color:var(--text-3)">${r.field}</code>
               </div>`).join('')}
           </div>
-          <button class="btn ghost" style="margin-top:12px;font-size:12px" data-act="toast" data-arg="Add relationship dialog opened">+ Add relationship</button>
+          <button class="btn ghost" style="margin-top:12px;font-size:12px" data-act="workspacecard" data-arg="customentities|Entity relationship|Cardinality, cascade rules and lookup field placement">+ Add relationship</button>
         </div>
       </div>
     </div>
