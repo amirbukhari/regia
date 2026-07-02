@@ -32,7 +32,7 @@ VIEWS.bizunits = (v)=>{
       ${kpi('Active Business Units','4','1 in migration',{accent:true})}
       ${kpi('Legal Entities','4','3 currencies',{})}
       ${kpi('Total MRR','$418,350','across all BUs',{trend:5.2})}
-      ${kpi('Active Subscriptions','689','in 4 BUs',{})}
+      ${kpi('Active Subscriptions',BUS.filter(b=>b.status==='active').reduce((s,b)=>s+b.subs,0).toLocaleString('en-US'),'across '+BUS.filter(b=>b.status==='active').length+' active BUs',{})}
     </div>
 
     <div class="val-banner info" style="margin-bottom:16px">${svg(I.bu,15)} <strong>Business Unit</strong> controls invoice branding, legal entity assignment, tax profile, GL export destination, product availability, and default invoice grouping. A single customer may span multiple Business Units.</div>

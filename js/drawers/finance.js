@@ -30,7 +30,7 @@ function openPostJournals(){
 function openSignOff(){
   openDrawer('Sign Off — June 2026 Close',`
     <div class="card" style="margin-bottom:16px;padding:14px 16px">
-      <div class="inv-sum-row"><span>Tasks complete</span><span class="tnum" style="color:var(--pos);font-weight:700">20 / 20</span></div>
+      <div class="inv-sum-row"><span>Tasks complete</span><span class="tnum" style="color:var(--warn);font-weight:700">15 / 20 — 5 open</span></div>
       <div class="inv-sum-row"><span>Controller sign-off</span><span>${pill('good','Approved')} <span class="mut" style="font-size:11px">Jun 27 · R. Chen</span></span></div>
       <div class="inv-sum-row"><span>CFO sign-off</span><span>${pill('warn','Pending')}</span></div>
       <div class="inv-sum-row"><span>Journals posted</span><span>${pill('good','847 entries')}</span></div>

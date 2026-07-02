@@ -38,8 +38,8 @@ VIEWS.tax = (v)=>{
       `<button class="btn ghost" data-act="taxconfig">${svg(I.settings,15)} Tax settings</button>
        <button class="btn primary" data-act="download" data-arg="zip|Tax Filing Package|Q2 2026 · 3 entities">${svg(I.download,15)} Export filings</button>`)}
     <div class="grid kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
-      ${kpi('Tax collected (MTD)','$38,400','14 jurisdictions active',{accent:true,trend:4.2})}
-      ${kpi('Jurisdictions','14','US · EU · UK · CA · AU',{})}
+      ${kpi('Tax collected (MTD)','$38,400',jurisdictions.length+' jurisdictions active',{accent:true,trend:4.2})}
+      ${kpi('Jurisdictions',''+jurisdictions.length,'US · EU · UK · CA · AU',{})}
       ${kpi('Nexus states','8','economic nexus triggered',{})}
       ${kpi('Next filing','Jul 20','CA + NY sales tax',{})}
     </div>

@@ -32,8 +32,8 @@ VIEWS.legalentity = (v)=>{
     ${pageHead('Legal Entities','4 entities · 3 currencies · GL systems: NetSuite, Xero, QuickBooks',
       `<button class="btn ghost" data-act="download" data-arg="xlsx|Tax Registrations|4 entities">${svg(I.download,14)} Export</button><button class="btn primary" data-act="newlegalentity">+ New Legal Entity</button>`)}
     <div class="grid kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-      ${kpi('Legal Entities','4','2 active, 1 legacy, 1 migration',{accent:true})}
-      ${kpi('Currencies','3','USD, EUR + legacy GBP',{})}
+      ${kpi('Legal Entities',''+LEGAL_ENTITIES.length,LEGAL_ENTITIES.filter(e=>e.status==='active').length+' active · '+LEGAL_ENTITIES.filter(e=>e.status==='migration').length+' in migration',{accent:true})}
+      ${kpi('Currencies',''+new Set(LEGAL_ENTITIES.map(e=>e.currency)).size,[...new Set(LEGAL_ENTITIES.map(e=>e.currency))].join(' · '),{})}
       ${kpi('GL Systems','3','NetSuite · Xero · QB',{})}
       ${kpi('Tax Jurisdictions','8','across all entities',{})}
     </div>
