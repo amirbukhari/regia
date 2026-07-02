@@ -28,7 +28,17 @@ function openIntegrationDetail(name){
         <tr><td style="font-size:12px">customer.updated</td><td class="mut tnum" style="font-size:11.5px">1h ago</td><td>${pill('good','OK')}</td></tr>
       </tbody></table></div>
     </div>
+    <div style="margin-bottom:16px">
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Sync settings</h4>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr">
+        <div class="fg"><label>Sync frequency</label><select class="finput"><option>Real-time (webhooks)</option><option>Every 15 minutes</option><option>Hourly</option><option>Nightly</option></select></div>
+        <div class="fg"><label>Failure alerts to</label><input class="finput" value="platform-ops@delonix.io"></div>
+        <div class="fg" style="display:flex;align-items:center;gap:10px"><label style="margin:0">Auto-sync enabled</label>${tgl('integ-'+name+'-auto', true, 'aria-label="Auto-sync enabled"')}</div>
+        <div class="fg" style="display:flex;align-items:center;gap:10px"><label style="margin:0">Retry failed syncs</label>${tgl('integ-'+name+'-retry', true, 'aria-label="Retry failed syncs"')}</div>
+      </div>
+    </div>
     <div class="form-actions">
+      ${cfgSaveBtn('integ-'+name,name+' sync settings saved','Save settings')}
       <button class="btn primary" data-act="toast" data-arg="${name} sync triggered manually">Sync Now</button>
       <button class="btn ghost" data-act="integeventlogs">View Event Log</button>
       <button class="btn ghost" onclick="closeDrawer()">Close</button>

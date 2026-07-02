@@ -3,11 +3,14 @@
 function openDrawer(titleOrHtml, body){
   const d=document.getElementById('drawer');
   if(body !== undefined){
-    d.innerHTML = `<div class="drawer-head"><div style="font-size:18px;font-weight:650">${titleOrHtml}</div><button class="x" data-act="close">✕</button></div><div class="drawer-body">${body}</div>`;
+    d.innerHTML = `<div class="drawer-head"><div style="font-size:18px;font-weight:650">${titleOrHtml}</div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div><div class="drawer-body">${body}</div>`;
   } else {
     d.innerHTML = titleOrHtml;
   }
   d.classList.add('open'); document.getElementById('drawerBg').classList.add('open');
+  // drawers with a persisted-config save button restore their saved values on open
+  const sb = d.querySelector('[data-act="saveconfig"]');
+  if(sb && typeof restoreDrawerConfig === 'function') restoreDrawerConfig((sb.dataset.arg||'').split('|')[0]);
 }
 
 function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerBg').classList.remove('open'); }

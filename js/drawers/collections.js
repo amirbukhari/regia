@@ -1,14 +1,16 @@
 /* delonix — collections.js */
 
 function openCollectionDetail(acct){
+  const logged = db().contactLog[acct||'Apex Systems'] || [];
   openDrawer((acct||'Apex Systems')+' — Collections',`
     <div class="grid kpis" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
       <div class="card kpi" style="padding:12px 14px"><div class="lab">Outstanding</div><div class="val tnum" style="font-size:18px">$5,800</div><div class="sub" style="color:var(--neg)">14 days overdue</div></div>
       <div class="card kpi" style="padding:12px 14px"><div class="lab">Day in sequence</div><div class="val tnum" style="font-size:18px">14</div><div class="sub">Next: final notice</div></div>
-      <div class="card kpi" style="padding:12px 14px"><div class="lab">Contact attempts</div><div class="val tnum" style="font-size:18px">3</div><div class="sub">Last: Jun 26 email</div></div>
+      <div class="card kpi" style="padding:12px 14px"><div class="lab">Contact attempts</div><div class="val tnum" style="font-size:18px">${3+logged.length}</div><div class="sub">Last: ${logged.length?logged[0].when+' '+logged[0].type.toLowerCase():'Jun 26 email'}</div></div>
     </div>
     <div class="form-section-title">Dunning timeline</div>
     <div class="timeline" style="margin-bottom:18px">
+      ${logged.map(l=>`<div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Manual — ${l.type} · ${l.outcome}</div><div class="tl-sub">${l.when}${l.note?' · '+l.note:''} · follow-up ${l.followup}</div></div></div>`).join('')}
       <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Day 1 — Friendly reminder sent</div><div class="tl-sub">Jun 15 · Email opened (2 times)</div></div></div>
       <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Day 3 — Payment failed notice</div><div class="tl-sub">Jun 17 · Email delivered, not opened</div></div></div>
       <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Day 7 — Urgent notice (email + SMS)</div><div class="tl-sub">Jun 21 · Email opened · SMS delivered</div></div></div>
@@ -18,16 +20,16 @@ function openCollectionDetail(acct){
     </div>
     <div class="form-section-title">Log manual contact</div>
     <div class="form-row"><div class="form-group"><label class="form-label">Contact type</label>
-      <select class="form-select"><option>Phone call</option><option>Email</option><option>SMS</option><option>Meeting</option></select></div>
+      <select class="form-select" id="lc_type"><option>Phone call</option><option>Email</option><option>SMS</option><option>Meeting</option></select></div>
       <div class="form-group"><label class="form-label">Outcome</label>
-      <select class="form-select"><option>Promise to pay</option><option>Dispute raised</option><option>Voicemail</option><option>No answer</option><option>Paid</option></select></div></div>
+      <select class="form-select" id="lc_outcome"><option>Promise to pay</option><option>Dispute raised</option><option>Voicemail</option><option>No answer</option><option>Paid</option></select></div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Follow-up date</label>
-      <input class="form-input" type="date" value="2026-07-01"></div>
+      <input class="form-input" id="lc_followup" type="date" value="2026-07-01"></div>
       <div class="form-group"><label class="form-label">Notes</label>
-      <input class="form-input" placeholder="Call notes…"></div></div>
+      <input class="form-input" id="lc_note" placeholder="Call notes…"></div></div>
     <div class="form-footer">
-      <button class="btn ghost" style="color:var(--neg);border-color:var(--neg)" data-act="suspendaccount" data-arg="current">Suspend account</button>
-      <button class="btn ghost" data-act="toast" data-arg="Contact logged for ${acct||'account'}">Log contact</button>
+      <button class="btn ghost" style="color:var(--neg);border-color:var(--neg)" data-act="suspendaccount" data-arg="${acct||'Apex Systems'}">Suspend account</button>
+      <button class="btn ghost" data-act="logcontact" data-arg="${acct||'Apex Systems'}">Log contact</button>
       <button class="btn primary" data-act="toast" data-arg="Manual payment link sent to ${acct||'customer'} billing contact">Send payment link</button>
     </div>`);
 }
@@ -45,15 +47,15 @@ function openDunningConfig(){
   ];
   openDrawer('Dunning Sequence Config',`
     <p style="font-size:12px;color:var(--text-2);margin-bottom:16px">Configure the automated recovery sequence applied to all failed and overdue accounts.</p>
-    ${steps.map(s=>`<div class="seq-step">
+    ${steps.map((s,i)=>`<div class="seq-step">
       <span class="seq-day">${s.day}</span>
       <span class="seq-label">${s.label}</span>
       <span class="seq-channel">${s.ch}</span>
-      <div class="toggle${s.on?' on':''}" data-act="toggle"><i></i></div>
+      ${tgl('dunning-step-'+i, s.on, `aria-label="Toggle ${s.label}"`)}
     </div>`).join('')}
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Dunning sequence saved and active">Save configuration</button>
+      <button class="btn primary" data-act="savedone" data-arg="Dunning sequence saved and active">Save configuration</button>
     </div>`);
 }
 
@@ -99,7 +101,7 @@ function openSuspendAccount(acct){
       <div class="fg" style="grid-column:1/-1"><label>Internal note</label><textarea class="finput" rows="2" placeholder="Reason for suspension — visible in audit log"></textarea></div>
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn" style="background:var(--neg);color:#fff;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:600" data-act="toast" data-arg="Account suspended — customer notified">Suspend Account</button>
+      <button class="btn" style="background:var(--neg);color:#fff;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:600" data-act="suspendnow" data-arg="${acct||'Account'}">Suspend Account</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

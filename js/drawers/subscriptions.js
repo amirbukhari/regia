@@ -40,9 +40,9 @@ function openNewQuote(){
 function openNewSub(){
   openDrawer('New Subscription',`
     <div class="form-row"><div class="form-group"><label class="form-label">Customer</label>
-      <select class="form-select"><option value="">— select customer —</option>${custOpts()}</select></div></div>
+      <select class="form-select" id="ns_customer"><option value="">— select customer —</option>${custOpts()}</select></div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Plan</label>
-      <select class="form-select">${planOpts()}</select></div>
+      <select class="form-select" id="ns_plan">${planOpts()}</select></div>
       <div class="form-group"><label class="form-label">Billing cycle</label>
       <select class="form-select"><option>Monthly</option><option>Annual (save 20%)</option><option>Quarterly</option></select></div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Seats</label>
@@ -54,8 +54,8 @@ function openNewSub(){
     <div class="form-group"><label class="form-label">Notes</label>
       <textarea class="form-textarea" placeholder="Internal notes…"></textarea></div>
     <div class="form-footer">
-      <button class="btn ghost" data-act="toast" data-arg="Subscription draft cancelled">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Subscription created — first invoice queued for Jul 1">Create subscription</button>
+      <button class="btn ghost" data-act="close">Cancel</button>
+      <button class="btn primary" data-act="createsub">Create subscription</button>
     </div>`);
 }
 
@@ -111,7 +111,7 @@ function openUsageImport(){
       <div class="fg" style="grid-column:1/-1">
         <label>Upload CSV or JSONL</label>
         <div style="border:2px dashed var(--border-2);border-radius:8px;padding:28px;text-align:center;color:var(--text-3);cursor:pointer" onclick="toast('File picker opened')">
-          <div style="font-size:24px;margin-bottom:8px">📂</div>
+          <div style="margin-bottom:8px">${svg(I.download,26)}</div>
           <div style="font-size:13px">Drop file here or click to browse</div>
           <div class="mut" style="font-size:11.5px;margin-top:4px">CSV or JSONL · max 100 MB · up to 1M events</div>
         </div>
@@ -148,7 +148,7 @@ function openChangePlan(acct){
       <div class="fg"><label>Reason</label><select class="finput"><option>Customer request</option><option>Sales negotiation</option><option>Auto-upgrade</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Plan change scheduled — effective Jul 1">Confirm Change</button>
+      <button class="btn primary" data-act="planchange" data-arg="${acct||'Account'}">Confirm Change</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

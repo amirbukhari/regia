@@ -80,7 +80,7 @@ VIEWS.dunning = (v)=>{
             `<td class="mut">${r.last}</td>`+
             `<td style="font-size:12px;color:${dayBarColor(r.day)}">${r.next}</td>`+
             `<td>${pill(r.status,r.sl)}</td>`+
-            `<td style="text-align:right"><button class="btn ghost" style="font-size:11px;padding:4px 8px;height:auto" data-act="toast" data-arg="Manual contact logged for ${r.acct}">Log contact</button></td>`+
+            `<td style="text-align:right"><button class="btn ghost" style="font-size:11px;padding:4px 8px;height:auto" data-act="colldetail" data-arg="${r.acct}">Log contact</button></td>`+
             `</tr>`).join('')}
           </tbody>
         </table>

@@ -3,7 +3,7 @@
 function openPostJournals(){
   openDrawer('Post to General Ledger',`
     <div class="confirm-panel">
-      <div class="confirm-title">⚠ Irreversible action</div>
+      <div class="confirm-title">${svg(I.warning,14)} Irreversible action</div>
       <div class="confirm-body">This will post <b>847 journal entries</b> to NetSuite for the June 2026 period. Once posted, entries cannot be reversed without a manual correcting journal.</div>
     </div>
     <div class="card" style="margin:16px 0;padding:14px 16px">
@@ -53,7 +53,7 @@ function openSignOff(){
       <input class="form-input" type="date" value="2026-06-28"></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="June 2026 close signed off by CFO — period locked, audit trail recorded">Submit sign-off</button>
+      <button class="btn primary" data-act="finalizeperiod">Submit sign-off</button>
     </div>`);
 }
 

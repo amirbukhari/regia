@@ -4,9 +4,9 @@ function openNewCustomer(){
   openDrawer('New Customer',`
     <div class="form-section-title">Company</div>
     <div class="form-row"><div class="form-group"><label class="form-label">Company name</label>
-      <input class="form-input" placeholder="Acme Corporation"></div>
+      <input class="form-input" id="nc_name" placeholder="Acme Corporation"></div>
       <div class="form-group"><label class="form-label">Plan</label>
-      <select class="form-select">${planOpts()}</select></div></div>
+      <select class="form-select" id="nc_plan">${planOpts()}</select></div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Industry</label>
       <select class="form-select"><option>SaaS</option><option>Fintech</option><option>Healthcare</option><option>E-commerce</option><option>Other</option></select></div>
       <div class="form-group"><label class="form-label">Country</label>
@@ -26,8 +26,8 @@ function openNewCustomer(){
       <div class="form-group"><label class="form-label">Tax exempt</label>
       <div style="margin-top:8px"><div class="toggle" data-act="toggle"><i></i></div></div></div></div>
     <div class="form-footer">
-      <button class="btn ghost" data-act="toast" data-arg="Customer draft saved">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Customer account created — welcome email sent">Create account</button>
+      <button class="btn ghost" data-act="close">Cancel</button>
+      <button class="btn primary" data-act="createcustomer">Create account</button>
     </div>`);
 }
 
@@ -36,23 +36,21 @@ function openNewCustomer(){
 function openNewCredit(){
   openDrawer('New Credit Note',`
     <div class="form-row"><div class="form-group"><label class="form-label">Customer</label>
-      <select class="form-select"><option value="">— select —</option>${custOpts()}</select></div></div>
+      <select class="form-select" id="ncr_customer"><option value="">— select —</option>${custOpts()}</select></div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Related invoice</label>
-      <select class="form-select"><option>INV-2026-0831 · Apex Systems · $5,800</option>
-        <option>INV-2026-0824 · Summit Digital · $6,400</option>
-        <option>INV-2026-0819 · CloudBase Inc · $7,200</option>
+      <select class="form-select" id="ncr_invoice">${db().invoices.slice(0,6).map(i=>`<option>${i.id} · ${i.acct} · ${fmt(i.amt)}</option>`).join('')}
         <option>Not linked to an invoice</option></select></div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Reason</label>
-      <select class="form-select"><option>Service outage</option><option>Billing error</option><option>Goodwill</option><option>Duplicate charge</option><option>Proration adjustment</option><option>Contract amendment</option></select></div>
+      <select class="form-select" id="ncr_reason"><option>Service outage</option><option>Billing error</option><option>Goodwill</option><option>Duplicate charge</option><option>Proration adjustment</option><option>Contract amendment</option></select></div>
       <div class="form-group" style="max-width:140px"><label class="form-label">Amount</label>
-      <input class="form-input" type="number" placeholder="0.00"></div></div>
+      <input class="form-input" id="ncr_amount" type="number" placeholder="0.00"></div></div>
     <div class="form-group"><label class="form-label">Description</label>
       <input class="form-input" placeholder="Brief description for the customer"></div>
     <div class="form-group" style="margin-top:10px"><label class="form-label">Internal notes</label>
       <textarea class="form-textarea" placeholder="Internal context only, not shown to customer…"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Credit note CRD-2026-0041 issued — applied to open balance">Issue credit note</button>
+      <button class="btn primary" data-act="createcredit">Issue credit note</button>
     </div>`);
 }
 

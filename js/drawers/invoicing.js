@@ -4,7 +4,7 @@ function openNewInvoice(){
   openDrawer('New Invoice',`
     <div class="form-section">
       <div class="form-row"><div class="form-group"><label class="form-label">Customer</label>
-        <select class="form-select"><option value="">— select —</option>${custOpts()}</select></div>
+        <select class="form-select" id="ni_customer"><option value="">— select —</option>${custOpts()}</select></div>
         <div class="form-group" style="max-width:140px"><label class="form-label">Invoice date</label>
         <input class="form-input" type="date" value="2026-06-28"></div>
         <div class="form-group" style="max-width:140px"><label class="form-label">Due date</label>
@@ -41,8 +41,8 @@ function openNewInvoice(){
     <div class="form-group" style="margin-top:16px"><label class="form-label">Notes / memo</label>
       <textarea class="form-textarea" placeholder="Internal notes or customer-facing memo…"></textarea></div>
     <div class="form-footer">
-      <button class="btn ghost" data-act="toast" data-arg="Draft INV-2026-0849 saved to drafts">Save draft</button>
-      <button class="btn primary" data-act="toast" data-arg="Invoice INV-2026-0849 sent to customer — $874.62 due Jul 28">Send invoice</button>
+      <button class="btn ghost" data-act="createinvoice" data-arg="draft">Save draft</button>
+      <button class="btn primary" data-act="createinvoice" data-arg="send">Send invoice</button>
     </div>`);
 }
 
@@ -74,7 +74,7 @@ function openApproveInvoice(id){
 function openVoidInvoice(id){
   openDrawer('Void Invoice',`
     <div class="confirm-panel">
-      <div class="confirm-title">⚠ This action cannot be undone</div>
+      <div class="confirm-title">${svg(I.warning,14)} This action cannot be undone</div>
       <div class="confirm-body">Voiding ${id||'this invoice'} will permanently cancel it. A credit note will be created if payment has already been collected. The invoice number will be retained in the audit log.</div>
     </div>
     <div class="form-group" style="margin-top:16px"><label class="form-label">Reason for voiding</label>
@@ -115,6 +115,7 @@ function openSendReminder(id){
 /* ── Retry Payment ── */
 
 function openInvoiceGroupingPolicy(accountId){
+  const gpSaved = db().config['grouping:'+accountId] ?? 1;
   openDrawer('Invoice Grouping — ' + (accountId||'Account'), `
     <div class="val-banner info" style="margin-bottom:16px">${svg(I.grouping,15)} <div><strong>Invoice grouping controls how charges are bundled into invoices.</strong> Client-selectable options apply immediately; custom policies require Finance approval and apply to the full open billing period.</div></div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Effective Policy (Inheritance)</h4>
@@ -126,14 +127,14 @@ function openInvoiceGroupingPolicy(accountId){
     </div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:10px">Change Grouping</h4>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
-      ${GROUPING_POLICIES.map((p,i)=>`<label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid ${i===1?'var(--ember)':'var(--border)'};border-radius:8px;cursor:pointer;background:${i===1?'var(--ember-glow)':'var(--surface)'}">
-        <input type="radio" name="gp_radio" ${i===1?'checked':''} style="margin-top:2px">
+      ${GROUPING_POLICIES.map((p,i)=>`<label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid ${i===gpSaved?'var(--ember)':'var(--border)'};border-radius:8px;cursor:pointer;background:${i===gpSaved?'var(--ember-glow)':'var(--surface)'}">
+        <input type="radio" name="gp_radio" ${i===gpSaved?'checked':''} style="margin-top:2px">
         <div style="flex:1"><div style="font-weight:600;font-size:13px">${p.name}${p.requiresApproval?' <span style="font-size:11px;color:var(--warn)">(requires approval)</span>':''}</div><div class="mut" style="font-size:12px;margin-top:2px">${p.desc}</div></div>
         ${p.clientVisible?pill('muted','Client-visible'):''}
       </label>`).join('')}
     </div>
     <div class="val-banner warn">${svg(I.warning,14)} Changes apply to the entire open billing period (June 2026). After finalization, grouping changes require a credit/rebill correction.</div>
-    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Invoice grouping policy updated — applying to Jun 2026 open period">Apply Change</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="applygrouping" data-arg="${accountId||''}">Apply Change</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
   `);
 }
 
@@ -160,7 +161,7 @@ function openCreditRebill(invoiceId){
       <div class="mut" style="font-size:11.5px;margin-top:8px">Tax reversal: −$478.50 will be credited against 2100 · Tax Payable</div>
     </div>
     <div class="val-banner warn">${svg(I.warning,14)} This correction requires Finance approval (amount &gt; $1,000). It will be queued for approval before the credit note is issued.</div>
-    <div class="form-actions"><button class="btn primary" data-act="toast" data-arg="Credit/rebill submitted for Finance approval — APR-2026-0115">Submit for Approval</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="form-actions"><button class="btn primary" data-act="submitcredit" data-arg="${inv}">Submit for Approval</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
   `);
 }
 
@@ -190,7 +191,7 @@ function openDraftValidation(invoiceId){
         <div class="mut" style="font-size:12.5px">2 product lines do not have confirmed GL account assignments for the Commercial BU. Invoices will export without GL codes until mappings are added.</div>
       </div>
     </div>
-    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Validation re-run started">Re-run Validation</button><button class="btn ghost" onclick="closeDrawer()">Close</button></div>
+    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="revalidate" data-arg="${invoiceId||'all'}">Re-run Validation</button><button class="btn ghost" onclick="closeDrawer()">Close</button></div>
   `);
 }
 
@@ -208,7 +209,7 @@ function openInvoiceFooterEditor(){
       ${BUS.slice(0,3).map(b=>`<div class="fg" style="margin-bottom:8px"><label>${b.name}</label><textarea class="finput" rows="2" placeholder="Leave blank to use default footer"></textarea></div>`).join('')}
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Invoice footer saved — applies to new invoices">Save Footer</button>
+      ${cfgSaveBtn('invoice-footer','Invoice footer saved — applies to new invoices','Save Footer')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

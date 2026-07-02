@@ -64,7 +64,7 @@ function openApprovalRules(){
     <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="New approval rule added">+ Add rule</button>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Approval rules saved">Save rules</button>
+      ${cfgSaveBtn('approval-rules','Approval rules saved','Save rules')}
     </div>`);
 }
 
@@ -139,11 +139,11 @@ function openMigrationDetail(id){
 function openDownloadPanel(arg){
   const parts=(arg||'pdf|Document|').split('|');
   const fmt=parts[0]||'pdf', title=parts[1]||'Document', detail=parts[2]||'';
-  const fmtIcon = fmt==='pdf'?'📄':fmt==='xlsx'?'📊':fmt==='csv'?'📋':'📦';
+  const fmtIcon = `<span style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:14px;background:var(--ember-glow);color:var(--ember)">${svg(fmt==='xlsx'||fmt==='csv'?I.reports:I.invoices,30)}</span>`;
   const fmtLabel = fmt.toUpperCase();
   openDrawer(`Export — ${title}`, `
     <div style="text-align:center;padding:24px 0 16px">
-      <div style="font-size:48px;margin-bottom:12px">${fmtIcon}</div>
+      <div style="margin-bottom:12px">${fmtIcon}</div>
       <div style="font-weight:700;font-size:17px;margin-bottom:4px">${title}</div>
       <div class="mut" style="font-size:13px">${detail}</div>
     </div>
@@ -202,7 +202,7 @@ function openPortalThemeEditor(){
       </div>
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Portal theme saved and published">Save & Publish</button>
+      ${cfgSaveBtn('portal-theme','Portal theme saved and published','Save & Publish')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -225,7 +225,7 @@ function openEditRole(name){
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="Role '${name}' updated">Save changes</button>
+        ${cfgSaveBtn('role-'+name,`Role '${name}' updated`,'Save changes')}
       </div>
     </div>
   `);

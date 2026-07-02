@@ -8,7 +8,26 @@ document.addEventListener('click',e=>{
   if(a==='enter') return enterApp(e);
   if(a==='signout') return signOut();
   if(a==='close') return closeDrawer();
-  if(a==='toggle') return t.classList.toggle('on');
+  if(a==='toggle'){ t.classList.toggle('on'); return tglPersist(t); }
+  /* ---- local demo DB mutations (js/db.js) ---- */
+  if(a==='saveconfig') return saveDrawerConfig(arg);
+  if(a==='savedone'){ closeDrawer(); return toast(arg); }
+  if(a==='resetdemo') return dbResetDemo();
+  if(a==='createinvoice') return dbCreateInvoice(arg);
+  if(a==='revalidate') return dbValidateDraft(arg);
+  if(a==='submitcredit') return dbSubmitCreditRebill(arg);
+  if(a==='finalizeperiod') return dbFinalizePeriod();
+  if(a==='retrypaynow') return dbRetryPayment(arg);
+  if(a==='refundnow') return dbRefundPayment(arg);
+  if(a==='recordpayment') return dbRecordManualPayment();
+  if(a==='createcustomer') return dbCreateCustomer();
+  if(a==='createsub') return dbCreateSub();
+  if(a==='planchange') return dbChangePlan(arg);
+  if(a==='createcredit') return dbCreateCredit();
+  if(a==='logcontact') return dbLogContact(arg);
+  if(a==='suspendnow') return dbSuspendAccount(arg);
+  if(a==='setpricebookdefault') return dbSetDefaultPricebook(arg);
+  if(a==='applygrouping') return dbApplyGrouping(arg);
   if(a==='featureflag') return toggleFeatureFlag(arg, t);
   if(a==='resetflags') return resetFeatureFlagUI();
   if(a==='menu') return document.getElementById('app').classList.toggle('nav-open');
@@ -146,6 +165,8 @@ document.addEventListener('click',e=>{ if(!e.target.closest('.search')) closeCmd
 document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault(); const ci=document.getElementById('cmdInput'); if(ci){ci.focus();ci.select();buildCmd('');}}
   if(e.key==='Escape')closeDrawer();
+  // switches are divs — make Enter/Space activate them for keyboard users
+  if((e.key==='Enter'||e.key===' ') && e.target.dataset && e.target.dataset.act==='toggle'){ e.preventDefault(); e.target.click(); }
 });
 window.addEventListener('resize',()=>{ if(current==='dashboard'){drawRevChart();drawSparks();}
   if(current==='usage')drawUsageChart(); if(current==='reports')drawMrrChart(); });

@@ -64,7 +64,7 @@ VIEWS.calculator = (v)=>{
             <div class="fg" style="margin-bottom:10px">
               <label style="font-size:12px;font-weight:600;display:flex;justify-content:space-between">
                 ${f.label}
-                <span class="mut" style="font-size:11px;cursor:pointer" data-act="toast" data-arg="Field settings for ${f.label}">⚙</span>
+                <span class="mut" style="font-size:11px;cursor:pointer" data-act="toast" data-arg="Field settings for ${f.label}" role="button" aria-label="Field settings for ${f.label}">${svg(I.settings,12)}</span>
               </label>
               ${f.type==='slider'?`
                 <input type="range" class="finput" min="${f.min}" max="${f.max}" step="${f.step||1}" value="${f.val}" style="padding:4px 0;height:auto">

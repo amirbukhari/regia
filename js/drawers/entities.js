@@ -48,7 +48,7 @@ function openBizUnit(id){
         <div class="fg"><label>Active Subscriptions</label><div class="tnum">${b.subs}</div></div>
         <div class="fg"><label>MRR</label><div class="tnum">${b.mrr?'$'+b.mrr.toLocaleString():'—'}</div></div>
       </div>
-      <div class="form-actions"><button class="btn primary" data-act="toast" data-arg="Business unit settings saved">Save Changes</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>`,
+      <div class="form-actions"><button class="btn primary" data-act="glmapping" data-arg="${b.id}">Edit GL mappings</button><button class="btn ghost" onclick="closeDrawer()">Close</button></div>`,
     'Legal & Tax':`
       <div style="margin-bottom:16px">
         <h4 style="font-size:13px;font-weight:700;margin-bottom:10px">Legal Entity</h4>
@@ -131,7 +131,7 @@ function openLegalEntity(id){
       ${e.bUs.map(id=>{const b=BUS.find(x=>x.id===id);return b?`<span class="bu-badge" data-act="bizunit" data-arg="${b.id}" style="cursor:pointer"><span class="bu-dot" style="background:${b.color}"></span>${b.name}</span>`:'';}).join('')}
     </div>
     <div class="val-banner info">${svg(I.entity,14)} Invoices from different legal entities require explicit grouping policies. Tax registrations and remittance details are managed per entity.</div>
-    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Legal entity saved">Save Changes</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="form-actions" style="margin-top:16px"><button class="btn ghost" onclick="closeDrawer()">Close</button></div>
   `);
 }
 
@@ -231,7 +231,7 @@ function openEditField(name){
       <div class="fg"><label>Indexed</label><select class="finput"><option selected>Yes</option><option>No</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Field ${name||'property_class'} updated">Save changes</button>
+      ${cfgSaveBtn('field-'+(name||'property_class'),`Field ${name||'property_class'} updated`,'Save changes')}
       <button class="btn crit" style="margin-left:auto" data-act="toast" data-arg="Field deletion requires confirmation — ${name} will be removed from all records">Delete field</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>

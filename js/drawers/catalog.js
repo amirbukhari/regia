@@ -7,11 +7,12 @@ function planOpts(){return PLANS.map(p=>`<option>${p}</option>`).join('');}
 /* ── New Invoice ── */
 
 function openPriceBook(){
+  const def = db().config['pricebook-default'] || '2026 Standard';
   const books=[
-    {name:'2026 Standard',desc:'Default list prices — all new accounts',accounts:189,active:true},
-    {name:'Volume Discount',desc:'>10 seats — 15% discount applied',accounts:42,active:false},
-    {name:'Enterprise Custom',desc:'Custom negotiated rates — requires approval',accounts:16,active:false},
-  ];
+    {name:'2026 Standard',desc:'Default list prices — all new accounts',accounts:189},
+    {name:'Volume Discount',desc:'>10 seats — 15% discount applied',accounts:42},
+    {name:'Enterprise Custom',desc:'Custom negotiated rates — requires approval',accounts:16},
+  ].map(b=>({...b, active:b.name===def}));
   openDrawer('Price Book Management',`
     ${books.map(b=>`<div class="entity-card${b.active?' active':''}">
       <div style="flex:1">
@@ -20,7 +21,7 @@ function openPriceBook(){
       </div>
       <div style="display:flex;gap:6px">
         <button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="editpricebook" data-arg="${b.name}">Edit</button>
-        ${!b.active?`<button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="toast" data-arg="${b.name} set as default price book">Set default</button>`:''}
+        ${!b.active?`<button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="setpricebookdefault" data-arg="${b.name}">Set default</button>`:''}
       </div>
     </div>`).join('')}
     <div class="form-footer">
@@ -52,7 +53,7 @@ function openTaxConfig(){
     </tbody></table></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Tax configuration saved">Save configuration</button>
+      ${cfgSaveBtn('tax-config','Tax configuration saved')}
     </div>`);
 }
 
@@ -84,7 +85,7 @@ function openRevRules(){
       </div>`).join('')}
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Recognition rules saved and applied to new contracts">Save rules</button>
+      ${cfgSaveBtn('revrec-rules','Recognition rules saved and applied to new contracts','Save rules')}
     </div>`);
 }
 
@@ -141,7 +142,7 @@ function openEditPlan(name){
       <div class="fg"><label>Affected subscriptions</label><div class="tnum mut">47 active</div></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Plan changes saved — applying to new subscriptions">Save Changes</button>
+      ${cfgSaveBtn('plan-'+(name||'Enterprise'),'Plan changes saved — applying to new subscriptions','Save Changes')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -184,7 +185,7 @@ function openEditPricebook(nameOrId){
       </tr>`).join('')}</tbody>
     </table></div>
     <div class="form-actions" style="margin-top:12px">
-      <button class="btn primary" data-act="toast" data-arg="Price book saved">Save Changes</button>
+      ${cfgSaveBtn('pricebook-'+name,'Price book saved','Save Changes')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

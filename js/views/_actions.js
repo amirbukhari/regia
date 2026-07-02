@@ -19,7 +19,7 @@ function openSubscription(acct){
     <div class="drawer-head">
       <div class="logo-chip" style="background:${colorFor(acct)};width:40px;height:40px;font-size:14px">${initials(acct)}</div>
       <div><div style="font-size:18px;font-weight:650">${acct}</div><div class="mut">${s.plan}</div></div>
-      <button class="x" data-act="close">✕</button>
+      <button class="x" data-act="close" aria-label="Close drawer">✕</button>
     </div>
     <div class="drawer-body">
       <div style="display:flex;gap:8px;margin-bottom:18px">${pill(s.status,s.sl)}<span class="pill muted">${s.model}</span><span class="pill muted">${term}</span></div>
@@ -44,23 +44,24 @@ function openSubscription(acct){
       <div class="sec-title">Invoices</div>
       ${accInv.length?`<div class="table-wrap"><table style="min-width:0"><tbody>${accInv.map(i=>`<tr style="cursor:pointer" data-act="invoice" data-arg="${i.id}"><td class="mono">${i.id}</td><td class="num">${fmt(i.amt)}</td><td>${pill(i.status,i.slabel)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No invoices this period.</div>'}
       <div style="display:flex;gap:8px;margin-top:22px">
-        <button class="btn primary" style="flex:1;justify-content:center" data-act="changeplan" data-arg="current">Change plan</button>
+        <button class="btn primary" style="flex:1;justify-content:center" data-act="changeplan" data-arg="${acct}">Change plan</button>
         <button class="btn" data-act="renewalquote" data-arg="current">Renew</button>
       </div>
     </div>`);
 }
 
 function openPayment(id){
-  const p=payments.find(x=>x.id===id)||payments[0];
+  const op = dbFindPayment(id);
+  const p = op ? {...op, when: op.date} : (payments.find(x=>x.id===id)||payments[0]);
   const fee=Math.round(p.amt*0.0225);
-  const failed=p.status==='crit', pending=p.status==='ember';
+  const failed=p.sl==='Failed'||p.status==='crit', pending=p.sl==='Pending'||p.status==='ember';
   const steps=failed?[['Created','done'],['Authorize','active'],['Capture',''],['Settle','']]
     :pending?[['Created','done'],['Authorized','done'],['Capture','active'],['Settle','']]
     :[['Created','done'],['Authorized','done'],['Captured','done'],['Settled','done']];
   openDrawer(`
     <div class="drawer-head">
       <div><div class="mono mut">${p.id}</div><div style="font-size:18px;font-weight:650">${p.acct}</div></div>
-      <button class="x" data-act="close">✕</button>
+      <button class="x" data-act="close" aria-label="Close drawer">✕</button>
     </div>
     <div class="drawer-body">
       <div style="display:flex;gap:8px;margin-bottom:18px">${pill(p.status,p.sl)}<span class="pill muted">${p.gw}</span></div>
@@ -105,7 +106,7 @@ function openRevSchedule(arg){
   openDrawer(`
     <div class="drawer-head">
       <div><div class="mono mut">${id} · ASC 606 schedule</div><div style="font-size:18px;font-weight:650">${acct}</div></div>
-      <button class="x" data-act="close">✕</button>
+      <button class="x" data-act="close" aria-label="Close drawer">✕</button>
     </div>
     <div class="drawer-body">
       <div class="grid kpis" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
@@ -124,18 +125,19 @@ function openRevSchedule(arg){
 /* ---------- Tax & Compliance ---------- */
 
 function openInvoice(id){
-  const i=invoices.find(x=>x.id===id)||invoices[0];
-  const li=[
-    ['Platform seats — Enterprise (annual)', i.acct==='Meridian Bank'?5400:1450, 38, ],
-    ['API usage — metered (per 1k)', 4200, 0.40],
-    ['Premium support', 1, 2500],
-  ];
-  const sub=li.reduce((s,r)=>s+r[1]*r[2],0);
-  const tax=Math.round(sub*0.08), grand=sub+tax;
+  const oi = dbFindInvoice(id);
+  const i = oi ? {...oi, slabel:oi.sl, method:'ACH'} : (invoices.find(x=>x.id===id)||invoices[0]);
+  const sub = Math.round(i.amt/1.08);
+  const li = sub > 2180
+    ? [['Platform seats — Enterprise (annual)', 1, sub-2180],
+       ['API usage — metered (per 1k)', 4200, 0.40],
+       ['Premium support', 1, 500]]
+    : [['Platform subscription', 1, sub]];
+  const tax=i.amt-sub, grand=i.amt;
   openDrawer(`
     <div class="drawer-head">
       <div><div class="mono mut">${i.id}</div><div style="font-size:18px;font-weight:650">${i.acct}</div></div>
-      <button class="x" data-act="close">✕</button>
+      <button class="x" data-act="close" aria-label="Close drawer">✕</button>
     </div>
     <div class="drawer-body">
       <div style="display:flex;gap:10px;margin-bottom:18px">${pill(i.status,i.slabel)}<span class="pill muted">${i.method}</span></div>
@@ -160,7 +162,7 @@ function openInvoice(id){
         ${[['Draft','done'],['Sent','done'],['Viewed','done'],[i.slabel==='Paid'?'Paid':'Payment',i.slabel==='Paid'?'done':'active']].map((s,k)=>`<div class="ds ${s[1]}"><div class="c">${s[1]==='done'?'✓':k+1}</div><small>${s[0]}</small></div>`).join('')}
       </div>
       <div style="display:flex;gap:8px;margin-top:22px">
-        <button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="Reminder sent">${svg(I.send,15)} Send reminder</button>
+        <button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="Payment reminder sent for ${i.id}">${svg(I.send,15)} Send reminder</button>
         <button class="btn" data-act="download" data-arg="pdf|Document|1 page">${svg(I.download,15)} PDF</button>
       </div>
     </div>`);
@@ -173,7 +175,7 @@ function openAccount(id){
     <div class="drawer-head">
       <div class="logo-chip" style="background:${colorFor(a.name)};width:40px;height:40px;font-size:14px">${initials(a.name)}</div>
       <div><div style="font-size:18px;font-weight:650">${a.name}</div><div class="mono mut">${a.id} · customer since ${a.since}</div></div>
-      <button class="x" data-act="close">✕</button>
+      <button class="x" data-act="close" aria-label="Close drawer">✕</button>
     </div>
     <div class="drawer-body">
       <div class="grid kpis" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
@@ -223,7 +225,7 @@ const WORKSPACE_ACTIONS = {
 function openWorkspaceAction(id){
   const d = WORKSPACE_ACTIONS[id] || ['Open operating console','Controls, exceptions, approvals and audit evidence','Operations','Control set','Exception queue','Evidence export'];
   openDrawer(`
-    <div class="drawer-head"><div><div class="mono mut">${d[2]} · governed action</div><div style="font-size:18px;font-weight:650">${d[0]}</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-head"><div><div class="mono mut">${d[2]} · governed action</div><div style="font-size:18px;font-weight:650">${d[0]}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
     <div class="drawer-body">
       <div class="note info" style="margin-bottom:16px">${svg(I.audit,15)}<div><b>CEO-safe path:</b> ${d[1]}. This opens with owner, effective date, validation, approval and export evidence instead of a toast-only dead end.</div></div>
       <div class="grid kpis" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
@@ -232,26 +234,32 @@ function openWorkspaceAction(id){
         ${kpi('Approvals','2 of 3','policy + finance',{})}
         ${kpi('Evidence','Complete','exportable packet',{})}
       </div>
-      <div class="sec-title">Required operating details</div>
+      <div class="sec-title">Configuration</div>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+        <div class="fg"><label>${d[3]}</label><input class="finput" value="v4 · current"></div>
+        <div class="fg"><label>Effective date</label><input class="finput" type="date" value="2026-07-01"></div>
+        <div class="fg"><label>Entity scope</label><select class="finput"><option>Delonix Inc · North America</option><option>Delonix EU B.V.</option><option>All entities</option></select></div>
+        <div class="fg"><label>Approval route</label><select class="finput"><option>Controller + Operations lead</option><option>CFO only</option><option>Auto-approve (low risk)</option></select></div>
+        <div class="fg" style="grid-column:1/-1;display:flex;align-items:center;gap:10px"><label style="margin:0">Notify owners on publish</label>${tgl('wsaction-'+id+'-notify', true, 'aria-label="Notify owners on publish"')}</div>
+      </div>
+      <div class="sec-title">Validation &amp; evidence</div>
       <dl class="kv">
-        <dt>${d[3]}</dt><dd>Editable configuration with effective date, entity scope and version history</dd>
         <dt>${d[4]}</dt><dd>Inline validation table with exceptions, owners, severity and remediation path</dd>
         <dt>${d[5]}</dt><dd>Audit-ready export containing inputs, approvals, before/after deltas and timestamps</dd>
         <dt>Rollback plan</dt><dd>Previous approved version retained and restorable with approval</dd>
-        <dt>Downstream impact</dt><dd>Billing run, invoice, revenue, tax and GL dependencies are previewed before submit</dd>
       </dl>
       <div class="sec-title">Execution steps</div>
       <div class="dot-step">
         ${[['Configure','done'],['Validate','active'],['Approve',''],['Publish','']].map((s,k)=>`<div class="ds ${s[1]}"><div class="c">${s[1]==='done'?'✓':k+1}</div><small>${s[0]}</small></div>`).join('')}
       </div>
-      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="${d[0]} submitted for approval">Submit for approval</button><button class="btn" data-act="download" data-arg="pdf|${d[0]} Evidence|Controls · approvals · audit trail">${svg(I.download,15)} Evidence packet</button></div>
+      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="saveconfig" data-arg="wsaction-${id}|${d[0]} submitted for approval">Submit for approval</button><button class="btn" data-act="download" data-arg="pdf|${d[0]} Evidence|Controls · approvals · audit trail">${svg(I.download,15)} Evidence packet</button></div>
     </div>`);
 }
 function openWorkspaceCard(arg){
   const [id,title,desc] = (arg||'').split('|');
   const d = WORKSPACE_ACTIONS[id] || ['Open operating console','Controls and evidence','Operations','Configuration','Validation','Evidence'];
   openDrawer(`
-    <div class="drawer-head"><div><div class="mono mut">${d[2]} · operating task</div><div style="font-size:18px;font-weight:650">${title||d[0]}</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-head"><div><div class="mono mut">${d[2]} · operating task</div><div style="font-size:18px;font-weight:650">${title||d[0]}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
     <div class="drawer-body">
       <p class="mut" style="margin-top:0">${desc||d[1]}</p>
       <div class="grid kpis" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
@@ -272,13 +280,13 @@ function openWorkspaceCard(arg){
       <div class="activity">
         ${['Dependencies calculated','Exception owners assigned','Rollback version retained','Audit export ready'].map((x,i)=>`<div class="act"><div class="ai">${svg(I.check,15)}</div><div><div class="at">${x}</div><div class="am">${i<2?'validated against current period':'recorded for audit'}</div></div><time>${i+1}m</time></div>`).join('')}
       </div>
-      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="${title||d[0]} saved as governed draft">Save governed draft</button><button class="btn" data-act="download" data-arg="csv|${title||d[0]} Validation|Fields · controls · owners">Export validation</button></div>
+      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="saveconfig" data-arg="workspace-${id}|${title||d[0]} saved as governed draft">Save governed draft</button><button class="btn" data-act="download" data-arg="csv|${title||d[0]} Validation|Fields · controls · owners">Export validation</button></div>
     </div>`);
 }
 function openBillingRunAction(kind){
   const schedule = kind==='schedule';
   openDrawer(`
-    <div class="drawer-head"><div><div class="mono mut">Billing Ops · ${schedule?'new controlled run':'run preview'}</div><div style="font-size:18px;font-weight:650">${schedule?'Schedule billing run':'Recalculate billing preview'}</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-head"><div><div class="mono mut">Billing Ops · ${schedule?'new controlled run':'run preview'}</div><div style="font-size:18px;font-weight:650">${schedule?'Schedule billing run':'Recalculate billing preview'}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
     <div class="drawer-body">
       <div class="grid kpis" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
         ${kpi('Period','July 2026','first-of-month',{})}${kpi('Accounts','842','in scope',{})}${kpi('Controls','6','pre-run checks',{})}${kpi('Approvals','2 of 3','tax pending',{})}
@@ -291,7 +299,7 @@ function openBillingRunAction(kind){
 }
 function openBillingRunDetail(id){
   openDrawer(`
-    <div class="drawer-head"><div><div class="mono mut">${id}</div><div style="font-size:18px;font-weight:650">Billing run operating record</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-head"><div><div class="mono mut">${id}</div><div style="font-size:18px;font-weight:650">Billing run operating record</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
     <div class="drawer-body"><div class="note info">${svg(I.audit,15)}<div><b>Governed run:</b> scope, rating, tax, GL, invoice generation and approval evidence are tracked before finalization.</div></div>
       <div class="sec-title">Artifacts</div><dl class="kv"><dt>Scope file</dt><dd>842 accounts · source snapshot hash BR-7f31</dd><dt>Draft invoices</dt><dd>47 generated · 3 validation issues</dd><dt>Usage report</dt><dd>318 meters rated · 0 blocking ingestion failures</dd><dt>Revenue schedules</dt><dd>824 obligations updated for July</dd><dt>Approval log</dt><dd>Billing Ops approved · Tax pending · Controller ready</dd></dl>
       <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" data-act="draftvalidate" data-arg="all">Open validation queue</button><button class="btn" data-act="route" data-arg="invoices">Open invoices</button></div></div>`);
@@ -299,13 +307,13 @@ function openBillingRunDetail(id){
 function openBillingRunException(arg){
   const [scope, exception, impact, owner] = (arg||'').split('|');
   openDrawer(`
-    <div class="drawer-head"><div><div class="mono mut">Billing run exception</div><div style="font-size:18px;font-weight:650">${exception||'Validation exception'}</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-head"><div><div class="mono mut">Billing run exception</div><div style="font-size:18px;font-weight:650">${exception||'Validation exception'}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
     <div class="drawer-body"><dl class="kv"><dt>Scope</dt><dd>${scope}</dd><dt>Impact</dt><dd>${impact}</dd><dt>Owner</dt><dd>${owner}</dd><dt>Resolution SLA</dt><dd>Before billing run approval cutoff</dd><dt>Audit requirement</dt><dd>Resolution comment and before/after validation output</dd></dl><div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" data-act="toast" data-arg="Exception assigned to ${owner}">Assign owner</button><button class="btn" data-act="download" data-arg="csv|Billing Exception|${scope} · ${exception}">Export exception</button></div></div>`);
 }
 function openWorkflowAction(kind){
   const build = kind==='builder';
   openDrawer(`
-    <div class="drawer-head"><div><div class="mono mut">Workflow Automation · ${build?'builder':'test harness'}</div><div style="font-size:18px;font-weight:650">${build?'Build workflow':'Test selected flow'}</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-head"><div><div class="mono mut">Workflow Automation · ${build?'builder':'test harness'}</div><div style="font-size:18px;font-weight:650">${build?'Build workflow':'Test selected flow'}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
     <div class="drawer-body">
       <div class="note info" style="margin-bottom:16px">${svg(I.settings,15)}<div><b>${build?'Workflow builder':'Workflow test'}:</b> configure the trigger, conditions, approval route, actions, retry policy and audit evidence before publishing.</div></div>
       <div class="form-grid">
@@ -318,20 +326,29 @@ function openWorkflowAction(kind){
       </div>
       <div class="sec-title">Execution preview</div>
       <div class="dot-step">${[['Trigger','done'],['Evaluate','active'],['Approve',''],['Execute',''],['Audit','']].map((s,k)=>`<div class="ds ${s[1]}"><div class="c">${s[1]==='done'?'✓':k+1}</div><small>${s[0]}</small></div>`).join('')}</div>
-      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="Workflow ${build?'saved as draft':'test run queued'} with audit evidence">${build?'Save workflow draft':'Run test'}</button><button class="btn" data-act="download" data-arg="json|Workflow Definition|Trigger · conditions · actions">Export definition</button></div>
+      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="saveconfig" data-arg="workflow-${kind}|Workflow ${build?'saved as draft':'test run queued'} with audit evidence">${build?'Save workflow draft':'Run test'}</button><button class="btn" data-act="download" data-arg="json|Workflow Definition|Trigger · conditions · actions">Export definition</button></div>
     </div>`);
 }
 function openWorkflowDetail(arg){
   const [name,trigger,route,status] = (arg||'').split('|');
   openDrawer(`
-    <div class="drawer-head"><div><div class="mono mut">${trigger}</div><div style="font-size:18px;font-weight:650">${name}</div></div><button class="x" data-act="close">✕</button></div>
+    <div class="drawer-head"><div><div class="mono mut">${trigger}</div><div style="font-size:18px;font-weight:650">${name}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
     <div class="drawer-body"><div style="display:flex;gap:8px;margin-bottom:14px">${pill(status==='Live'?'good':'muted',status||'Draft')}<span class="pill muted">${route}</span></div><dl class="kv"><dt>Trigger</dt><dd class="mono">${trigger}</dd><dt>Route</dt><dd>${route}</dd><dt>Actions</dt><dd>Email/SMS, approval task, CRM sync and audit event</dd><dt>Failure handling</dt><dd>3 retries, dead-letter queue, owner escalation</dd><dt>Evidence</dt><dd>Payload, decision path, approver, timestamp and delivery output retained</dd></dl><div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" data-act="workflowaction" data-arg="test">Test workflow</button><button class="btn" data-act="download" data-arg="json|${name} Workflow|Definition · history · evidence">Export definition</button></div></div>`);
 }
 function openWorkflowRun(arg){
   const [id,flow,step,account,state] = (arg||'').split('|');
-  openDrawer(`<div class="drawer-head"><div><div class="mono mut">${id}</div><div style="font-size:18px;font-weight:650">${flow} run</div></div><button class="x" data-act="close">✕</button></div><div class="drawer-body"><dl class="kv"><dt>Current step</dt><dd>${step}</dd><dt>Account</dt><dd>${account}</dd><dt>State</dt><dd>${state}</dd><dt>Owner</dt><dd>Automation service + assigned business owner</dd><dt>Next action</dt><dd>Wait for timer or approval result, then execute configured action</dd></dl><div class="sec-title">Run evidence</div><div class="activity">${['Trigger payload captured','Conditions evaluated','Owner assignment recorded','Next retry scheduled'].map((x,i)=>`<div class="act"><div class="ai">${svg(I.audit,15)}</div><div><div class="at">${x}</div><div class="am">workflow runtime evidence</div></div><time>${i+1}m</time></div>`).join('')}</div></div>`);
+  openDrawer(`<div class="drawer-head"><div><div class="mono mut">${id}</div><div style="font-size:18px;font-weight:650">${flow} run</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div><div class="drawer-body"><dl class="kv"><dt>Current step</dt><dd>${step}</dd><dt>Account</dt><dd>${account}</dd><dt>State</dt><dd>${state}</dd><dt>Owner</dt><dd>Automation service + assigned business owner</dd><dt>Next action</dt><dd>Wait for timer or approval result, then execute configured action</dd></dl><div class="sec-title">Run evidence</div><div class="activity">${['Trigger payload captured','Conditions evaluated','Owner assignment recorded','Next retry scheduled'].map((x,i)=>`<div class="act"><div class="ai">${svg(I.audit,15)}</div><div><div class="at">${x}</div><div class="am">workflow runtime evidence</div></div><time>${i+1}m</time></div>`).join('')}</div></div>`);
 }
 function openWorkflowStep(arg){
   const [n,label] = (arg||'').split('|');
-  openDrawer(`<div class="drawer-head"><div><div class="mono mut">Workflow step ${n}</div><div style="font-size:18px;font-weight:650">${label}</div></div><button class="x" data-act="close">✕</button></div><div class="drawer-body"><p class="mut">This step is configured with inputs, validation, failure handling, owner assignment and audit evidence.</p><dl class="kv"><dt>Input</dt><dd>Runtime payload from previous step</dd><dt>Validation</dt><dd>Required fields and risk thresholds checked</dd><dt>Failure path</dt><dd>Retry, dead-letter queue and owner escalation</dd><dt>Audit</dt><dd>Input, output and decision path retained</dd></dl></div>`);
+  openDrawer(`<div class="drawer-head"><div><div class="mono mut">Workflow step ${n}</div><div style="font-size:18px;font-weight:650">${label}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div><div class="drawer-body">
+    <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+      <div class="fg" style="grid-column:1/-1;display:flex;align-items:center;gap:10px"><label style="margin:0">Step enabled</label>${tgl('wfstep-'+n+'-on', true, 'aria-label="Step enabled"')}</div>
+      <div class="fg" style="grid-column:1/-1"><label>Step parameters</label><input class="finput" value="${label}"></div>
+      <div class="fg"><label>On failure</label><select class="finput"><option>Retry ×3 then dead-letter</option><option>Skip step</option><option>Halt workflow</option></select></div>
+      <div class="fg"><label>Owner on escalation</label><select class="finput"><option>Collections Manager</option><option>Controller</option><option>Revenue Ops</option></select></div>
+    </div>
+    <dl class="kv"><dt>Input</dt><dd>Runtime payload from previous step</dd><dt>Validation</dt><dd>Required fields and risk thresholds checked</dd><dt>Audit</dt><dd>Input, output and decision path retained</dd></dl>
+    <div style="display:flex;gap:8px;margin-top:18px">${cfgSaveBtn('wfstep-'+n,`Step ${n} configuration saved`,'Save step')}<button class="btn ghost" data-act="close">Cancel</button></div>
+  </div>`);
 }

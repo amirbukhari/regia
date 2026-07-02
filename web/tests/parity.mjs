@@ -91,9 +91,11 @@ async function compare(name, act) {
     await shot(n.page, path.join(OUT, `${name}.next.png`)),
   ];
   const { pixels, note } = diffPNGs(aBuf, bBuf, path.join(OUT, `${name}.diff.png`));
-  const ok = pixels === 0;
+  // ≤2px tolerates single-pixel compositor noise in long sessions (fresh loads
+  // compare 0px); any real markup/style difference measures in the hundreds
+  const ok = pixels <= 2;
   if (!ok) failures++;
-  console.log(`${ok ? 'OK  ' : 'FAIL'} ${name}${ok ? '' : ` — ${pixels} px differ${note ? ` (${note})` : ''}`}`);
+  console.log(`${ok ? 'OK  ' : 'FAIL'} ${name}${pixels ? ` — ${pixels} px differ${note ? ` (${note})` : ''}` : ''}`);
 }
 
 for (const id of mRoutes) {

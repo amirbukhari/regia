@@ -1,12 +1,13 @@
 /* delonix — payments.js */
 
 function openRetryPayment(id){
+  const p = dbFindPayment(id) || {id:id||'PAY-2026-0412', acct:'Summit Digital', amt:6400, gw:'Stripe'};
   openDrawer('Retry Payment',`
     <div class="card" style="margin-bottom:16px;padding:14px 16px">
-      <div class="inv-sum-row"><span>Payment ref</span><span class="tnum" style="font-weight:600">${id||'PAY-2026-0412'}</span></div>
-      <div class="inv-sum-row"><span>Customer</span><span>Summit Digital</span></div>
-      <div class="inv-sum-row"><span>Amount</span><span class="tnum">$6,400.00</span></div>
-      <div class="inv-sum-row"><span>Gateway</span><span>Stripe</span></div>
+      <div class="inv-sum-row"><span>Payment ref</span><span class="tnum" style="font-weight:600">${p.id}</span></div>
+      <div class="inv-sum-row"><span>Customer</span><span>${p.acct}</span></div>
+      <div class="inv-sum-row"><span>Amount</span><span class="tnum">${fmt2(p.amt)}</span></div>
+      <div class="inv-sum-row"><span>Gateway</span><span>${p.gw}</span></div>
     </div>
     <div class="confirm-panel warn">
       <div class="confirm-title" style="color:var(--warn)">Last failure reason</div>
@@ -18,31 +19,32 @@ function openRetryPayment(id){
       <select class="form-select"><option>Immediately</option><option>In 24 hours</option><option>In 48 hours</option><option>Custom…</option></select></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Payment retry queued — will attempt PAY-2026-0412 immediately">Retry now</button>
+      <button class="btn primary" data-act="retrypaynow" data-arg="${p.id}">Retry now</button>
     </div>`);
 }
 
 /* ── Refund ── */
 
 function openRefund(id){
+  const p = dbFindPayment(id) || {id:id||'PAY-2026-0387', acct:'Account', amt:4200, gw:'Stripe', method:'Visa ···· 4242'};
   openDrawer('Issue Refund',`
     <div class="card" style="margin-bottom:16px;padding:14px 16px">
-      <div class="inv-sum-row"><span>Original payment</span><span class="tnum" style="font-weight:600">${id||'PAY-2026-0387'}</span></div>
-      <div class="inv-sum-row"><span>Collected</span><span class="tnum">$4,200.00</span></div>
-      <div class="inv-sum-row"><span>Gateway</span><span>Stripe · Visa ···· 4242</span></div>
-      <div class="inv-sum-row"><span>Max refundable</span><span class="tnum" style="color:var(--pos)">$4,200.00</span></div>
+      <div class="inv-sum-row"><span>Original payment</span><span class="tnum" style="font-weight:600">${p.id}</span></div>
+      <div class="inv-sum-row"><span>Collected</span><span class="tnum">${fmt2(p.amt)}</span></div>
+      <div class="inv-sum-row"><span>Gateway</span><span>${p.gw} · ${p.method}</span></div>
+      <div class="inv-sum-row"><span>Max refundable</span><span class="tnum" style="color:var(--pos)">${fmt2(p.amt)}</span></div>
     </div>
     <div class="form-row"><div class="form-group"><label class="form-label">Refund type</label>
-      <select class="form-select"><option>Full refund ($4,200.00)</option><option>Partial refund</option></select></div>
+      <select class="form-select"><option>Full refund (${fmt2(p.amt)})</option><option>Partial refund</option></select></div>
       <div class="form-group"><label class="form-label">Amount</label>
-      <input class="form-input" type="number" value="4200.00"></div></div>
+      <input class="form-input" id="rf_amount" type="number" value="${p.amt}"></div></div>
     <div class="form-group"><label class="form-label">Reason</label>
       <select class="form-select"><option>Customer requested cancellation</option><option>Service outage / SLA breach</option><option>Billing error</option><option>Duplicate charge</option><option>Goodwill</option></select></div>
     <div class="form-group" style="margin-top:10px"><label class="form-label">Internal notes</label>
       <textarea class="form-textarea" placeholder="Notes for audit trail…" style="min-height:56px"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" style="background:var(--neg)" data-act="toast" data-arg="Refund of $4,200.00 queued — Stripe will process within 5–10 business days">Issue refund</button>
+      <button class="btn primary" style="background:var(--neg)" data-act="refundnow" data-arg="${p.id}">Issue refund</button>
     </div>`);
 }
 
@@ -51,16 +53,16 @@ function openRefund(id){
 function openManualPayment(acct){
   openDrawer('Record Manual Payment', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Invoice</label><select class="finput"><option>INV-2026-0843 · Apex Systems · $5,800.00 overdue</option><option>INV-2026-0836 · Bridgepoint · $2,150.00 overdue</option><option>INV-2026-0840 · Fulcrum Labs · $3,400.00 overdue</option></select></div>
-      <div class="fg"><label>Payment amount</label><input class="finput" type="number" placeholder="0.00"></div>
+      <div class="fg" style="grid-column:1/-1"><label>Invoice</label><select class="finput" id="mp_invoice">${db().invoices.filter(i=>i.sl==='Sent'||i.sl==='Overdue').map(i=>`<option>${i.id} · ${i.acct} · ${fmt2(i.amt)} ${i.sl.toLowerCase()}</option>`).join('')}</select></div>
+      <div class="fg"><label>Payment amount</label><input class="finput" id="mp_amount" type="number" placeholder="0.00"></div>
       <div class="fg"><label>Currency</label><select class="finput"><option>USD</option><option>EUR</option></select></div>
-      <div class="fg"><label>Payment method</label><select class="finput"><option>Wire transfer</option><option>ACH</option><option>Check</option><option>Credit card (manual)</option><option>Other</option></select></div>
+      <div class="fg"><label>Payment method</label><select class="finput" id="mp_method"><option>Wire transfer</option><option>ACH</option><option>Check</option><option>Credit card (manual)</option><option>Other</option></select></div>
       <div class="fg"><label>Payment date</label><input class="finput" type="date" value="2026-06-28"></div>
       <div class="fg"><label>Reference / check number</label><input class="finput" placeholder="Wire ref, check #, etc."></div>
       <div class="fg" style="grid-column:1/-1"><label>Notes</label><textarea class="finput" rows="2" placeholder="Internal notes — not visible to customer"></textarea></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Manual payment recorded — invoice marked as paid">Record Payment</button>
+      <button class="btn primary" data-act="recordpayment">Record Payment</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -75,7 +77,7 @@ function openRefundPolicy(){
       <div class="fg"><label>Partial refunds</label><select class="finput"><option selected>Allowed</option><option>Not allowed</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Refund policy saved">Save Policy</button>
+      ${cfgSaveBtn('refund-policy','Refund policy saved','Save Policy')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
