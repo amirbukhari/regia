@@ -94,7 +94,7 @@ function openAccountingExport(batchId){
 
 function openGLMappingEditor(buId){
   const bu = BUS.find(b=>b.id===buId)||BUS[0];
-  openDrawer(`GL Mappings — ${bu.name}`, `
+  openDrawer(`GL Mappings — ${bu.name} <span class="mono mut" style="font-size:12px;font-weight:400">${bu.id}</span>`, `
     <div class="mut" style="font-size:12.5px;margin-bottom:16px">GL account assignments control how revenue, AR, and tax entries are posted to ${bu.glDest}. Changes apply to new transactions only.</div>
     <div class="table-wrap"><table>
       <thead><tr><th>Revenue Category</th><th>GL Account</th><th>Department</th><th>Project Code</th></tr></thead>

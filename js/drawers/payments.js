@@ -84,24 +84,29 @@ function openRefundPolicy(){
 }
 
 function openManualMatch(ref){
+  const UNAPPLIED = {
+    'WIRE-2026-8821':{acct:'Vertex IO',  amt:890, date:'Jun 26', bank:'Wire · JPMorgan',  note:'No remittance data'},
+    'ACH-2026-7740': {acct:'NovaSpark',  amt:780, date:'Jun 25', bank:'ACH · Mercury',    note:'Invoice ref missing'},
+    'ACH-2026-7719': {acct:'Orbit Labs', amt:620, date:'Jun 24', bank:'ACH · SVB',        note:'Partial — short $120'},
+  };
+  const u = UNAPPLIED[ref] || {acct:'Acme Corp', amt:2800, date:'Jun 27', bank:'Wire · JPMorgan', note:'June invoices'};
+  const candidates = db().invoices.filter(i=>i.sl==='Sent'||i.sl==='Overdue').slice(0,3);
   openDrawer(`Manual Payment Match — ${ref||'PMT-2026-0312'}`, `
     <div class="mut" style="font-size:12.5px;margin-bottom:16px">Match this unidentified payment to the correct invoice or account. Once matched, the AR balance updates and the payment is marked as reconciled.</div>
     <div style="padding:12px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px;background:var(--surface)">
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">UNMATCHED PAYMENT</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
         <div><span class="mut">Reference: </span><span class="mono">${ref||'PMT-2026-0312'}</span></div>
-        <div><span class="mut">Amount: </span><span class="tnum" style="font-weight:700">$2,800.00</span></div>
-        <div><span class="mut">Received: </span>Jun 27, 2026</div>
-        <div><span class="mut">Bank: </span>Wire · JPMorgan</div>
-        <div style="grid-column:1/-1"><span class="mut">Remittance: </span>"June invoices Acme Corp"</div>
+        <div><span class="mut">Amount: </span><span class="tnum" style="font-weight:700">${fmt2(u.amt)}</span></div>
+        <div><span class="mut">Received: </span>${u.date}, 2026</div>
+        <div><span class="mut">Bank: </span>${u.bank}</div>
+        <div style="grid-column:1/-1"><span class="mut">Remittance: </span>"${u.note} — ${u.acct}"</div>
       </div>
     </div>
     <div class="form-grid" style="grid-template-columns:1fr">
       <div class="fg"><label>Match to invoice</label><select class="finput">
         <option value="">— Search invoice or account —</option>
-        <option>INV-2026-0843 · Acme Corp · $2,800.00 · overdue</option>
-        <option>INV-2026-0836 · Acme Corp · $1,400.00 · overdue</option>
-        <option>INV-2026-0829 · Acme Corp · $2,800.00 · paid</option>
+        ${candidates.map(i=>`<option>${i.id} · ${i.acct} · ${fmt2(i.amt)} · ${i.sl.toLowerCase()}</option>`).join('')}
       </select></div>
       <div class="fg"><label>Match type</label><select class="finput">
         <option selected>Full payment — close invoice</option>

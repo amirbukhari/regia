@@ -113,7 +113,7 @@ function openLegalEntity(id){
   openDrawer(`Legal Entity — ${e.name}`, `
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
       <span style="font-size:28px">${e.flag}</span>
-      <div><div style="font-size:16px;font-weight:700">${e.name}</div><div class="mut">${e.country} · ${e.currency} · ${e.glSystem}</div></div>
+      <div><div style="font-size:16px;font-weight:700">${e.name}</div><div class="mut"><span class="mono">${e.id}</span> · ${e.country} · ${e.currency} · ${e.glSystem}</div></div>
       ${pill('good','Active')}
     </div>
     <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:18px">
@@ -220,15 +220,27 @@ function openNewField(){
 }
 
 function openEditField(name){
+  const FIELD_INFO = {
+    owner_name:{display:'Owner name',type:'Text',required:true,indexed:false},
+    unit_count:{display:'Unit count',type:'Number',required:true,indexed:true},
+    property_class:{display:'Property class',type:'Dropdown',required:false,indexed:true,opts:'Class A\nClass B\nClass C\nMixed-use'},
+    billing_contact:{display:'Billing contact',type:'Email',required:true,indexed:false},
+    management_company:{display:'Management company',type:'Text',required:false,indexed:true},
+    go_live_date:{display:'Go-live date',type:'Date',required:false,indexed:false},
+    annual_revenue:{display:'Annual revenue',type:'Currency',required:false,indexed:true},
+    portal_enabled:{display:'Portal enabled',type:'Boolean',required:false,indexed:false},
+  };
+  const f = FIELD_INFO[name] || {display:(name||'field').replace(/_/g,' ').replace(/^./,c=>c.toUpperCase()),type:'Text',required:false,indexed:false};
+  const TYPES = ['Text','Number','Currency','Date','Email','Boolean','Dropdown'];
   openDrawer(`Edit Field — ${name||'property_class'}`, `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Display name</label><input class="finput" value="Property class" autofocus></div>
+      <div class="fg" style="grid-column:1/-1"><label>Display name</label><input class="finput" value="${f.display}" autofocus></div>
       <div class="fg"><label>API key</label><input class="finput mono" value="${name||'property_class'}" style="font-family:monospace"></div>
-      <div class="fg"><label>Field type</label><select class="finput"><option selected>Dropdown</option><option>Text</option></select></div>
-      <div class="fg"><label>Required</label><select class="finput"><option selected>No</option><option>Yes</option></select></div>
-      <div class="fg" style="grid-column:1/-1"><label>Dropdown options (one per line)</label><textarea class="finput" rows="4">Class A\nClass B\nClass C\nMixed-use</textarea></div>
+      <div class="fg"><label>Field type</label><select class="finput">${TYPES.map(t=>`<option${t===f.type?' selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="fg"><label>Required</label><select class="finput"><option${f.required?'':' selected'}>No</option><option${f.required?' selected':''}>Yes</option></select></div>
+      ${f.type==='Dropdown'?`<div class="fg" style="grid-column:1/-1"><label>Dropdown options (one per line)</label><textarea class="finput" rows="4">${f.opts||''}</textarea></div>`:''}
       <div class="fg"><label>Default value</label><input class="finput" placeholder="Leave blank for no default"></div>
-      <div class="fg"><label>Indexed</label><select class="finput"><option selected>Yes</option><option>No</option></select></div>
+      <div class="fg"><label>Indexed</label><select class="finput"><option${f.indexed?' selected':''}>Yes</option><option${f.indexed?'':' selected'}>No</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
       ${cfgSaveBtn('field-'+(name||'property_class'),`Field ${name||'property_class'} updated`,'Save changes')}

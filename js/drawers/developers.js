@@ -47,17 +47,22 @@ function openIntegrationDetail(name){
 }
 
 function openWebhookDetail(endpoint){
-  openDrawer(`Webhook — ${endpoint||'/hooks/billing'}`, `
+  const ep = endpoint||'/hooks/billing';
+  const isTest = /staging|test/.test(ep);
+  const created = dlxPick(ep,['Jan 15, 2026','Feb 03, 2026','Mar 22, 2026','May 09, 2026']);
+  const lastOk = isTest ? '3 days ago · 200 OK' : `${dlxRange(ep,2,45)} min ago · 200 OK`;
+  const subscribed = new Set(isTest ? ['invoice.finalized','payment.failed'] : ['invoice.finalized','invoice.sent','payment.succeeded','payment.failed','subscription.created','subscription.cancelled','credit.issued','dunning.started'].filter((e,i)=>dlxHash(ep+e)%4!==0||i<3));
+  openDrawer(`Webhook — ${ep}`, `
     <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
-      <div class="fg" style="grid-column:1/-1"><label>Endpoint URL</label><input class="finput" value="${endpoint||'https://example.com/hooks/billing'}" style="font-family:monospace"></div>
-      <div class="fg"><label>Status</label>${pill('good','Active')}</div>
-      <div class="fg"><label>Created</label><div class="mut">Jan 15, 2026</div></div>
-      <div class="fg"><label>Secret</label><div class="mono mut" style="font-size:12px">whsec_••••••••••••••••</div><button class="btn ghost" style="font-size:11px;margin-top:4px;padding:3px 7px" data-act="rotatekey" data-arg="${endpoint}">Rotate</button></div>
-      <div class="fg"><label>Last delivery</label><div class="tnum">2 min ago · 200 OK</div></div>
+      <div class="fg" style="grid-column:1/-1"><label>Endpoint URL</label><input class="finput" value="${ep}" style="font-family:monospace"></div>
+      <div class="fg"><label>Status</label>${isTest?pill('muted','Test mode'):pill('good','Active')}</div>
+      <div class="fg"><label>Created</label><div class="mut">${created}</div></div>
+      <div class="fg"><label>Secret</label><div class="mono mut" style="font-size:12px">whsec_••••${dlxHash(ep).toString(36).slice(0,4)}••••</div><button class="btn ghost" style="font-size:11px;margin-top:4px;padding:3px 7px" data-act="rotatekey" data-arg="${ep}">Rotate</button></div>
+      <div class="fg"><label>Last delivery</label><div class="tnum">${lastOk}</div></div>
     </div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Subscribed Events</h4>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px">
-      ${['invoice.finalized','invoice.sent','payment.succeeded','payment.failed','subscription.created','subscription.cancelled','credit.issued','dunning.started'].map(e=>`<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer"><input type="checkbox" checked> ${e}</label>`).join('')}
+      ${['invoice.finalized','invoice.sent','payment.succeeded','payment.failed','subscription.created','subscription.cancelled','credit.issued','dunning.started'].map(e=>`<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer"><input type="checkbox" ${subscribed.has(e)?'checked':''}> ${e}</label>`).join('')}
     </div>
     <div class="form-actions">
       <button class="btn primary" data-act="toast" data-arg="Webhook saved">Save</button>
@@ -148,7 +153,7 @@ function openAPIKeyCreator(){
 function openRotateKey(keyId){
   openDrawer(`Rotate API Key — ${keyId||'sk_live_••••••'}`, `
     <div class="val-banner error" style="margin-bottom:16px">${svg(I.warning,15)} <strong>Key rotation immediately invalidates the old key.</strong> Update your systems before rotating to avoid downtime.</div>
-    <div style="font-size:13px;margin-bottom:14px">A new secret key will be generated. The current key <span class="mono" style="font-size:12px">${keyId||'sk_live_••••••'}</span> will stop working immediately after rotation.</div>
+    <div style="font-size:13px;margin-bottom:14px">A new secret key will be generated. The current key <span class="mono" style="font-size:12px">${keyId||'sk_live_••••••'}</span> (created ${dlxPick(keyId||'k',['Jan 12, 2026','Nov 03, 2025','Apr 28, 2026'])} · last used ${dlxRange(keyId||'k',1,50)} min ago) will stop working immediately after rotation.</div>
     <div class="form-actions">
       <button class="btn" style="background:var(--warn);color:#1a0e00;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:600" data-act="toast" data-arg="API key rotated — new key ready, old key invalidated">Rotate Key</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>

@@ -115,14 +115,45 @@ function openAuditHistory(arg){
 }
 
 function openMigrationDetail(id){
+  const ss = (typeof SOURCE_SYSTEMS!=='undefined') && SOURCE_SYSTEMS.find(s=>s.id===id);
+  if(ss){
+    const acquired = ss.type==='acquired';
+    openDrawer(`Source System — ${ss.name} <span class="mono mut" style="font-size:12px;font-weight:400">${ss.id}</span>`, `
+      <div class="val-banner ${acquired?'warn':'info'}" style="margin-bottom:16px">${svg(I.migration,15)} <strong>${acquired?'Acquisition migration in progress.':'Accounting export connection.'}</strong> ${acquired?'Legacy customers are being mapped into delonix accounts.':'Journal entries export on a scheduled sync.'}</div>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+        <div class="fg"><label>System</label><div>${ss.name}</div></div>
+        <div class="fg"><label>Type</label><div>${ss.type}</div></div>
+        ${acquired?`<div class="fg"><label>Legacy customers</label><div class="tnum">${ss.legacyCustomers}</div></div>
+        <div class="fg"><label>Mapped</label><div class="tnum">${ss.mapped} · ${ss.unresolved} unresolved</div></div>
+        <div class="fg"><label>Invoice total (legacy)</label><div class="tnum">${fmt(ss.invoiceTotal)}</div></div>
+        <div class="fg"><label>Variance</label><div class="tnum" style="color:var(--warn)">${fmt(ss.delta)} — within tolerance</div></div>`
+        :`<div class="fg"><label>Connection</label><div>${pill('good','Active')}</div></div>
+        <div class="fg"><label>Last sync</label><div class="tnum">${ss.lastSync}</div></div>
+        <div class="fg"><label>Records exported</label><div class="tnum">${ss.recordsExported}</div></div>
+        <div class="fg"><label>Status</label><div>${pill('good','Healthy')}</div></div>`}
+      </div>
+      <div class="form-actions" style="margin-top:16px">${acquired?`<button class="btn primary" data-act="route" data-arg="migration">Open mapping queue</button>`:`<button class="btn primary" data-act="toast" data-arg="${ss.name} sync triggered">Sync now</button>`}<button class="btn ghost" onclick="closeDrawer()">Close</button></div>`);
+    return;
+  }
+  if(id==='bulk'){
+    openDrawer('Bulk Mapping — unresolved customers', `
+      <div class="val-banner warn" style="margin-bottom:16px">${svg(I.migration,15)} <strong>23 legacy customers need manual mapping.</strong> Suggested matches are ranked by name and billing-address similarity.</div>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+        <div class="fg"><label>Match strategy</label><select class="finput"><option>Name + address similarity</option><option>Tax ID exact match</option><option>Manual only</option></select></div>
+        <div class="fg"><label>Auto-accept threshold</label><select class="finput"><option>95% confidence</option><option>90% confidence</option><option>Manual review all</option></select></div>
+      </div>
+      <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Bulk mapping started — 23 customers queued">Run bulk mapping</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>`);
+    return;
+  }
+  const legacyName = dlxPick(id,['Riverfront Properties','Harborline Estates','Crestview Property Group','Lakeshore Rentals','Summit Property Co']);
   openDrawer('Migration Detail — ' + id, `
     <div class="val-banner warn" style="margin-bottom:16px">${svg(I.migration,15)} <strong>BuildStream acquisition migration in progress.</strong> This customer requires manual mapping before billing can proceed.</div>
     <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
       <div class="fg"><label>Legacy Customer ID</label><div class="mono">${id}</div></div>
-      <div class="fg"><label>Legacy Name</label><div>Riverfront Properties</div></div>
-      <div class="fg"><label>Legacy Product</label><div>BuildStream Pro</div></div>
-      <div class="fg"><label>Legacy MRR</label><div class="tnum">$4,800</div></div>
-      <div class="fg"><label>Migration Batch</label><div>BATCH-2026-06</div></div>
+      <div class="fg"><label>Legacy Name</label><div>${legacyName}</div></div>
+      <div class="fg"><label>Legacy Product</label><div>BuildStream ${dlxPick(id+'p',['Pro','Standard','Enterprise'])}</div></div>
+      <div class="fg"><label>Legacy MRR</label><div class="tnum">${fmt(dlxRange(id,800,6200))}</div></div>
+      <div class="fg"><label>Migration Batch</label><div>BATCH-2026-0${dlxRange(id+'b',4,6)}</div></div>
       <div class="fg"><label>Reconciliation Status</label><div>${pill('warn','Pending')}</div></div>
     </div>
     <h4 style="font-size:13px;font-weight:700;margin-bottom:10px">Map to delonix</h4>
@@ -232,21 +263,30 @@ function openEditRole(name){
 }
 
 function openEditMember(name){
+  const MEMBER_INFO = {
+    'Amir Bukhari':{email:'abukhari@delonix.com',role:'Super Admin',mfa:true,api:true},
+    'M. Reyes':{email:'mreyes@delonix.com',role:'Finance Manager',mfa:true,api:false},
+    'D. Cho':{email:'dcho@delonix.com',role:'Revenue Ops',mfa:true,api:false},
+    'P. Anand':{email:'panand@delonix.com',role:'Revenue Ops',mfa:false,api:false},
+    'L. Torres':{email:'ltorres@delonix.com',role:'Viewer',mfa:true,api:false},
+    'CI/CD Bot':{email:'cicd-bot@delonix.com',role:'API Service Account',mfa:false,api:true},
+  };
+  const m = MEMBER_INFO[name] || {email:(name||'user').toLowerCase().replace(/[^a-z0-9]+/g,'.')+'@delonix.com',role:'Viewer',mfa:false,api:false};
   openDrawer('Edit Member — '+name,`
     <div style="display:flex;flex-direction:column;gap:14px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div><label class="lbl">Name</label><input class="input" value="${name}" style="width:100%"></div>
-        <div><label class="lbl">Email</label><input class="input" value="${name.toLowerCase().replace(' ','.')}@delonix.com" style="width:100%"></div>
+        <div><label class="lbl">Email</label><input class="input" value="${m.email}" style="width:100%"></div>
       </div>
-      <div><label class="lbl">Role</label><select class="input" style="width:100%"><option>Super Admin</option><option>Admin</option><option selected>Finance Manager</option><option>Revenue Ops</option><option>Viewer</option><option>API Service Account</option></select></div>
+      <div><label class="lbl">Role</label><select class="input" style="width:100%">${['Super Admin','Admin','Finance Manager','Revenue Ops','Viewer','API Service Account'].map(r=>`<option${r===m.role?' selected':''}>${r}</option>`).join('')}</select></div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface-2);border-radius:var(--r-sm)">
           <span style="font-size:13px">Require MFA</span>
-          <div style="width:36px;height:20px;background:var(--good);border-radius:10px;cursor:pointer;position:relative"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;right:2px;top:2px"></div></div>
+          ${tgl('member-'+name+'-mfa', m.mfa, `aria-label="Require MFA for ${name}"`)}
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface-2);border-radius:var(--r-sm)">
           <span style="font-size:13px">API access</span>
-          <div style="width:36px;height:20px;background:var(--border);border-radius:10px;cursor:pointer;position:relative"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;left:2px;top:2px"></div></div>
+          ${tgl('member-'+name+'-api', m.api, `aria-label="API access for ${name}"`)}
         </div>
       </div>
       <div style="display:flex;gap:8px;justify-content:space-between;margin-top:4px">
@@ -261,28 +301,31 @@ function openEditMember(name){
 }
 
 function openAuditDetail(eventType){
-  openDrawer('Audit event — '+eventType,`
+  const et = eventType||'Event';
+  const actor = dlxPick(et,['A. Bukhari (abukhari@delonix.com)','M. Reyes (mreyes@delonix.com)','D. Cho (dcho@delonix.com)','Finance Bot (system)']);
+  const sev = /delete|permission|role|export|key/i.test(et) ? pill('warn','HIGH') : /modif|void|credit/i.test(et) ? pill('ember','MEDIUM') : pill('muted','ROUTINE');
+  const target = /invoice/i.test(et) ? 'INV-2026-08'+dlxRange(et,10,47) : /price/i.test(et) ? '2026 Standard price book' : /permission|role/i.test(et) ? 'D. Cho — role change' : /export/i.test(et) ? 'Customer export (247 rows)' : 'Billing object '+dlxRange(et,100,999);
+  const ts = `2026-06-${dlxRange(et+'d',21,28)} ${String(dlxRange(et+'h',8,18)).padStart(2,'0')}:${String(dlxRange(et+'m',10,59))}:0${dlxRange(et+'s',1,9)} UTC`;
+  openDrawer('Audit event — '+et,`
     <div style="display:flex;flex-direction:column;gap:14px">
       <div class="kv-grid" style="display:grid;grid-template-columns:130px 1fr;gap:6px 14px">
         <span class="mut">Event type</span><span style="font-weight:600">${eventType}</span>
-        <span class="mut">Timestamp</span><span class="mono">2026-06-28 10:41:03 UTC</span>
-        <span class="mut">Actor</span><span>A. Bukhari (abukhari@delonix.com)</span>
-        <span class="mut">Session ID</span><span class="mono" style="font-size:11px">sess_01Jx4mQpR9v2Kn7cP</span>
+        <span class="mut">Timestamp</span><span class="mono">${ts}</span>
+        <span class="mut">Actor</span><span>${actor}</span>
+        <span class="mut">Session ID</span><span class="mono" style="font-size:11px">sess_${dlxHash(et).toString(36)}Qp${dlxHash(et+"x").toString(36).slice(0,6)}</span>
         <span class="mut">IP address</span><span class="mono">10.0.0.1 (internal)</span>
         <span class="mut">User agent</span><span style="font-size:12px">Chrome 126 · macOS 14.5</span>
-        <span class="mut">Resource</span><span>D. Cho — role change</span>
-        <span class="mut">Severity</span><span>${pill('warn','HIGH')}</span>
+        <span class="mut">Resource</span><span>${target}</span>
+        <span class="mut">Severity</span><span>${sev}</span>
       </div>
       <div style="border-top:1px solid var(--border);padding-top:12px">
         <div style="font-weight:600;margin-bottom:8px;font-size:13px">Event payload</div>
         <pre class="mono" style="font-size:11px;background:var(--surface-2);padding:12px;border-radius:var(--r-sm);overflow-x:auto;white-space:pre-wrap">{
-  "event": "${eventType}",
-  "actor": "user_ABK001",
-  "target": "user_DC042",
-  "before": { "role": "revenue_ops" },
-  "after":  { "role": "finance_manager" },
-  "reason": "promotion",
-  "approved_by": "user_ABK001"
+  "event": "${et.toLowerCase().replace(/[^a-z0-9]+/g,'_')}",
+  "actor": "${actor.split(' (')[0]}",
+  "target": "${target}",
+  "recorded_at": "${ts}",
+  "immutable": true
 }</pre>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">

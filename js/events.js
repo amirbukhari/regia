@@ -36,6 +36,7 @@ document.addEventListener('click',e=>{
   if(a==='account') return openAccount(arg);
   if(a==='revsched') return openRevSchedule(arg);
   if(a==='subdetail') return openSubscription(arg);
+  if(a==='quotedetail') return openQuoteDetail(arg);
   if(a==='paydetail') return openPayment(arg);
   if(a==='retrypay') return openRetryPayment(arg);
   if(a==='refund') return openRefund(arg);

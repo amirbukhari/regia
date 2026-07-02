@@ -46,7 +46,7 @@ VIEWS.quotes = (v)=>{
       <table>
         <thead><tr><th>Quote #</th><th>Customer</th><th class="num">Value (ACV)</th><th>Plan</th><th>Owner</th><th>Stage</th><th>Expires</th><th>Status</th></tr></thead>
         <tbody>
-          ${quotes.map(q=>`<tr style="cursor:pointer" data-act="invoice" data-arg="${q.id}">
+          ${quotes.map(q=>`<tr style="cursor:pointer" data-act="quotedetail" data-arg="${q.id}|${q.acct}|${q.plan}|${q.val}|${q.owner}|${q.stage}|${q.sl}|${q.exp}">
             <td class="mono">${q.id}</td>
             <td class="nm">${q.acct}</td>
             <td class="num tnum">${fmt(q.val)}</td>

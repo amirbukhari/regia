@@ -132,14 +132,18 @@ function openNewPlan(){
 }
 
 function openEditPlan(name){
-  openDrawer(`Edit Plan — ${name||'Enterprise'}`, `
+  const plan = name||'Enterprise';
+  const PLAN_PRICES = {'Starter':650,'Business':1800,'Business+':4200,'Enterprise':9200,'Enterprise+':12000};
+  const price = PLAN_PRICES[plan] ?? dlxRange(plan,500,12000);
+  const affected = dlxRange(plan+'subs',12,120);
+  openDrawer(`Edit Plan — ${plan}`, `
     <div class="val-banner warn" style="margin-bottom:14px">${svg(I.warning,14)} Changes to a published plan apply to <strong>new subscriptions only</strong>. Existing subscriptions retain the current terms until renewal or manual update.</div>
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Plan name</label><input class="finput" value="${name||'Enterprise'}"></div>
-      <div class="fg"><label>Base price</label><input class="finput" type="number" value="9200"></div>
+      <div class="fg" style="grid-column:1/-1"><label>Plan name</label><input class="finput" value="${plan}"></div>
+      <div class="fg"><label>Base price</label><input class="finput" type="number" value="${price}"></div>
       <div class="fg"><label>Billing interval</label><select class="finput"><option selected>Monthly</option><option>Annual</option></select></div>
       <div class="fg"><label>Status</label><select class="finput"><option selected>Active</option><option>Draft</option><option>Archived</option></select></div>
-      <div class="fg"><label>Affected subscriptions</label><div class="tnum mut">47 active</div></div>
+      <div class="fg"><label>Affected subscriptions</label><div class="tnum mut">${affected} active</div></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
       ${cfgSaveBtn('plan-'+(name||'Enterprise'),'Plan changes saved — applying to new subscriptions','Save Changes')}

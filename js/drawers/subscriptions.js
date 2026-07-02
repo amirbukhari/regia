@@ -35,6 +35,42 @@ function openNewQuote(){
     </div>`);
 }
 
+function openQuoteDetail(arg){
+  const [id,acct,plan,val,owner,stage,sl,exp] = (arg||'').split('|');
+  const value = +val||0;
+  const stages = ['Discovery','Proposal','Negotiation','Signed'];
+  const idx = Math.max(0, stages.indexOf(stage));
+  openDrawer(`
+    <div class="drawer-head"><div><div class="mono mut">${id} · ${owner||'—'}</div><div style="font-size:18px;font-weight:650">${acct||'Quote'}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
+    <div class="drawer-body">
+      <div style="display:flex;gap:8px;margin-bottom:18px">${pill(stage==='Signed'?'good':stage==='Negotiation'?'warn':'info', sl||stage)}<span class="pill muted">${plan||'—'}</span>${exp&&exp!=='—'?`<span class="pill muted">Expires ${exp}</span>`:''}</div>
+      <div class="grid kpis" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+        ${kpi('Quote value',fmt(value),'annual contract value',{})}
+        ${kpi('Monthly equivalent',fmt(Math.round(value/12)),'ACV / 12',{})}
+        ${kpi('Owner',owner||'—','deal desk',{})}
+        ${kpi('Stage',stage||'—',sl||'',{})}
+      </div>
+      <div class="sec-title">Pipeline</div>
+      <div class="dot-step">
+        ${stages.map((s,k)=>`<div class="ds ${k<idx?'done':k===idx?'active':''}"><div class="c">${k<idx?'✓':k+1}</div><small>${s}</small></div>`).join('')}
+      </div>
+      <div class="sec-title">Terms</div>
+      <dl class="kv">
+        <dt>Plan</dt><dd>${plan||'—'}</dd>
+        <dt>Term</dt><dd>12 months · annual prepay</dd>
+        <dt>Discount</dt><dd>${dlxRange(id,0,15)}% negotiated</dd>
+        <dt>Payment terms</dt><dd>${dlxPick(id,['Net 30','Net 45','Net 60'])}</dd>
+        <dt>E-signature</dt><dd>${stage==='Signed'?'Completed via DocuSign':'Pending — awaiting customer'}</dd>
+      </dl>
+      <div style="display:flex;gap:8px;margin-top:22px">
+        ${stage==='Signed'
+          ? `<button class="btn primary" style="flex:1;justify-content:center" data-act="subdetail" data-arg="${acct}">View subscription</button>`
+          : `<button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="${id} sent to ${acct} for signature">${stage==='Negotiation'?'Send for signature':'Send to customer'}</button>`}
+        <button class="btn" data-act="download" data-arg="pdf|${id} Quote|${acct} · ${fmt(value)}">${svg(I.download,15)} PDF</button>
+      </div>
+    </div>`);
+}
+
 /* ── New Customer ── */
 
 function openNewSub(){
@@ -129,17 +165,22 @@ function openUsageImport(){
 }
 
 function openChangePlan(acct){
+  const cust = db().customers.find(x=>x.name===acct);
+  const curPlan = cust ? cust.plan : 'Enterprise';
+  const curMrr = cust ? cust.mrr : 9200;
+  const tiers = [['Enterprise+','$12,000','Unlimited API · Priority support'],['Enterprise','$9,200','10M API · 2TB storage'],['Business+','$4,200','5M API · 500GB storage'],['Business','$1,800','1M API · 100GB storage'],['Starter','$650','100k API · 20GB storage']];
+  const curIdx = Math.max(0, tiers.findIndex(t=>t[0]===curPlan));
   openDrawer(`Change Plan — ${acct||'Account'}`, `
     <div class="mut" style="font-size:12.5px;margin-bottom:16px">Plan changes take effect at the next billing cycle unless immediate activation is selected. Proration will apply for mid-cycle changes.</div>
     <div style="margin-bottom:16px">
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px">CURRENT PLAN</div>
-      <div style="padding:10px 14px;border:1px solid var(--ember);border-radius:8px;background:var(--ember-glow)">${pill('ember','Enterprise')} <span style="margin-left:8px;font-size:13px;font-weight:600">$9,200 / month</span></div>
+      <div style="padding:10px 14px;border:1px solid var(--ember);border-radius:8px;background:var(--ember-glow)">${pill('ember',curPlan)} <span style="margin-left:8px;font-size:13px;font-weight:600">${fmt(curMrr)} / month</span></div>
     </div>
     <div>
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">SELECT NEW PLAN</div>
       <div style="display:flex;flex-direction:column;gap:7px">
-        ${[['Enterprise+','$12,000','Unlimited API · Priority support'],['Enterprise','$9,200','Current plan'],['Business+','$4,200','5M API · 500GB storage'],['Business','$1,800','1M API · 100GB storage']].map((p,i)=>`<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ${i===1?'var(--ember)':'var(--border)'};border-radius:8px;cursor:pointer">
-          <input type="radio" name="planchange" ${i===1?'checked':''}> <div style="flex:1"><div style="font-weight:600;font-size:13px">${p[0]}</div><div class="mut" style="font-size:12px">${p[2]}</div></div><span class="tnum" style="font-weight:700">${p[1]}/mo</span>
+        ${tiers.map((p,i)=>`<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ${i===curIdx?'var(--ember)':'var(--border)'};border-radius:8px;cursor:pointer">
+          <input type="radio" name="planchange" ${i===curIdx?'checked':''}> <div style="flex:1"><div style="font-weight:600;font-size:13px">${p[0]}</div><div class="mut" style="font-size:12px">${i===curIdx?'Current plan':p[2]}</div></div><span class="tnum" style="font-weight:700">${p[1]}/mo</span>
         </label>`).join('')}
       </div>
     </div>
@@ -155,13 +196,15 @@ function openChangePlan(acct){
 }
 
 function openRenewalQuote(acct){
+  const cust = db().customers.find(x=>x.name===acct);
+  const arr = (cust ? cust.mrr : subs.find(s=>s.acct===acct)?.mrr || dlxRange(acct||'a',2000,50000)) * 12;
   openDrawer(`Renewal Quote — ${acct||'Account'}`, `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
       <div class="fg"><label>Contract end date</label><div class="tnum">Jun 30, 2026</div></div>
-      <div class="fg"><label>Current ARR</label><div class="tnum">$110,400</div></div>
+      <div class="fg"><label>Current ARR</label><div class="tnum">${fmt(arr)}</div></div>
       <div class="fg"><label>Renewal term</label><select class="finput"><option selected>12 months</option><option>24 months</option><option>36 months</option></select></div>
       <div class="fg"><label>Renewal type</label><select class="finput"><option selected>Auto-renew at current pricing</option><option>Price increase (CPI + 3%)</option><option>Custom pricing</option><option>Do not renew</option></select></div>
-      <div class="fg"><label>Renewal ARR</label><input class="finput" type="number" value="110400"></div>
+      <div class="fg"><label>Renewal ARR</label><input class="finput" type="number" value="${arr}"></div>
       <div class="fg"><label>Discount</label><input class="finput" type="number" placeholder="0" value="0">%</div>
     </div>
     <div class="form-actions" style="margin-top:14px">

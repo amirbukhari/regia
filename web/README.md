@@ -61,6 +61,10 @@ build (`BASE_URL=http://127.0.0.1:8001` for the export). `tests/deploy-check.mjs
 (`npm run test:deploy`) verifies a live deployment per §7. CI runs everything
 on each PR via `.github/workflows/tests.yml`.
 
+`tests/coherence-audit.mjs` is an advisory sweep for drawer content: it opens
+every drawer with several different arguments and flags content that ignores
+the clicked entity (review output by hand — it has known false positives).
+
 `tests/runtime-audit.mjs` (`npm run test:audit`) drives the mockup itself:
 it verifies every `events.js` dispatch handler exists, renders all routes,
 clicks every unique `data-act` element (including inside opened drawers), and

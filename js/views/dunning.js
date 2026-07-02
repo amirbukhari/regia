@@ -1,20 +1,7 @@
 /* delonix — dunning.js */
 
 VIEWS.dunning = (v)=>{
-  const DUN_DATA = [
-    {acct:'Apex Systems',      amt:5800,  day:28, last:'Jun 25',  next:'Final notice',   status:'neg',   sl:'Day 28'},
-    {acct:'Fulcrum Labs',      amt:3400,  day:28, last:'Jun 25',  next:'Final notice',   status:'neg',   sl:'Day 28'},
-    {acct:'Bridgepoint',       amt:2150,  day:21, last:'Jun 22',  next:'Suspend Jun 30', status:'neg',   sl:'Day 21'},
-    {acct:'Cascade Analytics', amt:2950,  day:21, last:'Jun 22',  next:'Suspend Jun 30', status:'neg',   sl:'Day 21'},
-    {acct:'Prism Networks',    amt:1100,  day:14, last:'Jun 21',  next:'Call · Jun 28',  status:'warn',  sl:'Day 14'},
-    {acct:'NovaSpark',         amt:780,   day:14, last:'Jun 21',  next:'Call · Jun 28',  status:'warn',  sl:'Day 14'},
-    {acct:'Orbit Labs',        amt:620,   day:14, last:'Jun 21',  next:'Call · Jun 28',  status:'warn',  sl:'Day 14'},
-    {acct:'Vertex IO',         amt:890,   day:7,  last:'Jun 28',  next:'Email+SMS today', status:'warn',  sl:'Day 7'},
-    {acct:'TechFlow Inc',      amt:1800,  day:7,  last:'Jun 28',  next:'Email+SMS today', status:'warn',  sl:'Day 7'},
-    {acct:'Ironside Tech',     amt:1650,  day:3,  last:'Jun 27',  next:'Email · Jun 30', status:'muted', sl:'Day 3'},
-    {acct:'Meridian Tech',     amt:1450,  day:3,  last:'Jun 27',  next:'Email · Jun 30', status:'muted', sl:'Day 3'},
-    {acct:'Streamline Co',     amt:2400,  day:1,  last:'Jun 28',  next:'Email · Jul 01', status:'muted', sl:'Day 1'},
-  ];
+  const DUN_DATA = DUN_ROWS;
   const SEQ = [
     {day:'Day 1',  action:'Email · payment reminder',        done:true},
     {day:'Day 3',  action:'Email · second notice',             done:true},

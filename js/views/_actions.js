@@ -11,9 +11,18 @@ function setDashLens(which, btn){
 }
 
 function openSubscription(acct){
-  const s=subs.find(x=>x.acct===acct)||subs[0];
+  let s = subs.find(x=>x.acct===acct);
+  const cust = db().customers.find(x=>x.name===acct);
+  if(!s && cust) s = {acct, plan:`${cust.plan} (${dlxPick(acct,['annual','monthly'])})`,
+    model:dlxPick(acct,['Per-seat','Per-seat + usage','Flat + usage','Tiered seats']),
+    seats:dlxRange(acct,40,900), mrr:cust.mrr,
+    renew:`2026-${String(dlxRange(acct+'m',8,12)).padStart(2,'0')}-01`,
+    status:cust.blab==='Suspended'?'crit':cust.status, sl:cust.blab==='Suspended'?'Suspended':'Active'};
+  if(!s) s = {acct, plan:'Enterprise (annual)', model:'Per-seat', seats:dlxRange(acct,40,900),
+    mrr:dlxRange(acct,2000,50000), renew:'2026-09-01', status:'good', sl:'Active'};
   const a=accounts.find(x=>x.name===acct);
-  const accInv=invoices.filter(x=>x.acct===acct);
+  const accInv=[...invoices.filter(x=>x.acct===acct),
+    ...db().invoices.filter(x=>x.acct===acct).map(i=>({id:i.id,amt:i.amt,status:i.status,slabel:i.sl}))];
   const term=s.plan.includes('annual')?'Annual':'Monthly';
   openDrawer(`
     <div class="drawer-head">
@@ -168,9 +177,23 @@ function openInvoice(id){
     </div>`);
 }
 
-function openAccount(id){
-  const a=accounts.find(x=>x.id===id)||accounts[0];
-  const accInv=invoices.filter(x=>x.acct===a.name);
+function openAccount(ref){
+  let a = accounts.find(x=>x.id===ref||x.name===ref);
+  if(!a){
+    const c = db().customers.find(x=>x.name===ref||x.id===ref);
+    if(c) a = {id:c.id, name:c.name, plan:c.plan, seats:dlxRange(c.name,40,900), mrr:c.mrr,
+      region:dlxPick(c.name,['US','EU','UK','CA','APAC']), terms:dlxPick(c.name,['Net 30','Net 45','Net 60']),
+      status:c.status, owner:dlxPick(c.name,['M. Reyes','D. Cho','P. Anand']),
+      since:String(dlxRange(c.name,2019,2024)),
+      health:c.health==='green'?dlxRange(c.name,80,97):c.health==='yellow'?dlxRange(c.name,55,75):dlxRange(c.name,30,50),
+      ar:c.blab==='Overdue'?c.mrr:0};
+  }
+  if(!a) a = {id:'AC-'+dlxRange(ref,4000,5999), name:String(ref), plan:'Enterprise',
+    seats:dlxRange(ref,50,800), mrr:dlxRange(ref,2000,60000), region:'US',
+    terms:dlxPick(ref,['Net 30','Net 45']), status:'good', owner:dlxPick(ref,['M. Reyes','D. Cho','P. Anand']),
+    since:String(dlxRange(ref,2019,2024)), health:dlxRange(ref,60,95), ar:0};
+  const accInv=[...invoices.filter(x=>x.acct===a.name),
+    ...db().invoices.filter(x=>x.acct===a.name).map(i=>({id:i.id,amt:i.amt,status:i.status,slabel:i.sl}))];
   openDrawer(`
     <div class="drawer-head">
       <div class="logo-chip" style="background:${colorFor(a.name)};width:40px;height:40px;font-size:14px">${initials(a.name)}</div>
@@ -195,8 +218,8 @@ function openAccount(id){
       <div class="sec-title">Invoices</div>
       ${accInv.length? `<div class="table-wrap"><table style="min-width:0"><tbody>${accInv.map(i=>`<tr style="cursor:pointer" data-act="invoice" data-arg="${i.id}"><td class="mono">${i.id}</td><td class="num">${fmt(i.amt)}</td><td>${pill(i.status,i.slabel)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">No invoices in current period.</div>'}
       <div style="display:flex;gap:8px;margin-top:22px">
-        <button class="btn primary" style="flex:1;justify-content:center" data-act="route" data-arg="subscriptions">View subscription</button>
-        <button class="btn" data-act="account" data-arg="Acme Corp">Manage</button>
+        <button class="btn primary" style="flex:1;justify-content:center" data-act="subdetail" data-arg="${a.name}">View subscription</button>
+        <button class="btn" data-act="invgrouping" data-arg="${a.id}">Grouping</button>
       </div>
     </div>`);
 }
@@ -298,10 +321,18 @@ function openBillingRunAction(kind){
     </div>`);
 }
 function openBillingRunDetail(id){
+  const RUNS = {
+    'RUN-2026-07-MONTHLY':{name:'July monthly recurring run', accounts:842, amount:418350, status:'Scheduled', s:'info', approvals:'Billing Ops approved · Tax ready · Controller ready', drafts:'Generated at run start (Jul 01)'},
+    'RUN-2026-06-USAGE':{name:'June usage true-up', accounts:318, amount:64200, status:'In validation', s:'warn', approvals:'Billing Ops approved · Tax pending · Controller ready', drafts:'47 generated · 3 validation issues'},
+    'RUN-2026-Q3-PREPAID':{name:'Q3 prepaid renewals', accounts:74, amount:287900, status:'Ready', s:'good', approvals:'Fully approved — Finance, Tax and Controller signed', drafts:'74 generated · 0 issues'},
+    'RUN-2026-ADHOC-041':{name:'Backdated amendment catch-up', accounts:12, amount:18450, status:'Blocked', s:'crit', approvals:'Blocked — proration review open with Deal Desk', drafts:'12 generated · 4 proration exceptions'},
+  };
+  const r = RUNS[id] || {name:'Billing run', accounts:dlxRange(id,10,900), amount:dlxRange(id,10000,400000), status:'Scheduled', s:'info', approvals:'Billing Ops approved · Tax pending', drafts:'Pending run start'};
   openDrawer(`
-    <div class="drawer-head"><div><div class="mono mut">${id}</div><div style="font-size:18px;font-weight:650">Billing run operating record</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
-    <div class="drawer-body"><div class="note info">${svg(I.audit,15)}<div><b>Governed run:</b> scope, rating, tax, GL, invoice generation and approval evidence are tracked before finalization.</div></div>
-      <div class="sec-title">Artifacts</div><dl class="kv"><dt>Scope file</dt><dd>842 accounts · source snapshot hash BR-7f31</dd><dt>Draft invoices</dt><dd>47 generated · 3 validation issues</dd><dt>Usage report</dt><dd>318 meters rated · 0 blocking ingestion failures</dd><dt>Revenue schedules</dt><dd>824 obligations updated for July</dd><dt>Approval log</dt><dd>Billing Ops approved · Tax pending · Controller ready</dd></dl>
+    <div class="drawer-head"><div><div class="mono mut">${id}</div><div style="font-size:18px;font-weight:650">${r.name}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
+    <div class="drawer-body"><div style="display:flex;gap:8px;margin-bottom:14px">${pill(r.s,r.status)}<span class="pill muted">${r.accounts.toLocaleString()} accounts</span><span class="pill muted">${fmt(r.amount)}</span></div>
+      <div class="note info">${svg(I.audit,15)}<div><b>Governed run:</b> scope, rating, tax, GL, invoice generation and approval evidence are tracked before finalization.</div></div>
+      <div class="sec-title">Artifacts</div><dl class="kv"><dt>Scope file</dt><dd>${r.accounts.toLocaleString()} accounts · source snapshot hash BR-${dlxHash(id).toString(16).slice(0,4)}</dd><dt>Draft invoices</dt><dd>${r.drafts}</dd><dt>Run value</dt><dd>${fmt(r.amount)} across ${r.accounts.toLocaleString()} accounts</dd><dt>Revenue schedules</dt><dd>Obligations update when the run finalizes</dd><dt>Approval log</dt><dd>${r.approvals}</dd></dl>
       <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" data-act="draftvalidate" data-arg="all">Open validation queue</button><button class="btn" data-act="route" data-arg="invoices">Open invoices</button></div></div>`);
 }
 function openBillingRunException(arg){

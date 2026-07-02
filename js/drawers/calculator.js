@@ -24,17 +24,26 @@ function openNewCalculator(){
 }
 
 function openEditCalculator(id){
+  const CALCS = {
+    'CALC-001':{name:'Enterprise ROI Calculator',status:'Published',views:1284,leads:87,url:'calc.delonix.io/enterprise-roi'},
+    'CALC-002':{name:'API Pricing Estimator',status:'Published',views:632,leads:41,url:'calc.delonix.io/api-pricing'},
+    'CALC-003':{name:'TCO vs Legacy System',status:'Draft',views:0,leads:0,url:'—'},
+    'CALC-004':{name:'Multi-Site Property Manager',status:'Published',views:319,leads:22,url:'calc.delonix.io/property'},
+  };
+  const c = CALCS[id] || {name:'Calculator',status:'Draft',views:0,leads:0,url:'—'};
+  const conv = c.views ? (c.leads/c.views*100).toFixed(1)+'%' : '—';
+  const avgT = c.views ? `${dlxRange(id,2,5)}m ${dlxRange(id+'s',5,55)}s` : '—';
   openDrawer(`Calculator — ${id||'CALC-001'}`, `
     <div class="val-banner info" style="margin-bottom:14px">${svg(I.calc,14)} Live edits are saved automatically. Publish when ready to push to the embed URL.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      ${[['Views (30d)','1,284'],['Leads captured','87'],['Conversion rate','6.8%'],['Avg time on page','4m 12s']].map(([l,v])=>`
+      ${[['Views (30d)',c.views.toLocaleString()],['Leads captured',String(c.leads)],['Conversion rate',conv],['Avg time on page',avgT]].map(([l,v])=>`
         <div style="background:var(--surface);padding:10px;border-radius:7px"><div class="mut" style="font-size:11px">${l}</div><div style="font-size:18px;font-weight:700">${v}</div></div>`).join('')}
     </div>
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Name</label><input class="finput" value="Enterprise ROI Calculator"></div>
-      <div class="fg"><label>Status</label><select class="finput"><option selected>Published</option><option>Draft</option><option>Archived</option></select></div>
+      <div class="fg" style="grid-column:1/-1"><label>Name</label><input class="finput" value="${c.name}"></div>
+      <div class="fg"><label>Status</label><select class="finput">${['Published','Draft','Archived'].map(s=>`<option${s===c.status?' selected':''}>${s}</option>`).join('')}</select></div>
       <div class="fg"><label>Lead capture</label><select class="finput"><option selected>Email gate before results</option><option>Optional</option><option>None</option></select></div>
-      <div class="fg" style="grid-column:1/-1"><label>Embed URL</label><div style="display:flex;gap:8px"><input class="finput mono" value="calc.delonix.io/enterprise-roi" style="flex:1"><button class="btn ghost" data-act="toast" data-arg="Copied embed snippet">Copy embed</button></div></div>
+      <div class="fg" style="grid-column:1/-1"><label>Embed URL</label><div style="display:flex;gap:8px"><input class="finput mono" value="${c.url}" style="flex:1"><button class="btn ghost" data-act="toast" data-arg="Copied embed snippet">Copy embed</button></div></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
       <button class="btn primary" data-act="toast" data-arg="Calculator changes published">Publish changes</button>

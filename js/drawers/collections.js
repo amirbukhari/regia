@@ -1,22 +1,23 @@
 /* delonix — collections.js */
 
 function openCollectionDetail(acct){
-  const logged = db().contactLog[acct||'Apex Systems'] || [];
-  openDrawer((acct||'Apex Systems')+' — Collections',`
+  const name = acct||'Apex Systems';
+  const logged = db().contactLog[name] || [];
+  const row = DUN_ROWS.find(r=>r.acct===name) || {amt:dlxRange(name,600,6000), day:14, last:'Jun 26', next:'Final notice'};
+  const SEQ = [[1,'Friendly reminder sent'],[3,'Payment failed notice'],[7,'Urgent notice (email + SMS)'],[14,'Final notice + manual call task'],[21,'Suspension warning'],[30,'Account suspend']];
+  const stepDate = d => d <= row.day ? `Jun ${Math.max(1, 28-(row.day-d))}` : `Scheduled Jul ${Math.min(28, d-row.day)}`;
+  const attempts = SEQ.filter(([d])=>d<=row.day).length + logged.length;
+  const nextStep = (SEQ.find(([d])=>d>row.day)||[null,'Escalation review'])[1];
+  openDrawer(name+' — Collections',`
     <div class="grid kpis" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
-      <div class="card kpi" style="padding:12px 14px"><div class="lab">Outstanding</div><div class="val tnum" style="font-size:18px">$5,800</div><div class="sub" style="color:var(--neg)">14 days overdue</div></div>
-      <div class="card kpi" style="padding:12px 14px"><div class="lab">Day in sequence</div><div class="val tnum" style="font-size:18px">14</div><div class="sub">Next: final notice</div></div>
-      <div class="card kpi" style="padding:12px 14px"><div class="lab">Contact attempts</div><div class="val tnum" style="font-size:18px">${3+logged.length}</div><div class="sub">Last: ${logged.length?logged[0].when+' '+logged[0].type.toLowerCase():'Jun 26 email'}</div></div>
+      <div class="card kpi" style="padding:12px 14px"><div class="lab">Outstanding</div><div class="val tnum" style="font-size:18px">${fmt(row.amt)}</div><div class="sub" style="color:var(--neg)">${row.day} day${row.day===1?'':'s'} overdue</div></div>
+      <div class="card kpi" style="padding:12px 14px"><div class="lab">Day in sequence</div><div class="val tnum" style="font-size:18px">${row.day}</div><div class="sub">Next: ${row.next}</div></div>
+      <div class="card kpi" style="padding:12px 14px"><div class="lab">Contact attempts</div><div class="val tnum" style="font-size:18px">${attempts}</div><div class="sub">Last: ${logged.length?logged[0].when+' '+logged[0].type.toLowerCase():row.last+' email'}</div></div>
     </div>
     <div class="form-section-title">Dunning timeline</div>
     <div class="timeline" style="margin-bottom:18px">
       ${logged.map(l=>`<div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Manual — ${l.type} · ${l.outcome}</div><div class="tl-sub">${l.when}${l.note?' · '+l.note:''} · follow-up ${l.followup}</div></div></div>`).join('')}
-      <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Day 1 — Friendly reminder sent</div><div class="tl-sub">Jun 15 · Email opened (2 times)</div></div></div>
-      <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Day 3 — Payment failed notice</div><div class="tl-sub">Jun 17 · Email delivered, not opened</div></div></div>
-      <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">Day 7 — Urgent notice (email + SMS)</div><div class="tl-sub">Jun 21 · Email opened · SMS delivered</div></div></div>
-      <div class="tl-item"><div class="tl-dot active"></div><div class="tl-content"><div class="tl-title">Day 14 — Final notice + manual call task</div><div class="tl-sub">Jun 28 · Today — email sent, call pending</div></div></div>
-      <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-title">Day 21 — Suspension warning</div><div class="tl-sub">Scheduled Jul 6</div></div></div>
-      <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-title">Day 30 — Account suspend</div><div class="tl-sub">Scheduled Jul 15</div></div></div>
+      ${SEQ.map(([d,label])=>`<div class="tl-item"><div class="tl-dot ${d<row.day?'done':d===row.day?'active':''}"></div><div class="tl-content"><div class="tl-title">Day ${d} — ${label}</div><div class="tl-sub">${d<row.day?stepDate(d)+' · completed':d===row.day?stepDate(d)+' · Today — in progress':stepDate(d)}</div></div></div>`).join('')}
     </div>
     <div class="form-section-title">Log manual contact</div>
     <div class="form-row"><div class="form-group"><label class="form-label">Contact type</label>
@@ -28,9 +29,9 @@ function openCollectionDetail(acct){
       <div class="form-group"><label class="form-label">Notes</label>
       <input class="form-input" id="lc_note" placeholder="Call notes…"></div></div>
     <div class="form-footer">
-      <button class="btn ghost" style="color:var(--neg);border-color:var(--neg)" data-act="suspendaccount" data-arg="${acct||'Apex Systems'}">Suspend account</button>
-      <button class="btn ghost" data-act="logcontact" data-arg="${acct||'Apex Systems'}">Log contact</button>
-      <button class="btn primary" data-act="toast" data-arg="Manual payment link sent to ${acct||'customer'} billing contact">Send payment link</button>
+      <button class="btn ghost" style="color:var(--neg);border-color:var(--neg)" data-act="suspendaccount" data-arg="${name}">Suspend account</button>
+      <button class="btn ghost" data-act="logcontact" data-arg="${name}">Log contact</button>
+      <button class="btn primary" data-act="toast" data-arg="Manual payment link sent to ${name} billing contact">Send payment link</button>
     </div>`);
 }
 
