@@ -23,7 +23,7 @@ VIEWS.credits = (v)=>{
   v.appendChild(el(`<div class="view">
     ${pageHead('Credits & Refunds',`${CRD_DATA.length} credit notes · ${fmt(totCr)} total credits issued`,
       `<button class="btn ghost" data-act="download" data-arg="pdf|Document|1 page">${svg(I.download,15)} Export</button><button class="btn primary" data-act="newcredit">+ New Credit Note</button>`)}
-    <div class="val-banner info" style="margin-bottom:14px">${svg(I.audit,15)} <div><strong>Finalized invoices cannot be directly edited.</strong> To correct a finalized invoice, use <strong>Credit/Rebill</strong> — this creates a credit note against the original invoice and optionally generates a corrected replacement. <a href="#" data-act="toast" data-arg="Opening credit/rebill documentation" style="color:var(--ember);text-decoration:none">Learn more</a></div></div>
+    <div class="val-banner info" style="margin-bottom:14px">${svg(I.audit,15)} <div><strong>Finalized invoices cannot be directly edited.</strong> To correct a finalized invoice, use <strong>Credit/Rebill</strong> — this creates a credit note against the original invoice and optionally generates a corrected replacement. <a href="#" data-act="toast" data-arg="Full credit/rebill guide ships with the production docs (docs.delonix.io)" style="color:var(--ember);text-decoration:none">Learn more</a></div></div>
     <div class="grid kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
       ${kpi('Total Credits (Jun)',fmt(totCr),CRD_DATA.length+' notes issued',{accent:true})}
       ${kpi('Applied',fmt(sumBy('Applied')),cntBy('Applied')+' notes applied',{trend:0})}

@@ -14,6 +14,24 @@ VIEWS.dunning = (v)=>{
   const dunTotal = DUN_DATA.reduce((s,r)=>s+r.amt,0);
   const atRisk = DUN_DATA.filter(r=>r.day>=21).reduce((s,r)=>s+r.amt,0);
 
+  const stageCycle = ['All','Day 21+','Day 7–14','Day 1–3'];
+  const dunMatch = (r, s) => s==='All' ? true : s==='Day 21+' ? r.day>=21 : s==='Day 7–14' ? (r.day>=7&&r.day<21) : r.day<7;
+  const dunRowsFor = (s) => DUN_DATA.filter(r=>dunMatch(r,s)).map(r=>`<tr style="cursor:pointer" data-act="colldetail" data-arg="${r.acct}">`+
+    `<td class="nm">${r.acct}</td>`+
+    `<td class="num tnum">${fmt(r.amt)}</td>`+
+    `<td class="num tnum" style="color:${dayBarColor(r.day)};font-weight:700">${r.day}</td>`+
+    `<td class="mut">${r.last}</td>`+
+    `<td style="font-size:12px;color:${dayBarColor(r.day)}">${r.next}</td>`+
+    `<td>${pill(r.status,r.sl)}</td>`+
+    `<td style="text-align:right"><button class="btn ghost" style="font-size:11px;padding:4px 8px;height:auto" data-act="colldetail" data-arg="${r.acct}">Log contact</button></td>`+
+    `</tr>`).join('') || `<tr><td colspan="7" class="empty">No accounts in this stage.</td></tr>`;
+  window._dunStage = 'All';
+  window._cycleDunStage = (elBtn) => {
+    window._dunStage = stageCycle[(stageCycle.indexOf(window._dunStage)+1)%stageCycle.length];
+    elBtn.innerHTML = elBtn.innerHTML.replace(/Stage(: [^<]*)?/, 'Stage' + (window._dunStage==='All'?'':': '+window._dunStage));
+    elBtn.classList.toggle('on', window._dunStage!=='All');
+    document.getElementById('dunBody').innerHTML = dunRowsFor(window._dunStage);
+  };
   v.appendChild(el(`<div class="view">
     ${pageHead('Dunning & Collections','Automated retry sequences, escalation rules and recovery tracking.',
       `<button class="btn ghost" data-act="dunningconfig">Sequence Rules</button><button class="btn primary" data-act="collectionssweep">Run Sweep</button>`)}
@@ -47,7 +65,7 @@ VIEWS.dunning = (v)=>{
       <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
         <span style="font-size:13px;font-weight:600">Active Dunning Sequences <span class="tnum" style="font-weight:400;color:var(--mut)">· ${DUN_DATA.length} accounts</span></span>
         <div style="display:flex;gap:8px">
-          <span class="chip">${svg(I.filter,13)} Stage</span>
+          <button class="chip" onclick="window._cycleDunStage(this)" title="Cycle stage filter">${svg(I.filter,13)} Stage</button>
           <span class="chip" style="cursor:pointer" data-act="download" data-arg="xlsx|Dunning Report|${DUN_DATA.length} sequences · ${fmt(dunTotal)} exposure">${svg(I.download,13)} Export</span>
         </div>
       </div>
@@ -62,16 +80,7 @@ VIEWS.dunning = (v)=>{
             <th>Status</th>
             <th></th>
           </tr></thead>
-          <tbody>${DUN_DATA.map(r=>`<tr style="cursor:pointer" data-act="colldetail" data-arg="${r.acct}">`+
-            `<td class="nm">${r.acct}</td>`+
-            `<td class="num tnum">${fmt(r.amt)}</td>`+
-            `<td class="num tnum" style="color:${dayBarColor(r.day)};font-weight:700">${r.day}</td>`+
-            `<td class="mut">${r.last}</td>`+
-            `<td style="font-size:12px;color:${dayBarColor(r.day)}">${r.next}</td>`+
-            `<td>${pill(r.status,r.sl)}</td>`+
-            `<td style="text-align:right"><button class="btn ghost" style="font-size:11px;padding:4px 8px;height:auto" data-act="colldetail" data-arg="${r.acct}">Log contact</button></td>`+
-            `</tr>`).join('')}
-          </tbody>
+          <tbody id="dunBody">${dunRowsFor('All')}</tbody>
         </table>
       </div>
     </div>

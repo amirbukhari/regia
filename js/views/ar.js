@@ -27,7 +27,7 @@ VIEWS.ar = (v)=>{
     {acct:'Vertex IO',       ref:'WIRE-2026-8821', amt:890,  date:'Jun 26', note:'No remittance data'},
     {acct:'NovaSpark',       ref:'ACH-2026-7740',  amt:780,  date:'Jun 25', note:'Invoice ref missing'},
     {acct:'Orbit Labs',      ref:'ACH-2026-7719',  amt:620,  date:'Jun 24', note:'Partial — short $120'},
-  ];
+  ].filter(u=>!db().matched.includes(u.ref));
   const bucketColor = (b) => ({Current:'var(--good)','1–30d':'var(--warn)','31–60d':'#f97316','61–90d':'var(--neg)','90d+':'#9f1239'}[b]||'var(--mut)');
 
   v.appendChild(el(`<div class="view">
@@ -54,8 +54,9 @@ VIEWS.ar = (v)=>{
         </div>
       </div>
       <div class="card" style="padding:16px 18px">
-        <div style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:12px">Unapplied Cash <span class="pill warn" style="margin-left:6px">3 to match</span></div>
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:12px">Unapplied Cash ${UNAPPLIED.length?`<span class="pill warn" style="margin-left:6px">${UNAPPLIED.length} to match</span>`:`<span class="pill good" style="margin-left:6px">All applied</span>`}</div>
         <div style="display:flex;flex-direction:column;gap:10px">
+          ${UNAPPLIED.length?'':'<div class="empty" style="padding:18px 6px">Every incoming payment is matched — new unapplied cash will appear here.</div>'}
           ${UNAPPLIED.map(u=>`<div style="padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;border-left:3px solid var(--warn)">`+
             `<div style="display:flex;justify-content:space-between;align-items:baseline">`+
               `<span style="font-size:13px;font-weight:600">${u.acct}</span>`+

@@ -3,7 +3,13 @@
 VIEWS.invoices = (v)=>{
   const INV_DATA = db().invoices;
   const tabs = ['All','Draft','Sent','Paid','Overdue','Void'];
-  const matchTab = (inv, t) => t==='All' ? true : inv.sl===t;
+  window._invPeriod = window._invPeriod || 'All periods';
+  const matchPeriod = (inv) => window._invPeriod==='All periods' ? true
+    : window._invPeriod==='This month' ? inv.period==='Jun 2026'
+    : window._invPeriod==='Last month' ? inv.period==='May 2026'
+    : window._invPeriod==='This quarter' ? ['Apr 2026','May 2026','Jun 2026'].includes(inv.period)
+    : true;
+  const matchTab = (inv, t) => matchPeriod(inv) && (t==='All' ? true : inv.sl===t);
   const countTab = t => INV_DATA.filter(i=>matchTab(i,t)).length;
   const buColor = id => (BUS.find(b=>b.id===id)||{color:'#888'}).color;
   const rowsFor = t => INV_DATA.filter(i=>matchTab(i,t)).map(i=>{
@@ -50,8 +56,7 @@ VIEWS.invoices = (v)=>{
     <div class="toolbar">
       <div class="tabs" id="invTabs">${tabs.map((t,i)=>`<button class="${i===0?'on':''}" onclick="(function(btn){document.querySelectorAll('#invTabs button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('invBody').innerHTML=rowsFor_inv('${t}');})(this)">${t}<span class="ct">${countTab(t)}</span></button>`).join('')}</div>
       <div class="spacer"></div>
-      <span class="chip" data-act="toast" data-arg="Showing consolidated view">${svg(I.filter,13)} Business Unit</span>
-      <span class="chip" data-act="daterange" data-arg="custom">${svg(I.filter,13)} Period</span>
+      <span class="chip" id="invPeriodChip" data-act="daterange" data-arg="invoices">${svg(I.filter,13)} Period${window._invPeriod==='All periods'?'':': '+window._invPeriod}</span>
     </div>
     <div class="table-wrap">
       <table>

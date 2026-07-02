@@ -29,7 +29,7 @@ VIEWS.bizunits = (v)=>{
       `<button class="btn ghost" data-act="glmapping" data-arg="BU-001">${svg(I.settings,14)} GL Mappings</button><button class="btn primary" data-act="newbizunit">+ New Business Unit</button>`)}
 
     <div class="grid kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-      ${kpi('Active Business Units','4','1 in migration',{accent:true})}
+      ${kpi('Active Business Units',''+([...db().added.bizunits, ...BUS].filter(b=>b.status==='active').length),([...db().added.bizunits, ...BUS].filter(b=>b.status!=='active').length)+' in migration',{accent:true})}
       ${kpi('Legal Entities','4','3 currencies',{})}
       ${kpi('Total MRR','$418,350','across all BUs',{trend:5.2})}
       ${kpi('Active Subscriptions',BUS.filter(b=>b.status==='active').reduce((s,b)=>s+b.subs,0).toLocaleString('en-US'),'across '+BUS.filter(b=>b.status==='active').length+' active BUs',{})}
@@ -47,7 +47,7 @@ VIEWS.bizunits = (v)=>{
             <th>Tax Profile</th><th>GL Export</th><th>Template</th>
             <th class="num">MRR</th><th class="num">Subs</th><th>Status</th><th></th>
           </tr></thead>
-          <tbody>${BUS.map(b=>`<tr data-act="bizunit" data-arg="${b.id}" style="cursor:pointer">
+          <tbody>${[...db().added.bizunits, ...BUS].map(b=>`<tr data-act="bizunit" data-arg="${b.id}" style="cursor:pointer">
             <td><div style="display:flex;align-items:center;gap:8px">
               <span class="bu-dot" style="background:${buColor(b)};width:10px;height:10px;border-radius:50%;flex-shrink:0"></span>
               <strong style="font-size:13px">${b.name}</strong>

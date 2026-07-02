@@ -3,7 +3,7 @@
 function openNewCalculator(){
   openDrawer('New Pricing Calculator', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Calculator name</label><input class="finput" placeholder="e.g. Enterprise ROI Calculator" autofocus></div>
+      <div class="fg" style="grid-column:1/-1"><label>Calculator name</label><input class="finput" id="ncal_name" placeholder="e.g. Enterprise ROI Calculator" autofocus></div>
       <div class="fg"><label>Template</label><select class="finput">
         <option>ROI / Payback calculator</option>
         <option>Seat-based pricing estimator</option>
@@ -17,7 +17,7 @@ function openNewCalculator(){
       <div class="fg" style="grid-column:1/-1"><label>Description</label><textarea class="finput" rows="2" placeholder="Internal description — not shown to users"></textarea></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Calculator created — opening builder">Create & open builder</button>
+      <button class="btn primary" data-act="createcalculator">Create & open builder</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -30,7 +30,8 @@ function openEditCalculator(id){
     'CALC-003':{name:'TCO vs Legacy System',status:'Draft',views:0,leads:0,url:'—'},
     'CALC-004':{name:'Multi-Site Property Manager',status:'Published',views:319,leads:22,url:'calc.delonix.io/property'},
   };
-  const c = CALCS[id] || {name:'Calculator',status:'Draft',views:0,leads:0,url:'—'};
+  const added = db().added.calculators.find(x=>x.id===id);
+  const c = CALCS[id] || (added && {name:added.name,status:'Draft',views:0,leads:0,url:added.url}) || {name:'Calculator',status:'Draft',views:0,leads:0,url:'—'};
   const conv = c.views ? (c.leads/c.views*100).toFixed(1)+'%' : '—';
   const avgT = c.views ? `${dlxRange(id,2,5)}m ${dlxRange(id+'s',5,55)}s` : '—';
   openDrawer(`Calculator — ${id||'CALC-001'}`, `
@@ -43,10 +44,10 @@ function openEditCalculator(id){
       <div class="fg" style="grid-column:1/-1"><label>Name</label><input class="finput" value="${c.name}"></div>
       <div class="fg"><label>Status</label><select class="finput">${['Published','Draft','Archived'].map(s=>`<option${s===c.status?' selected':''}>${s}</option>`).join('')}</select></div>
       <div class="fg"><label>Lead capture</label><select class="finput"><option selected>Email gate before results</option><option>Optional</option><option>None</option></select></div>
-      <div class="fg" style="grid-column:1/-1"><label>Embed URL</label><div style="display:flex;gap:8px"><input class="finput mono" value="${c.url}" style="flex:1"><button class="btn ghost" data-act="toast" data-arg="Copied embed snippet">Copy embed</button></div></div>
+      <div class="fg" style="grid-column:1/-1"><label>Embed URL</label><div style="display:flex;gap:8px"><input class="finput mono" value="${c.url}" style="flex:1"><button class="btn ghost" data-act="copy" data-arg="&lt;script src=&quot;https://${c.url}/embed.js&quot;&gt;&lt;/script&gt;">Copy embed</button></div></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Calculator changes published">Publish changes</button>
+      <button class="btn primary" data-act="demoact" data-arg="${c.name} changes published to ${c.url==='—'?'draft':c.url}">Publish changes</button>
       <button class="btn ghost" data-act="toast" data-arg="Opening full builder editor">Open full editor</button>
       <button class="btn ghost" onclick="closeDrawer()">Close</button>
     </div>
@@ -65,7 +66,7 @@ function openPublishCalc(name){
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="Calculator published">Publish</button>
+        <button class="btn primary" data-act="demoact" data-arg="Calculator published — live at the embed URL">Publish</button>
       </div>
     </div>
   `);
@@ -92,7 +93,7 @@ function openEditFormulas(){
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="Formulas saved">Save formulas</button>
+        <button class="btn primary" data-act="saveconfig" data-arg="calc-formulas|Formulas saved">Save formulas</button>
       </div>
     </div>
   `);

@@ -58,6 +58,19 @@ VIEWS.usage = (v)=>{
             </table>
           </div>
         </div>
+      </div>
+      <div class="card panel" style="margin-top:16px">
+        <div class="panel-head"><h3>Active Meters</h3><span class="sub">${4+db().added.meters.length} meters</span></div>
+        <div class="table-wrap" style="border:none">
+          <table><thead><tr><th>Meter</th><th>Slug</th><th>Unit</th><th>Aggregation</th><th class="num">Events (Jun)</th></tr></thead>
+          <tbody>${[...db().added.meters, 
+            {name:'API Calls',slug:'api_calls',unit:'calls',agg:'Sum',events:'4.1B'},
+            {name:'Storage',slug:'storage_gb',unit:'GB',agg:'Max',events:'612M'},
+            {name:'Seats',slug:'seats',unit:'users',agg:'Last value',events:'84M'},
+            {name:'Emails Sent',slug:'emails_sent',unit:'emails',agg:'Sum',events:'21M'}]
+            .map(m=>`<tr><td class="nm">${m.name}</td><td class="mono mut" style="font-size:12px">${m.slug}</td><td class="mut">${m.unit}</td><td class="mut">${m.agg}</td><td class="num tnum">${m.events||'0'}</td></tr>`).join('')}</tbody>
+          </table>
+        </div>
       </div>`,
     'Event Explorer': `
       <div class="toolbar" style="margin-bottom:12px">

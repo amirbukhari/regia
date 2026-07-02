@@ -36,9 +36,6 @@ VIEWS.accounts = (v)=>{
       <div class="tabs" id="acctTabs2">${tabs.map((t,i)=>`<button class="${i===0?'on':''}" onclick="(function(b){document.querySelectorAll('#acctTabs2 button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById('acctBody').innerHTML=rowsFor_acct('${t}')})(this)">${t}<span class="ct">${counts[i]}</span></button>`).join('')}</div>
       <div class="spacer"></div>
       <span class="mut" style="font-size:12px;align-self:center">Top ${customers.length} of 247 by MRR — Export CSV for all</span>
-      <span class="chip" data-act="toast" data-arg="Showing consolidated view">${svg(I.filter,13)} Business Unit</span>
-      <span class="chip" data-act="toast" data-arg="Showing consolidated view">${svg(I.filter,13)} Region</span>
-      <span class="chip" data-act="toast" data-arg="Filter: owner">${svg(I.filter,13)} Owner</span>
     </div>
     <div class="table-wrap">
       <table>

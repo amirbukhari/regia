@@ -138,8 +138,8 @@ function openLegalEntity(id){
 function openNewBizUnit(){
   openDrawer('New Business Unit', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Business Unit name</label><input class="finput" placeholder="e.g. Healthcare" autofocus></div>
-      <div class="fg" style="grid-column:1/-1"><label>Brand display name</label><input class="finput" placeholder="e.g. delonix Healthcare — shown on invoices"></div>
+      <div class="fg" style="grid-column:1/-1"><label>Business Unit name</label><input class="finput" id="nbu_name" placeholder="e.g. Healthcare" autofocus></div>
+      <div class="fg" style="grid-column:1/-1"><label>Brand display name</label><input class="finput" id="nbu_brand" placeholder="e.g. delonix Healthcare — shown on invoices"></div>
       <div class="fg"><label>Legal Entity</label><select class="finput">${LEGAL_ENTITIES.map(e=>`<option value="${e.id}">${e.flag} ${e.name}</option>`).join('')}</select></div>
       <div class="fg"><label>Currency</label><select class="finput"><option selected>USD</option><option>EUR</option><option>GBP</option></select></div>
       <div class="fg"><label>Tax profile</label><select class="finput"><option>US-Residential</option><option>US-Commercial</option><option>EU-VAT</option><option>CA-GST</option></select></div>
@@ -150,7 +150,7 @@ function openNewBizUnit(){
       <div class="fg"><label>Status</label><select class="finput"><option>Active</option><option>Draft</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="New Business Unit created — configure GL mappings and invoice template next">Create Business Unit</button>
+      <button class="btn primary" data-act="createbizunit">Create Business Unit</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -160,7 +160,7 @@ function openNewLegalEntity(){
   openDrawer('New Legal Entity', `
     <div class="val-banner info" style="margin-bottom:14px">${svg(I.entity,14)} A Legal Entity is a registered company with its own tax registrations, bank accounts, and GL system. Business Units are assigned to a Legal Entity.</div>
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Entity legal name</label><input class="finput" placeholder="e.g. Acme Corp Ltd." autofocus></div>
+      <div class="fg" style="grid-column:1/-1"><label>Entity legal name</label><input class="finput" id="nle_name" placeholder="e.g. Acme Corp Ltd." autofocus></div>
       <div class="fg"><label>Country of incorporation</label><select class="finput"><option>🇺🇸 United States</option><option>🇳🇱 Netherlands</option><option>🇬🇧 United Kingdom</option><option>🇨🇦 Canada</option><option>🇦🇺 Australia</option><option>🇸🇬 Singapore</option></select></div>
       <div class="fg"><label>Functional currency</label><select class="finput"><option>USD</option><option>EUR</option><option>GBP</option><option>CAD</option></select></div>
       <div class="fg"><label>Tax registration number</label><input class="finput" placeholder="EIN, VAT ID, etc." style="font-family:monospace"></div>
@@ -171,7 +171,7 @@ function openNewLegalEntity(){
       <div class="fg" style="grid-column:1/-1"><label>Registered address</label><textarea class="finput" rows="2" placeholder="Full registered address for invoice headers"></textarea></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Legal entity created — assign Business Units and configure tax registrations next">Create Legal Entity</button>
+      <button class="btn primary" data-act="createlegalentity">Create Legal Entity</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -181,7 +181,7 @@ function openNewEntity(){
   openDrawer('New Custom Entity', `
     <div class="val-banner info" style="margin-bottom:14px">${svg(I.entity2,14)} Custom entities extend the billing data model. They can be linked to Accounts, Subscriptions, and other objects via relation fields.</div>
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Entity name (singular)</label><input class="finput" placeholder="e.g. Property" autofocus></div>
+      <div class="fg" style="grid-column:1/-1"><label>Entity name (singular)</label><input class="finput" id="ne_name" placeholder="e.g. Property" autofocus></div>
       <div class="fg"><label>API name</label><input class="finput" placeholder="property" class="mono" style="font-family:monospace"></div>
       <div class="fg"><label>Plural label</label><input class="finput" placeholder="Properties"></div>
       <div class="fg"><label>Icon</label><input class="finput" placeholder="🏢" maxlength="2"></div>
@@ -192,7 +192,7 @@ function openNewEntity(){
       <div class="fg"><label>Record ID prefix</label><input class="finput" placeholder="PROP" style="font-family:monospace;max-width:100px"></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Custom entity created — add fields to get started">Create entity</button>
+      <button class="btn primary" data-act="createentity">Create entity</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -201,7 +201,7 @@ function openNewEntity(){
 function openNewField(){
   openDrawer('Add Field — Property', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Display name</label><input class="finput" placeholder="e.g. Property class" autofocus></div>
+      <div class="fg" style="grid-column:1/-1"><label>Display name</label><input class="finput" id="nf_display" placeholder="e.g. Property class" autofocus></div>
       <div class="fg"><label>API key</label><input class="finput" placeholder="property_class" style="font-family:monospace"></div>
       <div class="fg"><label>Field type</label><select class="finput" id="fieldTypeSelect">
         <option>Text</option><option>Number</option><option>Currency</option><option>Date</option>
@@ -213,7 +213,7 @@ function openNewField(){
       <div class="fg" style="grid-column:1/-1"><label>Description / help text</label><input class="finput" placeholder="Shown to users when filling in this field"></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Field added to Property entity">Add field</button>
+      <button class="btn primary" data-act="createfield">Add field</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

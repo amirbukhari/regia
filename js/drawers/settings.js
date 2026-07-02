@@ -73,16 +73,16 @@ function openApprovalRules(){
 function openInviteUser(){
   openDrawer('Invite Team Member',`
     <div class="form-group"><label class="form-label">Email address</label>
-      <input class="form-input" type="email" placeholder="colleague@company.com"></div>
+      <input class="form-input" id="iv_email" type="email" placeholder="colleague@company.com"></div>
     <div class="form-row" style="margin-top:12px"><div class="form-group"><label class="form-label">Role</label>
-      <select class="form-select"><option>Admin</option><option>Revenue Manager</option><option>Collections</option><option>Sales Ops</option><option>Viewer (read-only)</option></select></div>
+      <select class="form-select" id="iv_role"><option>Admin</option><option>Revenue Manager</option><option>Collections</option><option>Sales Ops</option><option>Viewer (read-only)</option></select></div>
       <div class="form-group"><label class="form-label">Team</label>
       <select class="form-select"><option>Finance</option><option>Billing</option><option>Sales</option><option>Executive</option></select></div></div>
     <div class="form-group" style="margin-top:10px"><label class="form-label">Personal message (optional)</label>
       <textarea class="form-textarea" placeholder="Add a note to the invitation email…" style="min-height:56px"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Invitation sent — they will receive an email to set up their account">Send invitation</button>
+      <button class="btn primary" data-act="invitemember">Send invitation</button>
     </div>`);
 }
 
@@ -100,10 +100,8 @@ function openAuditHistory(arg){
   ];
   openDrawer(`Audit History — ${objType} ${objId}`, `
     <div class="toolbar" style="margin-bottom:12px">
-      <span class="chip">${svg(I.filter,13)} Action type</span>
-      <span class="chip">${svg(I.filter,13)} User</span>
       <div class="spacer"></div>
-      <button class="btn ghost" style="font-size:12px;padding:5px 10px" data-act="toast" data-arg="Audit log exported">Export Log</button>
+      <button class="btn ghost" style="font-size:12px;padding:5px 10px" data-act="download" data-arg="csv|Audit History ${objId}|${auditData.length} events">Export Log</button>
     </div>
     <div>${auditData.map(a=>`<div class="audit-row">
       <span class="audit-ts">${a.ts}</span>
@@ -142,7 +140,7 @@ function openMigrationDetail(id){
         <div class="fg"><label>Match strategy</label><select class="finput"><option>Name + address similarity</option><option>Tax ID exact match</option><option>Manual only</option></select></div>
         <div class="fg"><label>Auto-accept threshold</label><select class="finput"><option>95% confidence</option><option>90% confidence</option><option>Manual review all</option></select></div>
       </div>
-      <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Bulk mapping started — 23 customers queued">Run bulk mapping</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>`);
+      <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="demoact" data-arg="Bulk mapping started — 23 customers queued for review">Run bulk mapping</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>`);
     return;
   }
   const legacyName = dlxPick(id,['Riverfront Properties','Harborline Estates','Crestview Property Group','Lakeshore Rentals','Summit Property Co']);
@@ -163,7 +161,7 @@ function openMigrationDetail(id){
       <div class="fg"><label>Map to Product</label><select class="finput"><option>— select —</option><option>Enterprise Plan</option><option>Business Plan</option></select></div>
       <div class="fg"><label>Mapping Confidence</label><div>${pill('warn','Manual — low confidence')}</div></div>
     </div>
-    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="toast" data-arg="Migration mapping saved — customer mapped to BU-001">Save Mapping</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="form-actions" style="margin-top:16px"><button class="btn primary" data-act="demoact" data-arg="Migration mapping saved — customer mapped to BU-001">Save Mapping</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
   `);
 }
 
@@ -201,7 +199,7 @@ function openLogoUpload(){
   openDrawer('Brand Logo', `
     <div class="mut" style="font-size:12.5px;margin-bottom:14px">Logo appears on invoices, the customer portal, and email notifications. Separate logos can be set per Business Unit.</div>
     <div style="border:2px dashed var(--border-2);border-radius:8px;padding:28px;text-align:center;cursor:pointer;margin-bottom:14px" onclick="toast('File picker opened')">
-      <div style="font-size:36px;margin-bottom:8px">🖼</div>
+      <div style="margin-bottom:8px">${svg(I.brush,28)}</div>
       <div style="font-size:13px;font-weight:600">Upload logo</div>
       <div class="mut" style="font-size:12px;margin-top:4px">PNG or SVG · 200×200px minimum · transparent background recommended</div>
     </div>
@@ -209,7 +207,8 @@ function openLogoUpload(){
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">BUSINESS UNIT OVERRIDES</div>
       ${BUS.slice(0,3).map(b=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="bu-badge"><span class="bu-dot" style="background:${b.color}"></span>${b.name}</span><span class="mut" style="font-size:12px;flex:1">Using default logo</span><button class="btn ghost" style="font-size:11px;padding:3px 8px" data-act="toast" data-arg="Logo upload for ${b.name}">Upload</button></div>`).join('')}
     </div>
-    <div class="form-actions"><button class="btn primary" data-act="toast" data-arg="Logo uploaded and saved">Save</button><button class="btn ghost" onclick="closeDrawer()">Cancel</button></div>
+    <div class="val-banner info" style="margin:2px 0 12px">${svg(I.warning,14)} File uploads are disabled in this demo build — logo changes require the production asset pipeline.</div>
+    <div class="form-actions"><button class="btn primary" disabled style="opacity:.45;cursor:not-allowed" aria-disabled="true" title="Uploads are disabled in the demo">Save</button><button class="btn ghost" onclick="closeDrawer()">Close</button></div>
   `);
 }
 
@@ -356,7 +355,7 @@ function openApplyTheme(){
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="Theme changes applied to all surfaces">Apply now</button>
+        <button class="btn primary" data-act="demoact" data-arg="Theme changes applied to all surfaces">Apply now</button>
       </div>
     </div>
   `);

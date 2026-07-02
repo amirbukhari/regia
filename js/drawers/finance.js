@@ -118,7 +118,7 @@ function openGLMappingEditor(buId){
       </tbody>
     </table></div>
     <div class="form-actions" style="margin-top:12px">
-      <button class="btn primary" data-act="toast" data-arg="GL mappings saved — effective for next export batch">Save Mappings</button>
+      ${cfgSaveBtn('gl-'+bu.id,'GL mappings saved — effective for next export batch','Save Mappings')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -142,7 +142,7 @@ function openTreasurySweep(arg){
     </div>
     <div class="val-banner warn" style="margin-top:12px">${svg(I.warning,14)} FX rate is indicative. The executed rate will be confirmed by your banking partner at the time of settlement. Rate lock expires in 4 hours.</div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="FX sweep initiated — €${parseInt(amount).toLocaleString()} converting at ${rate} · settles T+1">Initiate Sweep</button>
+      <button class="btn primary" data-act="demoact" data-arg="FX sweep initiated — €${parseInt(amount).toLocaleString()} converting at ${rate} · settles T+1">Initiate Sweep</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -165,7 +165,7 @@ function openICEliminations(){
       <div class="mut" style="font-size:12px">Applied to consolidated revenue before external reporting. FX adjustment for EU B.V. will post after rate confirmation.</div>
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Intercompany eliminations posted — $84,200 eliminated across 3 entity pairs">Post Eliminations</button>
+      <button class="btn primary" data-act="demoact" data-arg="Intercompany eliminations posted — $84,200 eliminated across 3 entity pairs">Post Eliminations</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -189,7 +189,7 @@ function openConsolidationRun(){
       </div>
     </div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="Consolidation run started — estimated 2 minutes · 4 entities">Run Consolidation</button>
+      <button class="btn primary" data-act="demoact" data-arg="Consolidation run started — 4 entities · results post to the consolidation ledger">Run Consolidation</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

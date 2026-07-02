@@ -35,7 +35,7 @@ function openReportBuilder(){
         <div class="form-group"><label class="form-label">To</label>
         <input class="form-input" type="date" value="2026-06-28"></div></div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
-        ${['MTD','QTD','YTD','Last month','Last quarter'].map(l=>`<button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="toast" data-arg="Date range set to ${l}">${l}</button>`).join('')}
+        ${['MTD','QTD','YTD','Last month','Last quarter'].map(l=>`<button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="setrange" data-arg="${l}">${l}</button>`).join('')}
       </div>
     </div>
     <div class="form-section">
@@ -63,7 +63,7 @@ function openReportBuilder(){
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
       <button class="btn ghost" data-act="schedulereport">Schedule delivery</button>
-      <button class="btn primary" data-act="download" data-arg="xlsx|Custom Revenue Report|MRR · ARR · NRR · custom dimensions">Generate report</button>
+      <button class="btn primary" data-act="savereport" data-arg="Custom Revenue Report|XLSX">Generate report</button>
     </div>`);
 }
 
@@ -83,7 +83,7 @@ function openScheduleReport(){
       <input class="form-input" placeholder="amir@delonix.com, cfo@delonix.com"></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Scheduled report saved — first delivery on Jul 1">Save schedule</button>
+      <button class="btn primary" data-act="saveconfig" data-arg="report-schedule|Scheduled report saved — first delivery on Jul 1">Save schedule</button>
     </div>`);
 }
 
@@ -119,31 +119,30 @@ function openRatingDetail(lineId){
 }
 
 function openDateRangePicker(context){
+  const presets = [['This month','Jun 1 – Jun 28, 2026'],['Last month','May 1 – May 31, 2026'],['This quarter','Apr 1 – Jun 30, 2026'],['All periods','Everything in the demo dataset']];
+  const cur = window._invPeriod || 'All periods';
   openDrawer('Select Date Range', `
     <div style="margin-bottom:14px">
       <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">QUICK RANGES</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        ${[['This month','Jun 1 – Jun 28, 2026'],['Last month','May 1 – May 31, 2026'],['This quarter','Apr 1 – Jun 30, 2026'],['Last quarter','Jan 1 – Mar 31, 2026'],['YTD','Jan 1 – Jun 28, 2026'],['Last 12 months','Jul 2025 – Jun 2026']].map(([l,d])=>`<button class="btn ghost" style="text-align:left;font-size:12px;padding:8px 12px" data-act="toast" data-arg="Date range set to ${l}"><div style="font-weight:600">${l}</div><div class="mut" style="font-size:11px">${d}</div></button>`).join('')}
+        ${presets.map(([l,d])=>`<label style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border:1.5px solid ${l===cur?'var(--ember)':'var(--border)'};border-radius:8px;cursor:pointer;background:${l===cur?'var(--ember-glow)':'var(--surface)'}">
+          <input type="radio" name="dr_preset" value="${l}" ${l===cur?'checked':''} style="margin-top:2px">
+          <span><span style="font-size:13px;font-weight:600;display:block">${l}</span><span class="mut" style="font-size:11.5px">${d}</span></span>
+        </label>`).join('')}
       </div>
     </div>
-    <div style="margin-bottom:14px">
-      <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px">CUSTOM RANGE</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div class="fg" style="margin:0"><label>From</label><input class="finput" type="date" value="2026-06-01"></div>
-        <div class="fg" style="margin:0"><label>To</label><input class="finput" type="date" value="2026-06-28"></div>
-      </div>
-    </div>
+    <div class="mut" style="font-size:12px;margin-bottom:14px">The demo dataset covers Mar–Jun 2026. Quick ranges filter the current view; custom calendar ranges are a production feature.</div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="Date range set to custom Jun 1–28">Apply Range</button>
+      <button class="btn primary" data-act="applyrange">Apply Range</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
 }
 
+
 function openReportArchive(){
   openDrawer('Report Archive', `
     <div class="toolbar" style="margin-bottom:12px">
-      <span class="chip">${svg(I.filter,13)} Report type</span>
       <span class="chip">${svg(I.filter,13)} Period</span>
       <div class="spacer"></div>
     </div>
@@ -200,7 +199,7 @@ function openAIQuery(q){
         <button class="btn ghost" style="font-size:12px" data-act="toast" data-arg="${s} — ${query.slice(0,50)}">${s}</button>`).join('')}
     </div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="Report created from AI query">Save as report</button>
+      <button class="btn primary" data-act="savereport" data-arg="AI query — ${query.slice(0,40)}|CSV">Save as report</button>
       <button class="btn ghost" onclick="closeDrawer()">Close</button>
     </div>
   `);
@@ -222,7 +221,7 @@ function openScheduleDigest(){
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn ghost" data-act="close">Cancel</button>
-        <button class="btn primary" data-act="toast" data-arg="AI digest scheduled">Save schedule</button>
+        <button class="btn primary" data-act="saveconfig" data-arg="ai-digest|AI digest scheduled — first delivery Monday 8am">Save schedule</button>
       </div>
     </div>
   `);

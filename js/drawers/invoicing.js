@@ -22,15 +22,15 @@ function openNewInvoice(){
       <div id="lineItems">
         <div class="line-item-row"><input class="form-input" placeholder="Platform subscription — Business plan" value="Platform subscription — Business plan">
           <input class="form-input" type="number" value="1"><input class="form-input" type="number" value="199.00">
-          <span class="line-item-total">$199.00</span><button class="li-del" data-act="toast" data-arg="Line item removed">×</button></div>
+          <span class="line-item-total">$199.00</span><button class="li-del" data-act="removeline" aria-label="Remove line item">×</button></div>
         <div class="line-item-row"><input class="form-input" placeholder="Additional seats (×5)" value="Additional seats (×5)">
           <input class="form-input" type="number" value="5"><input class="form-input" type="number" value="15.00">
-          <span class="line-item-total">$75.00</span><button class="li-del" data-act="toast" data-arg="Line item removed">×</button></div>
+          <span class="line-item-total">$75.00</span><button class="li-del" data-act="removeline" aria-label="Remove line item">×</button></div>
         <div class="line-item-row"><input class="form-input" placeholder="Onboarding & setup fee" value="Onboarding & setup fee">
           <input class="form-input" type="number" value="1"><input class="form-input" type="number" value="500.00">
-          <span class="line-item-total">$500.00</span><button class="li-del" data-act="toast" data-arg="Line item removed">×</button></div>
+          <span class="line-item-total">$500.00</span><button class="li-del" data-act="removeline" aria-label="Remove line item">×</button></div>
       </div>
-      <button class="btn ghost" style="margin-top:6px;font-size:12px" data-act="toast" data-arg="Line item added">+ Add line item</button>
+      <button class="btn ghost" style="margin-top:6px;font-size:12px" data-act="addline">+ Add line item</button>
     </div>
     <div class="invoice-summary">
       <div class="inv-sum-row"><span>Subtotal</span><span class="tnum">$774.00</span></div>
@@ -66,7 +66,7 @@ function openApproveInvoice(id){
       <textarea class="form-textarea" placeholder="Notes for audit trail…" style="min-height:56px"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Invoice approved — sent to customer for payment">Confirm approval</button>
+      <button class="btn primary" data-act="approvenow" data-arg="${inv.id}">Confirm approval</button>
     </div>`);
 }
 
@@ -84,7 +84,7 @@ function openVoidInvoice(id){
       <textarea class="form-textarea" placeholder="Additional context for audit trail…"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Keep invoice</button>
-      <button class="btn primary" style="background:var(--neg)" data-act="toast" data-arg="Invoice voided — credit note CRD-2026-0042 created">Void invoice</button>
+      <button class="btn primary" style="background:var(--neg)" data-act="voidnow" data-arg="${id||''}">Void invoice</button>
     </div>`);
 }
 
@@ -111,7 +111,7 @@ function openSendReminder(id){
       <textarea class="form-textarea" placeholder="Appended to the standard reminder template…" style="min-height:56px"></textarea></div>
     <div class="form-footer">
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
-      <button class="btn primary" data-act="toast" data-arg="Payment reminder sent to ${email}">Send reminder</button>
+      <button class="btn primary" data-act="demoact" data-arg="Payment reminder for ${inv.id} sent to ${email}">Send reminder</button>
     </div>`);
 }
 

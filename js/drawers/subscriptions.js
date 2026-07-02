@@ -3,13 +3,13 @@
 function openNewQuote(){
   openDrawer('New Quote',`
     <div class="form-row"><div class="form-group"><label class="form-label">Customer</label>
-      <select class="form-select"><option value="">— select —</option>${custOpts()}</select></div>
+      <select class="form-select" id="nq_customer"><option value="">— select —</option>${custOpts()}</select></div>
       <div class="form-group"><label class="form-label">Owner</label>
-      <select class="form-select"><option>M. Reyes</option><option>P. Anand</option><option>D. Cho</option><option>Amir Bukhari</option></select></div></div>
+      <select class="form-select" id="nq_owner"><option>M. Reyes</option><option>P. Anand</option><option>D. Cho</option><option>Amir Bukhari</option></select></div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Deal name</label>
       <input class="form-input" placeholder="e.g. Acme Corp Enterprise Renewal 2027"></div>
       <div class="form-group" style="max-width:140px"><label class="form-label">Expires</label>
-      <input class="form-input" type="date" value="2026-07-28"></div></div>
+      <input class="form-input" id="nq_expires" type="date" value="2026-07-28"></div></div>
     <div class="form-section">
       <div class="form-section-title">Line items</div>
       <div style="display:grid;grid-template-columns:1fr 60px 90px 70px 80px 28px;gap:8px;margin-bottom:6px">
@@ -17,21 +17,21 @@ function openNewQuote(){
         <span class="form-label">Unit price</span><span class="form-label">Disc %</span>
         <span class="form-label">Total</span><span></span></div>
       <div class="line-item-row" style="grid-template-columns:1fr 60px 90px 70px 80px 28px">
-        <select class="form-select">${planOpts()}</select>
-        <input class="form-input" type="number" value="1"><input class="form-input" type="number" value="8500">
-        <input class="form-input" type="number" value="10"><span class="line-item-total">$7,650</span>
-        <button class="li-del">×</button></div>
-      <button class="btn ghost" style="margin-top:6px;font-size:12px" data-act="toast" data-arg="Line item added">+ Add line item</button>
+        <select class="form-select" id="nq_plan">${planOpts()}</select>
+        <input class="form-input" id="nq_qty" type="number" value="1"><input class="form-input" id="nq_price" type="number" value="8500">
+        <input class="form-input" id="nq_disc" type="number" value="10"><span class="line-item-total">$7,650</span>
+        <button class="li-del" data-act="removeline" aria-label="Remove line item">×</button></div>
+      <button class="btn ghost" style="margin-top:6px;font-size:12px" data-act="addline">+ Add line item</button>
     </div>
     <div class="form-row"><div class="form-group"><label class="form-label">Payment terms</label>
       <select class="form-select"><option>Net 30</option><option>Net 60</option><option>Annual prepay</option></select></div>
       <div class="form-group"><label class="form-label">Stage</label>
-      <select class="form-select"><option>Discovery</option><option>Proposal</option><option>Negotiation</option></select></div></div>
+      <select class="form-select" id="nq_stage"><option>Discovery</option><option>Proposal</option><option>Negotiation</option></select></div></div>
     <div class="form-group"><label class="form-label">Notes</label>
       <textarea class="form-textarea" placeholder="Deal context, custom terms, internal notes…"></textarea></div>
     <div class="form-footer">
-      <button class="btn ghost" data-act="toast" data-arg="Quote QT-2026-0094 saved as draft">Save draft</button>
-      <button class="btn primary" data-act="toast" data-arg="Quote QT-2026-0094 sent for internal review">Send for review</button>
+      <button class="btn ghost" data-act="createquote" data-arg="draft">Save draft</button>
+      <button class="btn primary" data-act="createquote" data-arg="review">Send for review</button>
     </div>`);
 }
 
@@ -125,17 +125,17 @@ function openUsageEvent(id){
 function openNewMeter(){
   openDrawer('New Usage Meter', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Meter name</label><input class="finput" placeholder="e.g. API Calls" autofocus></div>
-      <div class="fg"><label>Meter ID / slug</label><input class="finput" placeholder="api_calls" style="font-family:monospace"></div>
-      <div class="fg"><label>Unit of measure</label><input class="finput" placeholder="calls, GB, users, unit-nights…"></div>
-      <div class="fg"><label>Aggregation</label><select class="finput"><option>Sum</option><option>Max</option><option>Count distinct</option><option>Last value</option></select></div>
+      <div class="fg" style="grid-column:1/-1"><label>Meter name</label><input class="finput" id="nm_name" placeholder="e.g. API Calls" autofocus></div>
+      <div class="fg"><label>Meter ID / slug</label><input class="finput" id="nm_slug" placeholder="api_calls" style="font-family:monospace"></div>
+      <div class="fg"><label>Unit of measure</label><input class="finput" id="nm_unit" placeholder="calls, GB, users, unit-nights…"></div>
+      <div class="fg"><label>Aggregation</label><select class="finput" id="nm_agg"><option>Sum</option><option>Max</option><option>Count distinct</option><option>Last value</option></select></div>
       <div class="fg"><label>Reset interval</label><select class="finput"><option>Monthly</option><option>Annually</option><option>Never (cumulative)</option></select></div>
       <div class="fg"><label>Idempotency</label><select class="finput"><option selected>Required (recommended)</option><option>Optional</option><option>Disabled</option></select></div>
       <div class="fg" style="grid-column:1/-1"><label>Source system filter</label><input class="finput" placeholder="Leave blank to accept from all sources"></div>
     </div>
     <div class="val-banner info" style="margin-top:12px">${svg(I.rating,14)} Meter ID is immutable after creation. Events must include this ID as the meter reference to be counted.</div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="New meter created — begin sending events to start tracking">Create Meter</button>
+      <button class="btn primary" data-act="createmeter">Create Meter</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -146,10 +146,10 @@ function openUsageImport(){
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
       <div class="fg" style="grid-column:1/-1">
         <label>Upload CSV or JSONL</label>
-        <div style="border:2px dashed var(--border-2);border-radius:8px;padding:28px;text-align:center;color:var(--text-3);cursor:pointer" onclick="toast('File picker opened')">
+        <div style="border:2px dashed var(--border-2);border-radius:8px;padding:28px;text-align:center;color:var(--text-3);opacity:.55" aria-disabled="true">
           <div style="margin-bottom:8px">${svg(I.download,26)}</div>
-          <div style="font-size:13px">Drop file here or click to browse</div>
-          <div class="mut" style="font-size:11.5px;margin-top:4px">CSV or JSONL · max 100 MB · up to 1M events</div>
+          <div style="font-size:13px">File uploads are disabled in this demo build</div>
+          <div class="mut" style="font-size:11.5px;margin-top:4px">In production: CSV or JSONL · max 100 MB · up to 1M events</div>
         </div>
       </div>
       <div class="fg"><label>Source system</label><select class="finput"><option>BuildStream-API</option><option>Meter-v2</option><option>Legacy-CSV</option><option>Manual</option></select></div>
@@ -158,7 +158,7 @@ function openUsageImport(){
       <div class="fg"><label>Validation mode</label><select class="finput"><option selected>Validate then import</option><option>Import with warnings</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Usage import queued — validating 0 events">Start Import</button>
+      <button class="btn primary" disabled style="opacity:.45;cursor:not-allowed" aria-disabled="true" title="File uploads are disabled in the demo">Start Import</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -204,11 +204,11 @@ function openRenewalQuote(acct){
       <div class="fg"><label>Current ARR</label><div class="tnum">${fmt(arr)}</div></div>
       <div class="fg"><label>Renewal term</label><select class="finput"><option selected>12 months</option><option>24 months</option><option>36 months</option></select></div>
       <div class="fg"><label>Renewal type</label><select class="finput"><option selected>Auto-renew at current pricing</option><option>Price increase (CPI + 3%)</option><option>Custom pricing</option><option>Do not renew</option></select></div>
-      <div class="fg"><label>Renewal ARR</label><input class="finput" type="number" value="${arr}"></div>
+      <div class="fg"><label>Renewal ARR</label><input class="finput" id="rq_arr" type="number" value="${arr}"></div>
       <div class="fg"><label>Discount</label><input class="finput" type="number" placeholder="0" value="0">%</div>
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Renewal quote QT-2026-0095 created and sent for review">Create Renewal Quote</button>
+      <button class="btn primary" data-act="createrenewal" data-arg="${acct||'Account'}">Create Renewal Quote</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

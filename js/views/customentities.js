@@ -1,13 +1,13 @@
 /* delonix — customentities.js */
 
 VIEWS.customentities = (v)=>{
-  const ENTITIES = [
-    {id:'CE-001',name:'Property',icon:'🏢',fields:14,records:312,system:false,desc:'Multi-unit residential or commercial property with units, owners and billing contacts'},
-    {id:'CE-002',name:'Contract',icon:'📄',fields:11,records:847,system:false,desc:'Custom contract object linked to Account and Subscription with legal terms and obligations'},
-    {id:'CE-003',name:'Ownership Group',icon:'👥',fields:8,records:94,system:false,desc:'Portfolio entity grouping multiple Properties and Accounts under a single billing hierarchy'},
-    {id:'CE-004',name:'Cost Center',icon:'💰',fields:6,records:28,system:true,desc:'System-level GL cost allocation object — read-only from billing, write via GL sync'},
-  ];
-  const FIELDS = [
+  const ENTITIES = [...db().added.entities, ...[
+    {id:'CE-001',name:'Property',icon:'bu',fields:14,records:312,system:false,desc:'Multi-unit residential or commercial property with units, owners and billing contacts'},
+    {id:'CE-002',name:'Contract',icon:'invoices',fields:11,records:847,system:false,desc:'Custom contract object linked to Account and Subscription with legal terms and obligations'},
+    {id:'CE-003',name:'Ownership Group',icon:'team',fields:8,records:94,system:false,desc:'Portfolio entity grouping multiple Properties and Accounts under a single billing hierarchy'},
+    {id:'CE-004',name:'Cost Center',icon:'cash',fields:6,records:28,system:true,desc:'System-level GL cost allocation object — read-only from billing, write via GL sync'},
+  ]];
+  const FIELDS = [...db().added.fields, ...[
     {name:'property_id',type:'Text',required:true,indexed:true,system:true,display:'Property ID'},
     {name:'owner_name',type:'Text',required:true,indexed:false,system:false,display:'Owner name'},
     {name:'unit_count',type:'Number',required:true,indexed:false,system:false,display:'Unit count'},
@@ -17,7 +17,7 @@ VIEWS.customentities = (v)=>{
     {name:'go_live_date',type:'Date',required:false,indexed:false,system:false,display:'Go-live date'},
     {name:'annual_revenue',type:'Currency',required:false,indexed:false,system:false,display:'Annual revenue'},
     {name:'portal_enabled',type:'Boolean',required:false,indexed:false,system:false,display:'Portal enabled'},
-  ];
+  ]];
   v.appendChild(el(`<div class="view">
   ${pageHead('Custom Entities','Define custom object types, fields and relationships to extend the billing data model',
     `<button class="btn primary" data-act="newentity">+ New entity</button>`
@@ -30,7 +30,7 @@ VIEWS.customentities = (v)=>{
         </div>
         ${ENTITIES.map((e,i)=>`
           <div class="nav-item${i===0?' active':''}" style="margin-bottom:2px;cursor:pointer" data-act="toast" data-arg="Switched to ${e.name} entity">
-            <span style="font-size:16px">${e.icon}</span>
+            <span style="font-size:16px">${svg(I[e.icon]||I.entity2,20)}</span>
             <div style="flex:1">
               <div style="font-size:13px;font-weight:600">${e.name}</div>
               <div class="mut" style="font-size:11px">${e.fields} fields · ${e.records.toLocaleString()} records</div>

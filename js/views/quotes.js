@@ -1,15 +1,7 @@
 /* delonix — quotes.js */
 
 VIEWS.quotes = (v)=>{
-  const stages = [
-    {label:'Discovery',   count:8,  value:142000},
-    {label:'Proposal',    count:14, value:387000},
-    {label:'Negotiation', count:6,  value:218000},
-    {label:'Signed',      count:22, value:614000},
-  ];
-  const totalPipeline = stages.reduce((s,x)=>s+x.value,0);
-  const stageColors = ['var(--text-3)','var(--info)','var(--warn)','var(--good)'];
-  const quotes = [
+  const quotes = [...db().added.quotes, ...[
     {id:'Q-2026-322', acct:'Pinnacle SaaS',     plan:'Enterprise+', val:312000, owner:'P. Anand',  stage:'Signed',      exp:'—',    status:'good',  sl:'Signed'},
     {id:'Q-2026-321', acct:'Stellar Systems',   plan:'Enterprise+', val:187200, owner:'M. Reyes',  stage:'Negotiation', exp:'Jul 05',    status:'warn',  sl:'Negotiating'},
     {id:'Q-2026-320', acct:'CloudBase Inc',     plan:'Enterprise',  val:144000, owner:'D. Cho',    stage:'Proposal',    exp:'Jul 12',    status:'info',  sl:'Sent'},
@@ -22,15 +14,21 @@ VIEWS.quotes = (v)=>{
     {id:'Q-2026-313', acct:'Cascade Analytics', plan:'Business+',   val:34200,  owner:'P. Anand',  stage:'Proposal',    exp:'Jul 22',    status:'info',  sl:'Sent'},
     {id:'Q-2026-312', acct:'NovaSpark',         plan:'Business',    val:9360,   owner:'M. Reyes',  stage:'Discovery',   exp:'—',    status:'muted', sl:'Discovery'},
     {id:'Q-2026-311', acct:'Meridian Tech',     plan:'Business+',   val:44400,  owner:'D. Cho',    stage:'Signed',      exp:'—',    status:'good',  sl:'Signed'},
-  ];
+  ]];
+  const stages = ['Discovery','Proposal','Negotiation','Signed'].map(label=>({label,
+    count: quotes.filter(q=>q.stage===label).length,
+    value: quotes.filter(q=>q.stage===label).reduce((s,q)=>s+q.val,0)}));
+  const totalPipeline = stages.reduce((s,x)=>s+x.value,0);
+  const stageColors = ['var(--text-3)','var(--info)','var(--warn)','var(--good)'];
+
   v.appendChild(el(`<div class="view">
     ${pageHead('Quotes & Contracts','CPQ pipeline · approval routing · e-signature · June 2026',
       `<button class="btn ghost" data-act="approvalrules">Approval rules</button><button class="btn primary" data-act="newquote">+ New quote</button>`)}
     <div class="grid kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-      ${kpi('Pipeline value','$1.36M','total open ACV',{accent:true})}
+      ${kpi('Pipeline value',fmt(Math.round(stages.filter(s=>s.label!=='Signed').reduce((a,s)=>a+s.value,0)/1000))+'k','total open ACV',{accent:true})}
       ${kpi('Win rate','68%','quote → signed, trailing 90d',{trend:4})}
       ${kpi('Avg deal cycle','23 days','first touch → close',{trend:-12})}
-      ${kpi('Signed (30d)','22','$614k closed ACV',{trend:18})}
+      ${kpi('Signed (30d)',''+stages[3].count,fmt(Math.round(stages[3].value/1000))+'k closed ACV',{trend:18})}
     </div>
     <div class="sec-title">Pipeline by stage</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px">

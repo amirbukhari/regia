@@ -171,7 +171,7 @@ function openInvoice(id){
         ${[['Draft','done'],['Sent','done'],['Viewed','done'],[i.slabel==='Paid'?'Paid':'Payment',i.slabel==='Paid'?'done':'active']].map((s,k)=>`<div class="ds ${s[1]}"><div class="c">${s[1]==='done'?'✓':k+1}</div><small>${s[0]}</small></div>`).join('')}
       </div>
       <div style="display:flex;gap:8px;margin-top:22px">
-        <button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="Payment reminder sent for ${i.id}">${svg(I.send,15)} Send reminder</button>
+        <button class="btn primary" style="flex:1;justify-content:center" data-act="demoact" data-arg="Payment reminder sent for ${i.id} to ${i.acct}">${svg(I.send,15)} Send reminder</button>
         <button class="btn" data-act="download" data-arg="pdf|Document|1 page">${svg(I.download,15)} PDF</button>
       </div>
     </div>`);
@@ -317,7 +317,7 @@ function openBillingRunAction(kind){
       <div class="sec-title">Run configuration</div>
       <dl class="kv"><dt>Billing window</dt><dd>Jul 01 00:30–02:15 UTC</dd><dt>Source snapshot</dt><dd>Subscriptions, usage, amendments, tax addresses and GL mappings frozen</dd><dt>Invoice mode</dt><dd>Draft first, approval required before send</dd><dt>Payment action</dt><dd>Auto-charge eligible after invoice finalization</dd><dt>Evidence</dt><dd>Run snapshot, validation output, approval log and invoice diff retained</dd></dl>
       <div class="sec-title">Control sequence</div><div class="dot-step">${[['Scope','done'],['Rate','done'],['Validate','active'],['Approve',''],['Generate','']].map((s,k)=>`<div class="ds ${s[1]}"><div class="c">${s[1]==='done'?'✓':k+1}</div><small>${s[0]}</small></div>`).join('')}</div>
-      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="toast" data-arg="Billing run ${schedule?'scheduled':'preview recalculated'} with evidence packet">${schedule?'Schedule controlled run':'Recalculate preview'}</button><button class="btn" data-act="download" data-arg="pdf|Billing Run Evidence|Scope · controls · approvals">${svg(I.download,15)} Evidence</button></div>
+      <div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" style="flex:1;justify-content:center" data-act="demoact" data-arg="Billing run ${schedule?'scheduled for Jul 01 00:30 UTC':'preview recalculated'} — logged with evidence packet">${schedule?'Schedule controlled run':'Recalculate preview'}</button><button class="btn" data-act="download" data-arg="pdf|Billing Run Evidence|Scope · controls · approvals">${svg(I.download,15)} Evidence</button></div>
     </div>`);
 }
 function openBillingRunDetail(id){
@@ -339,7 +339,7 @@ function openBillingRunException(arg){
   const [scope, exception, impact, owner] = (arg||'').split('|');
   openDrawer(`
     <div class="drawer-head"><div><div class="mono mut">Billing run exception</div><div style="font-size:18px;font-weight:650">${exception||'Validation exception'}</div></div><button class="x" data-act="close" aria-label="Close drawer">✕</button></div>
-    <div class="drawer-body"><dl class="kv"><dt>Scope</dt><dd>${scope}</dd><dt>Impact</dt><dd>${impact}</dd><dt>Owner</dt><dd>${owner}</dd><dt>Resolution SLA</dt><dd>Before billing run approval cutoff</dd><dt>Audit requirement</dt><dd>Resolution comment and before/after validation output</dd></dl><div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" data-act="toast" data-arg="Exception assigned to ${owner}">Assign owner</button><button class="btn" data-act="download" data-arg="csv|Billing Exception|${scope} · ${exception}">Export exception</button></div></div>`);
+    <div class="drawer-body"><dl class="kv"><dt>Scope</dt><dd>${scope}</dd><dt>Impact</dt><dd>${impact}</dd><dt>Owner</dt><dd>${owner}</dd><dt>Resolution SLA</dt><dd>Before billing run approval cutoff</dd><dt>Audit requirement</dt><dd>Resolution comment and before/after validation output</dd></dl><div style="display:flex;gap:8px;margin-top:22px"><button class="btn primary" data-act="demoact" data-arg="Billing exception assigned to ${owner}">Assign owner</button><button class="btn" data-act="download" data-arg="csv|Billing Exception|${scope} · ${exception}">Export exception</button></div></div>`);
 }
 function openWorkflowAction(kind){
   const build = kind==='builder';

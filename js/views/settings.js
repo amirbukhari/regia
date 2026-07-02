@@ -41,7 +41,7 @@ VIEWS.settings = (v)=>{
         <div class="card panel">
           <div class="panel-head"><h3>Team & permissions</h3><div class="right"><button class="btn ghost" style="padding:5px 10px" data-act="inviteusr">+ Invite</button></div></div>
           <div class="table-wrap" style="border:none"><table style="min-width:0"><thead><tr><th>Member</th><th>Role</th><th>Access</th></tr></thead>
-          <tbody>${[['Amir Bukhari','Admin','Full'],['M. Reyes','Revenue Manager','Billing, A/R'],['D. Cho','Collections','A/R, Dunning'],['P. Anand','Sales Ops','Quotes'],['Auditor (read-only)','Viewer','Reports']]
+          <tbody>${[...db().added.members.map(m=>[m.name,m.role,'Invited · pending']), ['Amir Bukhari','Admin','Full'],['M. Reyes','Revenue Manager','Billing, A/R'],['D. Cho','Collections','A/R, Dunning'],['P. Anand','Sales Ops','Quotes'],['Auditor (read-only)','Viewer','Reports']]
             .map(r=>`<tr><td class="nm">${r[0]}</td><td>${pill(r[1]==='Admin'?'ember':'muted',r[1])}</td><td class="mut">${r[2]}</td></tr>`).join('')}</tbody></table></div>
         </div>
       </div>

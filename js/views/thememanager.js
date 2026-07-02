@@ -12,7 +12,7 @@ VIEWS.thememanager = (v)=>{
   v.appendChild(el(`<div class="view">
     ${pageHead('Theme & Branding','Customise the visual identity of the delonix platform',`
       <button class="btn ghost" data-act="theme" data-arg="ember">Reset to default</button>
-      <button class="btn primary" data-act="toast" data-arg="Theme preferences saved">Save preferences</button>
+      <button class="btn primary" data-act="demoact" data-arg="Theme preferences saved for the organization">Save preferences</button>
     `)}
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">

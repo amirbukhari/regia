@@ -31,7 +31,7 @@ function openCollectionDetail(acct){
     <div class="form-footer">
       <button class="btn ghost" style="color:var(--neg);border-color:var(--neg)" data-act="suspendaccount" data-arg="${name}">Suspend account</button>
       <button class="btn ghost" data-act="logcontact" data-arg="${name}">Log contact</button>
-      <button class="btn primary" data-act="toast" data-arg="Manual payment link sent to ${name} billing contact">Send payment link</button>
+      <button class="btn primary" data-act="sendpaylink" data-arg="${name}">Send payment link</button>
     </div>`);
 }
 
@@ -63,15 +63,11 @@ function openDunningConfig(){
 /* ── Approval Rules ── */
 
 function openCollectionsSweep(){
-  const accounts = [
-    {name:'Meridian Tech',  overdue:'$1,450', days:59, action:'Email + phone'},
-    {name:'Bridgepoint',    overdue:'$2,150', days:31, action:'Email reminder'},
-    {name:'Apex Systems',   overdue:'$5,800', days:28, action:'Email reminder'},
-    {name:'Fulcrum Labs',   overdue:'$3,400', days:28, action:'Email reminder'},
-    {name:'Cascade Analytics',overdue:'$2,950', days:87, action:'Final notice + legal hold'},
-  ];
+  const accounts = DUN_ROWS.filter(r=>r.day>=7).sort((a,b)=>b.amt-a.amt).slice(0,5)
+    .map(r=>({name:r.acct, overdue:fmt(r.amt), days:r.day, action:r.day>=21?'Final notice + call task':r.day>=14?'Email + phone':'Email reminder'}));
+  const sweepTotal = accounts.reduce((s,a)=>s+(+a.overdue.replace(/[^0-9]/g,'')),0);
   openDrawer('Collections Sweep — June 28, 2026', `
-    <div class="val-banner warn" style="margin-bottom:14px">${svg(I.dunning,14)} <strong>${accounts.length} accounts</strong> have overdue balances totalling <strong>$15,750</strong>. This sweep will send reminders and log collection attempts.</div>
+    <div class="val-banner warn" style="margin-bottom:14px">${svg(I.dunning,14)} <strong>${accounts.length} accounts</strong> have overdue balances totalling <strong>${fmt(sweepTotal)}</strong>. This sweep will send reminders and log collection attempts.</div>
     <div class="table-wrap" style="margin-bottom:14px"><table>
       <thead><tr><th>Account</th><th class="num">Overdue</th><th>Days past due</th><th>Planned action</th></tr></thead>
       <tbody>${accounts.map(a=>`<tr>
@@ -87,7 +83,7 @@ function openCollectionsSweep(){
       <div class="fg"><label>CC Finance</label><input class="finput" value="finance@delonix.io"></div>
     </div>
     <div class="form-actions" style="margin-top:12px">
-      <button class="btn primary" data-act="toast" data-arg="Collections sweep complete — 5 reminders sent · 5 attempts logged">Run Sweep</button>
+      <button class="btn primary" data-act="runsweep">Run Sweep</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

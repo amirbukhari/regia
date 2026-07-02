@@ -65,8 +65,8 @@ function openWebhookDetail(endpoint){
       ${['invoice.finalized','invoice.sent','payment.succeeded','payment.failed','subscription.created','subscription.cancelled','credit.issued','dunning.started'].map(e=>`<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer"><input type="checkbox" ${subscribed.has(e)?'checked':''}> ${e}</label>`).join('')}
     </div>
     <div class="form-actions">
-      <button class="btn primary" data-act="toast" data-arg="Webhook saved">Save</button>
-      <button class="btn ghost" data-act="toast" data-arg="Test event sent to endpoint">Send Test</button>
+      ${cfgSaveBtn('webhook-'+ep,'Webhook settings saved','Save')}
+      <button class="btn ghost" data-act="demoact" data-arg="Test event sent to ${ep} — delivery logged">Send Test</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -105,7 +105,7 @@ function openCustomDomain(){
     </div>
     <div class="val-banner info">${svg(I.check,14)} SSL certificate will be automatically provisioned via Let's Encrypt after DNS propagation (typically 24–48h).</div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Custom domain saved — verifying DNS propagation">Save & Verify</button>
+      ${cfgSaveBtn('custom-domain','Custom domain saved — DNS verification queued','Save & Verify')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -137,14 +137,14 @@ function openIntegrationEventLogs(){
 function openAPIKeyCreator(){
   openDrawer('Create API Key', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Key name</label><input class="finput" placeholder="e.g. Production · Billing Integration" autofocus></div>
-      <div class="fg"><label>Access level</label><select class="finput"><option>Read-only</option><option selected>Read + Write</option><option>Admin</option></select></div>
+      <div class="fg" style="grid-column:1/-1"><label>Key name</label><input class="finput" id="ak_name" placeholder="e.g. Production · Billing Integration" autofocus></div>
+      <div class="fg"><label>Access level</label><select class="finput" id="ak_scope"><option>Read-only</option><option selected>Read + Write</option><option>Admin</option></select></div>
       <div class="fg"><label>Expiry</label><select class="finput"><option>Never</option><option>30 days</option><option selected>1 year</option><option>Custom</option></select></div>
       <div class="fg" style="grid-column:1/-1"><label>Allowed IP ranges (optional)</label><input class="finput" placeholder="e.g. 192.168.1.0/24 — leave blank for any"></div>
     </div>
     <div class="val-banner info" style="margin-top:12px">${svg(I.api,14)} The secret key will only be shown once. Copy it immediately after creation — it cannot be retrieved again.</div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="API key created — copy it now, it won't be shown again">Create Key</button>
+      <button class="btn primary" data-act="createkey">Create Key</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -155,7 +155,7 @@ function openRotateKey(keyId){
     <div class="val-banner error" style="margin-bottom:16px">${svg(I.warning,15)} <strong>Key rotation immediately invalidates the old key.</strong> Update your systems before rotating to avoid downtime.</div>
     <div style="font-size:13px;margin-bottom:14px">A new secret key will be generated. The current key <span class="mono" style="font-size:12px">${keyId||'sk_live_••••••'}</span> (created ${dlxPick(keyId||'k',['Jan 12, 2026','Nov 03, 2025','Apr 28, 2026'])} · last used ${dlxRange(keyId||'k',1,50)} min ago) will stop working immediately after rotation.</div>
     <div class="form-actions">
-      <button class="btn" style="background:var(--warn);color:#1a0e00;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:600" data-act="toast" data-arg="API key rotated — new key ready, old key invalidated">Rotate Key</button>
+      <button class="btn" style="background:var(--warn);color:#1a0e00;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:600" data-act="rotatenow" data-arg="${keyId||'sk_live_••••••'}">Rotate Key</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

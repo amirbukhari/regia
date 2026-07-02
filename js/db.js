@@ -8,7 +8,7 @@ const DEMO_TODAY = 'Jun 28';
 
 function dbSeed(){
   return {
-    v: 2,
+    v: 3,
     /* Invoices view ledger */
     invoices: [
       {id:'INV-2026-0847',acct:'Stellar Systems',   bu:'BU-002',buName:'Commercial',    amt:9200, issued:'Jun 01',due:'Jul 01',period:'Jun 2026',sl:'Paid',     status:'good', finalized:true,  validated:true},
@@ -91,7 +91,10 @@ function dbSeed(){
     contactLog: {},   // acct -> [{type,outcome,followup,note,when}]
     activity: [],     // [{who,what,when}] — shown in Settings audit log
     config: {},       // configKey -> saved control values / scalars
-    counters: { inv: 849, cn: 113, pay: 94202, acct: 4113, qt: 96 },
+    added: { quotes:[], plans:[], meters:[], members:[], apikeys:[], pricebooks:[],
+             bizunits:[], legalentities:[], entities:[], fields:[], calculators:[], reports:[] },
+    matched: [],   // unapplied-cash references already matched to invoices
+    counters: { inv: 849, cn: 113, pay: 94202, acct: 4113, qt: 323, bu: 6, le: 5, ce: 5, calc: 5 },
   };
 }
 
@@ -122,7 +125,7 @@ function db(){
   if(DLX_DB_CACHE) return DLX_DB_CACHE;
   try{
     const raw = localStorage.getItem(DLX_DB_KEY);
-    if(raw){ const parsed = JSON.parse(raw); if(parsed && parsed.v === 2){ DLX_DB_CACHE = parsed; return DLX_DB_CACHE; } }
+    if(raw){ const parsed = JSON.parse(raw); if(parsed && parsed.v === 3){ DLX_DB_CACHE = parsed; return DLX_DB_CACHE; } }
   }catch(e){}
   DLX_DB_CACHE = dbSeed();
   return DLX_DB_CACHE;
@@ -381,6 +384,277 @@ function dbApplyGrouping(acctId){
   dbRefresh(pol && pol.requiresApproval
     ? `Invoice grouping set to ${pol.name} — queued for Finance approval`
     : `Invoice grouping set to ${pol?pol.name:short} — applies to Jun 2026 open period`);
+}
+
+/* ============================================================
+   Demo actions — every claim leaves a visible trace
+   ============================================================ */
+/* toast + audit-feed entry + close: for process actions whose only sensible
+   mock artifact is the audit trail (sends, posts, syncs) */
+function demoAct(arg){ dbActivity(arg); dbSave(); closeDrawer(); toast(arg); }
+
+function copyText(arg){
+  try{ navigator.clipboard && navigator.clipboard.writeText(arg); }catch(e){}
+  toast('Copied to clipboard');
+}
+
+/* line-item rows in drawer forms really add/remove */
+function addLineRow(t){
+  const scope = t.closest('.form-section') || t.parentElement;
+  const rows = scope.querySelectorAll('.line-item-row');
+  const last = rows[rows.length-1];
+  if(!last) return;
+  const clone = last.cloneNode(true);
+  clone.querySelectorAll('input').forEach((inp,i)=>{ if(inp.type==='number') inp.value = i===0?1:0; else inp.value=''; });
+  const totalEl = clone.querySelector('.line-item-total'); if(totalEl) totalEl.textContent='$0.00';
+  last.after(clone);
+  recalcInvoiceForm();
+}
+function removeLineRow(t){
+  const row = t.closest('.line-item-row');
+  if(!row) return;
+  const scope = row.parentElement;
+  if(scope.querySelectorAll('.line-item-row').length <= 1){ toast('At least one line item is required'); return; }
+  row.remove();
+  recalcInvoiceForm();
+}
+/* keep the New Invoice summary in sync with its line items */
+function recalcInvoiceForm(){
+  const wrap = document.getElementById('lineItems'); if(!wrap) return;
+  let sub = 0;
+  wrap.querySelectorAll('.line-item-row').forEach(r=>{
+    const inp = r.querySelectorAll('input');
+    if(inp.length < 3) return;
+    const amt = (+inp[1].value||0) * (+inp[2].value||0);
+    sub += amt;
+    const t = r.querySelector('.line-item-total'); if(t) t.textContent = fmt2(amt);
+  });
+  const rows = document.querySelectorAll('#drawer .invoice-summary .inv-sum-row');
+  if(rows.length >= 4){
+    rows[0].lastElementChild.textContent = fmt2(sub);
+    rows[1].lastElementChild.textContent = fmt2(Math.round(sub*13)/100);
+    rows[3].lastElementChild.textContent = fmt2(Math.round(sub*113)/100);
+  }
+}
+
+function dbVoidInvoice(id){
+  const inv = dbFindInvoice(id);
+  if(inv){ inv.sl='Void'; inv.status='muted'; }
+  const cn = { id: dbNext('cn','CN-2026-'), acct: inv?inv.acct:'Account', amt: inv?inv.amt:0,
+    reason: `Full credit on void ${id}`, applied: id, date: DEMO_TODAY,
+    status:'muted', sl:'Applied', type:'full-credit', finalized:true };
+  if(inv) db().credits.unshift(cn);
+  dbActivity(`voided ${id} — credit note ${cn.id} created`);
+  closeDrawer();
+  dbRefresh(inv ? `${id} voided — credit note ${cn.id} created for ${fmt(inv.amt)}` : 'Invoice voided');
+}
+
+function dbApproveInvoice(id){
+  const inv = dbFindInvoice(id);
+  if(inv && inv.sl==='Draft'){ inv.validated=true; delete inv.validationErrors; inv.sl='Sent'; inv.finalized=true; inv.due='Jul 28'; }
+  dbActivity(`approved invoice ${id||''}`);
+  closeDrawer();
+  dbRefresh(inv ? `${inv.id} approved — sent to ${inv.acct} for payment` : 'Invoice approved');
+}
+
+function dbApplyMatch(ref){
+  db().matched.push(ref);
+  const sel = $dv('mm_invoice');
+  const invId = (sel.match(/INV-\S+/)||[])[0];
+  const inv = invId ? dbFindInvoice(invId) : null;
+  if(inv){
+    inv.sl='Paid'; inv.status='good';
+    db().payments.unshift({ id: dbNext('pay','PAY-'), acct: inv.acct, amt: inv.amt, net: inv.amt,
+      gw:'Other', method:'Matched · '+ref, date: DEMO_TODAY, status:'good', sl:'Succeeded' });
+  }
+  dbActivity(`matched ${ref}${inv?` to ${inv.id}`:''} — cash applied`);
+  closeDrawer();
+  dbRefresh(inv ? `${ref} matched to ${inv.id} — invoice paid, AR updated` : `${ref} matched — cash applied`);
+}
+
+function dbRunSweep(){
+  const targets = DUN_ROWS.filter(r=>r.day>=7).slice(0,5);
+  targets.forEach(r=>{
+    (db().contactLog[r.acct] = db().contactLog[r.acct] || []).unshift(
+      { type:'Email reminder', outcome:'Sweep sent', followup:'2026-07-05', note:'Automated collections sweep', when:DEMO_TODAY });
+  });
+  dbActivity(`ran collections sweep — ${targets.length} reminders sent`);
+  closeDrawer();
+  dbRefresh(`Collections sweep complete — ${targets.length} reminders sent and logged`);
+}
+
+function dbSendPayLink(acct){
+  (db().contactLog[acct] = db().contactLog[acct] || []).unshift(
+    { type:'Payment link', outcome:'Sent to billing contact', followup:'2026-07-02', note:'Self-serve payment link', when:DEMO_TODAY });
+  dbActivity(`sent payment link to ${acct}`);
+  dbSave();
+  openCollectionDetail(acct);
+  toast(`Payment link sent to ${acct} billing contact — logged`);
+}
+
+/* ---- creations: every "create X" adds a visible row ---- */
+function dbCreateQuote(mode){
+  const acct = $dv('nq_customer') || 'Acme Corp';
+  const plan = $dv('nq_plan','Enterprise');
+  const qty = +$dv('nq_qty',1)||1, price = +$dv('nq_price',8500)||8500, disc = +$dv('nq_disc',0)||0;
+  const val = Math.round(qty*price*12*(1-disc/100));
+  const stage = mode==='review' ? 'Proposal' : ($dv('nq_stage','Discovery'));
+  const q = { id: dbNext('qt','Q-2026-'), acct, plan, val, owner: $dv('nq_owner','M. Reyes'),
+    stage, exp: $dv('nq_expires','2026-07-28').slice(5).replace('-',' / '),
+    status: mode==='review'?'ember':'muted', sl: mode==='review'?'Pending approval':'Draft' };
+  db().added.quotes.unshift(q);
+  dbActivity(`created quote ${q.id} — ${acct} · ${fmt(val)} ACV`);
+  closeDrawer();
+  if(current!=='quotes') route('quotes');
+  dbRefresh(`Quote ${q.id} ${mode==='review'?'sent for internal review':'saved as draft'} — ${fmt(val)} ACV`);
+}
+
+function dbCreateRenewal(acct){
+  const val = +$dv('rq_arr',0) || 110400;
+  const q = { id: dbNext('qt','Q-2026-'), acct, plan:'Renewal', val, owner:'M. Reyes',
+    stage:'Proposal', exp:'Jul 28', status:'info', sl:'Sent' };
+  db().added.quotes.unshift(q);
+  dbActivity(`created renewal quote ${q.id} for ${acct} — ${fmt(val)} ARR`);
+  closeDrawer();
+  if(current!=='quotes') route('quotes');
+  dbRefresh(`Renewal quote ${q.id} created for ${acct} — ${fmt(val)} ARR, sent for review`);
+}
+
+function dbCreatePlan(){
+  const name = $dv('np_name') || 'New Plan';
+  const price = +$dv('np_price',0)||0;
+  db().added.plans.unshift({ name, price: price?'$'+price.toLocaleString('en-US'):'Custom',
+    unit: price?'/mo':'/ negotiated', badge:'muted', blab:'Draft', subs:0 });
+  dbActivity(`created plan ${name} (draft)`);
+  closeDrawer();
+  if(current!=='catalog') route('catalog');
+  dbRefresh(`Plan "${name}" saved as draft — publish from the catalog when ready`);
+}
+
+function dbCreateMeter(){
+  const name = $dv('nm_name') || 'New Meter';
+  const slug = $dv('nm_slug') || name.toLowerCase().replace(/[^a-z0-9]+/g,'_');
+  db().added.meters.unshift({ name, slug, unit: $dv('nm_unit','events'), agg: $dv('nm_agg','Sum'), events:'0' });
+  dbActivity(`created usage meter ${slug}`);
+  closeDrawer();
+  if(current!=='usage') route('usage');
+  dbRefresh(`Meter "${name}" created — send events with meter ref "${slug}"`);
+}
+
+function dbInviteMember(){
+  const email = $dv('iv_email') || 'teammate@delonix.com';
+  const role = $dv('iv_role','Viewer');
+  const name = email.split('@')[0].split(/[._-]/).map(w=>w? w[0].toUpperCase()+w.slice(1):'').join(' ') || 'Invited User';
+  db().added.members.unshift({ name, email, role, status:'pending', last:'—', mfa:false });
+  dbActivity(`invited ${email} as ${role}`);
+  closeDrawer();
+  if(current!=='permissions') route('permissions');
+  dbRefresh(`Invitation sent to ${email} — pending acceptance`);
+}
+
+function dbCreateKey(){
+  const label = $dv('ak_name') || 'Integration key';
+  const scope = $dv('ak_scope','Full access');
+  const suffix = dlxHash(label+Object.keys(db().config).length).toString(36).slice(0,4);
+  db().added.apikeys.unshift(['Live · '+label, 'sk_live_••••'+suffix, scope, DEMO_TODAY+', now', 'good', 'Active']);
+  dbActivity(`created API key sk_live_••••${suffix} (${scope})`);
+  closeDrawer();
+  if(current!=='developers') route('developers');
+  dbRefresh(`API key created — sk_live_••••${suffix} · shown once, stored hashed`);
+}
+
+function dbRotateKeyNow(keyId){
+  dbActivity(`rotated API key ${keyId} — old key invalidated`);
+  closeDrawer();
+  dbRefresh(`${keyId} rotated — new secret issued, old key invalidated`);
+}
+
+function dbCreatePricebook(){
+  const name = $dv('npb_name') || 'New Price Book';
+  db().added.pricebooks.unshift({ name, desc: $dv('npb_desc','Draft price book'), accounts: 0 });
+  dbActivity(`created price book ${name} (draft)`);
+  dbSave();
+  openPriceBook();
+  toast(`Price book "${name}" created as draft`);
+}
+
+function dbCreateBizUnit(){
+  const name = $dv('nbu_name') || 'New Business Unit';
+  const id = 'BU-00' + db().counters.bu++;
+  db().added.bizunits.unshift({ id, name, brand: $dv('nbu_brand',name), entity:'Delonix Holdings LLC',
+    currency: $dv('nbu_currency','USD'), status:'active', mrr:0, subs:0, color:'#8b5cf6' });
+  dbActivity(`created business unit ${name} (${id})`);
+  closeDrawer();
+  if(current!=='bizunits') route('bizunits');
+  dbRefresh(`${name} created (${id}) — configure GL mappings and invoice template next`);
+}
+
+function dbCreateLegalEntity(){
+  const name = $dv('nle_name') || 'New Legal Entity';
+  const id = 'LE-00' + db().counters.le++;
+  db().added.legalentities.unshift({ id, name, country: $dv('nle_country','US'),
+    currency: $dv('nle_currency','USD'), glSystem: $dv('nle_gl','NetSuite'), status:'active' });
+  dbActivity(`created legal entity ${name} (${id})`);
+  closeDrawer();
+  if(current!=='legalentity') route('legalentity');
+  dbRefresh(`${name} created (${id}) — assign Business Units and tax registrations next`);
+}
+
+function dbCreateEntity(){
+  const name = $dv('ne_name') || 'New Entity';
+  const id = 'CE-00' + db().counters.ce++;
+  db().added.entities.unshift({ id, name, icon:'entity2', fields:0, records:0, system:false,
+    desc: $dv('ne_desc','Custom object') });
+  dbActivity(`created custom entity ${name} (${id})`);
+  closeDrawer();
+  if(current!=='customentities') route('customentities');
+  dbRefresh(`Custom entity "${name}" created — add fields to get started`);
+}
+
+function dbCreateField(){
+  const name = $dv('nf_name') || 'new_field';
+  db().added.fields.unshift({ name: name.toLowerCase().replace(/[^a-z0-9]+/g,'_'),
+    type: $dv('nf_type','Text'), required: $dv('nf_required','No')==='Yes', indexed:false, system:false,
+    display: $dv('nf_display', name) });
+  dbActivity(`added field ${name} to Property entity`);
+  closeDrawer();
+  if(current!=='customentities') route('customentities');
+  dbRefresh(`Field "${name}" added to Property entity`);
+}
+
+function dbCreateCalculator(){
+  const name = $dv('ncal_name') || 'New Calculator';
+  const id = 'CALC-00' + db().counters.calc++;
+  db().added.calculators.unshift({ id, name, status:'draft', views:0, leads:0, lastEdit: DEMO_TODAY, url:'—' });
+  dbActivity(`created calculator ${name} (${id})`);
+  closeDrawer();
+  if(current!=='calculator') route('calculator');
+  dbRefresh(`Calculator "${name}" created as draft — open it to build inputs and formulas`);
+}
+
+function dbSaveReport(name, fmtLabel){
+  db().added.reports.unshift({ name: name||'Custom report', period:'Jun 2026', by:'Amir Bukhari', date: DEMO_TODAY, fmt: fmtLabel||'PDF' });
+  dbActivity(`generated report — ${name||'Custom report'}`);
+  closeDrawer();
+  if(current!=='reports') route('reports');
+  dbRefresh(`${name||'Report'} generated — available under Recent reports`);
+}
+
+function applyDateRange(){
+  const sel = document.querySelector('#drawer input[name="dr_preset"]:checked');
+  window._invPeriod = sel ? sel.value : 'All periods';
+  closeDrawer();
+  route(current);
+  toast(window._invPeriod==='All periods' ? 'Showing all periods' : `Filtered to ${window._invPeriod.toLowerCase()}`);
+}
+function setBuilderRange(label, t){
+  const map = { MTD:['2026-06-01','2026-06-28'], QTD:['2026-04-01','2026-06-28'], YTD:['2026-01-01','2026-06-28'],
+    'Last month':['2026-05-01','2026-05-31'], 'Last quarter':['2026-01-01','2026-03-31'] };
+  const dates = map[label] || map.MTD;
+  const inputs = [...document.querySelectorAll('#drawer input[type="date"]')];
+  if(inputs.length >= 2){ inputs[0].value = dates[0]; inputs[1].value = dates[1]; }
+  t.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on', b===t));
+  toast(`Date range set to ${label}`);
 }
 
 function dbResetDemo(){

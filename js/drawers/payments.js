@@ -104,7 +104,7 @@ function openManualMatch(ref){
       </div>
     </div>
     <div class="form-grid" style="grid-template-columns:1fr">
-      <div class="fg"><label>Match to invoice</label><select class="finput">
+      <div class="fg"><label>Match to invoice</label><select class="finput" id="mm_invoice">
         <option value="">— Search invoice or account —</option>
         ${candidates.map(i=>`<option>${i.id} · ${i.acct} · ${fmt2(i.amt)} · ${i.sl.toLowerCase()}</option>`).join('')}
       </select></div>
@@ -116,7 +116,7 @@ function openManualMatch(ref){
       <div class="fg"><label>Reconciliation note</label><input class="finput" placeholder="Wire received Jun 27 — matched to June invoice"></div>
     </div>
     <div class="form-actions" style="margin-top:14px">
-      <button class="btn primary" data-act="toast" data-arg="Payment ${ref||'PMT-2026-0312'} matched — AR updated, invoice marked paid">Apply Match</button>
+      <button class="btn primary" data-act="applymatch" data-arg="${ref||'PMT-2026-0312'}">Apply Match</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);

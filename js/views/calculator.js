@@ -1,19 +1,19 @@
 /* delonix — calculator.js */
 
 VIEWS.calculator = (v)=>{
-  const CALCS = [
+  const CALCS = [...db().added.calculators, ...[
     {id:'CALC-001',name:'Enterprise ROI Calculator',status:'published',views:1284,leads:87,lastEdit:'Jun 22',url:'calc.delonix.io/enterprise-roi'},
     {id:'CALC-002',name:'API Pricing Estimator',status:'published',views:632,leads:41,lastEdit:'Jun 15',url:'calc.delonix.io/api-pricing'},
     {id:'CALC-003',name:'TCO vs Legacy System',status:'draft',views:0,leads:0,lastEdit:'Jun 27',url:'—'},
     {id:'CALC-004',name:'Multi-Site Property Manager',status:'published',views:319,leads:22,lastEdit:'May 30',url:'calc.delonix.io/property'},
-  ];
+  ]];
   v.appendChild(el(`<div class="view">
   ${pageHead('Pricing Calculator','Build and embed interactive pricing calculators for sales, website and customer portal',
-    `<button class="btn ghost" data-act="toast" data-arg="Opening template library…">Browse templates</button>
+    `<button class="btn ghost" data-act="newcalculator">Browse templates</button>
      <button class="btn primary" data-act="newcalculator">+ New calculator</button>`
   )}
     <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:18px;display:none">
-      <button class="btn ghost" data-act="toast" data-arg="Opening template library…">Browse templates</button>
+      <button class="btn ghost" data-act="newcalculator">Browse templates</button>
       <button class="btn primary" data-act="newcalculator">+ New calculator</button>
     </div>
 

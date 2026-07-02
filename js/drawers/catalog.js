@@ -96,10 +96,10 @@ function openRevRules(){
 function openNewPlan(){
   openDrawer('New Plan', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Plan name</label><input class="finput" placeholder="e.g. Enterprise Plus" autofocus></div>
+      <div class="fg" style="grid-column:1/-1"><label>Plan name</label><input class="finput" id="np_name" placeholder="e.g. Enterprise Plus" autofocus></div>
       <div class="fg"><label>Business Unit</label><select class="finput">${BUS.map(b=>`<option value="${b.id}">${b.name}</option>`).join('')}</select></div>
       <div class="fg"><label>Billing interval</label><select class="finput"><option>Monthly</option><option>Annual</option><option>Usage-based</option><option>Custom</option></select></div>
-      <div class="fg"><label>Base price</label><input class="finput" type="number" placeholder="0.00"></div>
+      <div class="fg"><label>Base price</label><input class="finput" id="np_price" type="number" placeholder="0.00"></div>
       <div class="fg"><label>Currency</label><select class="finput"><option>USD</option><option>EUR</option><option>GBP</option></select></div>
       <div class="fg"><label>Trial days</label><input class="finput" type="number" placeholder="0" value="0"></div>
       <div class="fg"><label>Status</label><select class="finput"><option>Draft</option><option>Active</option></select></div>
@@ -107,25 +107,25 @@ function openNewPlan(){
     </div>
     <h4 style="font-size:13px;font-weight:700;margin:14px 0 10px">Entitlements</h4>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
-      <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:8px;align-items:center">
+      <div class="line-item-row" style="display:grid;grid-template-columns:1fr 1fr 80px;gap:8px;align-items:center">
         <input class="finput" placeholder="Feature / meter name" value="API Calls">
         <input class="finput" placeholder="Limit or Unlimited" value="1,000,000 / mo">
-        <button class="btn ghost" style="padding:6px 10px;font-size:12px" data-act="toast" data-arg="Line item removed">✕</button>
+        <button class="btn ghost" style="padding:6px 10px;font-size:12px" data-act="removeline" aria-label="Remove entitlement">✕</button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:8px;align-items:center">
+      <div class="line-item-row" style="display:grid;grid-template-columns:1fr 1fr 80px;gap:8px;align-items:center">
         <input class="finput" placeholder="Feature / meter name" value="Storage">
         <input class="finput" placeholder="Limit or Unlimited" value="100 GB">
-        <button class="btn ghost" style="padding:6px 10px;font-size:12px" data-act="toast" data-arg="Line item removed">✕</button>
+        <button class="btn ghost" style="padding:6px 10px;font-size:12px" data-act="removeline" aria-label="Remove entitlement">✕</button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:8px;align-items:center">
+      <div class="line-item-row" style="display:grid;grid-template-columns:1fr 1fr 80px;gap:8px;align-items:center">
         <input class="finput" placeholder="Feature / meter name" value="Seats">
         <input class="finput" placeholder="Limit or Unlimited" value="Unlimited">
-        <button class="btn ghost" style="padding:6px 10px;font-size:12px" data-act="toast" data-arg="Line item removed">✕</button>
+        <button class="btn ghost" style="padding:6px 10px;font-size:12px" data-act="removeline" aria-label="Remove entitlement">✕</button>
       </div>
     </div>
-    <button class="btn ghost" style="font-size:12px;width:100%" data-act="toast" data-arg="Line item added">+ Add entitlement</button>
+    <button class="btn ghost" style="font-size:12px;width:100%" data-act="addline">+ Add entitlement</button>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="New plan saved as draft">Save Draft</button>
+      <button class="btn primary" data-act="createplan">Save Draft</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -155,14 +155,14 @@ function openEditPlan(name){
 function openNewPricebook(){
   openDrawer('New Price Book', `
     <div class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div class="fg" style="grid-column:1/-1"><label>Price book name</label><input class="finput" placeholder="e.g. Enterprise Q3 2026" autofocus></div>
+      <div class="fg" style="grid-column:1/-1"><label>Price book name</label><input class="finput" id="npb_name" placeholder="e.g. Enterprise Q3 2026" autofocus></div>
       <div class="fg"><label>Business Unit</label><select class="finput">${BUS.map(b=>`<option>${b.name}</option>`).join('')}</select></div>
       <div class="fg"><label>Currency</label><select class="finput"><option>USD</option><option>EUR</option></select></div>
       <div class="fg"><label>Effective from</label><input class="finput" type="date" value="2026-07-01"></div>
       <div class="fg"><label>Status</label><select class="finput"><option>Draft</option><option>Active</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Price book created as draft">Create Price Book</button>
+      <button class="btn primary" data-act="createpricebook">Create Price Book</button>
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
@@ -176,7 +176,7 @@ function openEditPricebook(nameOrId){
     <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
       ${pill('good','Active')}
       <span class="mut" style="font-size:12px">Effective: Jan 1, 2026 – present</span>
-      <span style="margin-left:auto"><button class="btn ghost" style="font-size:12px;padding:5px 10px" data-act="toast" data-arg="Price book archived">Archive</button></span>
+      <span style="margin-left:auto"><button class="btn ghost" style="font-size:12px;padding:5px 10px" data-act="demoact" data-arg="Price book ${name} archived — hidden from new subscriptions">Archive</button></span>
     </div>
     <div class="table-wrap"><table>
       <thead><tr><th>Plan</th><th>List Price</th><th>Min. Commitment</th><th>Overage Rate</th><th></th></tr></thead>
@@ -185,7 +185,7 @@ function openEditPricebook(nameOrId){
         <td class="tnum">$${prices[i].toLocaleString()}/mo</td>
         <td class="tnum mut">${i<2?'$'+prices[i].toLocaleString()+'/yr':'—'}</td>
         <td class="tnum mut">${i<3?'$0.002 / API call':'—'}</td>
-        <td><button class="btn ghost" style="padding:4px 8px;font-size:11px" data-act="toast" data-arg="Editing ${p} pricing">Edit</button></td>
+        <td><button class="btn ghost" style="padding:4px 8px;font-size:11px" data-act="editplan" data-arg="${p}">Edit</button></td>
       </tr>`).join('')}</tbody>
     </table></div>
     <div class="form-actions" style="margin-top:12px">
@@ -206,7 +206,7 @@ function openEditObligation(name){
       <div class="fg"><label>Deferred GL account</label><input class="finput" value="2800 · Deferred Revenue"></div>
     </div>
     <div class="form-actions" style="margin-top:16px">
-      <button class="btn primary" data-act="toast" data-arg="Obligation saved">Save Obligation</button>
+      ${cfgSaveBtn('obligation-'+(name||'Subscription Revenue'),'Obligation saved','Save Obligation')}
       <button class="btn ghost" onclick="closeDrawer()">Cancel</button>
     </div>
   `);
