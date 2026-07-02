@@ -54,6 +54,12 @@ node tests/parity.mjs                        # CHROMIUM_PATH=... to pin a browse
 
 Screenshots and diff images land in `tests/.artifacts/`.
 
+`tests/runtime-audit.mjs` (`npm run test:audit`) drives the mockup itself:
+it verifies every `events.js` dispatch handler exists, renders all routes,
+clicks every unique `data-act` element (including inside opened drawers), and
+scans the rendered HTML for template bugs (`undefined`, `NaN`,
+`[object Object]`, unrendered `${…}`), failing on any page error.
+
 ## Deployment
 
 `.github/workflows/deploy-pages.yml` builds the export with

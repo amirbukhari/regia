@@ -41,7 +41,7 @@ VIEWS.integrations = (v)=>{
   v.appendChild(el(`<div class="view">
     ${pageHead('Integrations','Pre-built connectors keeping billing, CRM, GL and banking in sync.',
       `<button class="btn ghost" data-act="integeventlogs">View logs</button>
-       <button class="btn primary" data-act="route" data-arg="integrations">Browse marketplace</button>`)}
+       <button class="btn primary" data-act="toast" data-arg="Marketplace — 13 connectors available, 6 installed">Browse marketplace</button>`)}
     <div class="grid kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
       ${kpi('Active connectors','6','of 13 installed',{accent:true})}
       ${kpi('Records synced (24h)','48,621','across 6 integrations',{trend:6})}

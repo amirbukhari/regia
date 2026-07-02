@@ -210,7 +210,7 @@ VIEWS.statements = (v)=>{
                 <dt>D&amp;A</dt><dd class="tnum">${money(-12400)}</dd>
               </dl>
             </div>
-            <div class="note info">${svg(I.statements,15)}<div>Management-basis P&amp;L. GAAP reconciliation and full audited financials available on request. D&amp;A includes capitalized software amortization of <b>$8,200</b> and equipment <b>$4,200</b>.</div></div>
+            <div class="note info">${svg(I.ledger,15)}<div>Management-basis P&amp;L. GAAP reconciliation and full audited financials available on request. D&amp;A includes capitalized software amortization of <b>$8,200</b> and equipment <b>$4,200</b>.</div></div>
           </div>
         </div>`;
     } else if(tab==='bs'){

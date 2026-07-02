@@ -19,8 +19,8 @@ function openPriceBook(){
         <div class="entity-meta">${b.desc} · ${b.accounts} accounts</div>
       </div>
       <div style="display:flex;gap:6px">
-        <button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="editpricebook" data-arg="${b.id}">Edit</button>
-        ${!b.active?`<button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="editpricebook" data-arg="${b.id}">Set default</button>`:''}
+        <button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="editpricebook" data-arg="${b.name}">Edit</button>
+        ${!b.active?`<button class="btn ghost" style="font-size:11px;padding:4px 8px" data-act="toast" data-arg="${b.name} set as default price book">Set default</button>`:''}
       </div>
     </div>`).join('')}
     <div class="form-footer">

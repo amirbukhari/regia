@@ -56,15 +56,24 @@ VIEWS.migration = (v)=>{
         <table>
           <thead><tr><th>System</th><th>Type</th><th>Records</th><th>Last Sync</th><th>Coverage</th><th>Status</th><th></th></tr></thead>
           <tbody>
-            ${SOURCE_SYSTEMS.map(s=>`<tr data-act="migrationdetail" data-arg="${s.id}" style="cursor:pointer">
+            ${SOURCE_SYSTEMS.map(s=>{
+              const acquired = s.type==='acquired';
+              const records = acquired ? `${s.legacyCustomers.toLocaleString('en-US')} customers` : `${s.recordsExported.toLocaleString('en-US')} exported`;
+              const coverage = acquired ? `${s.mapped}/${s.legacyCustomers} mapped · ${s.unresolved} unresolved` : '—';
+              const statusPill = s.status==='active'?pill('good','Active')
+                :s.status==='complete'?pill('ember','Complete')
+                :s.status==='healthy'?pill('good','Healthy')
+                :s.status==='in-progress'?pill('warn','In progress')
+                :pill('warn',s.status);
+              return `<tr data-act="migrationdetail" data-arg="${s.id}" style="cursor:pointer">
               <td style="font-weight:600;font-size:13px">${s.name}</td>
               <td class="mut" style="font-size:12px">${s.type}</td>
-              <td class="tnum" style="font-size:12.5px">${s.records}</td>
-              <td class="mut tnum" style="font-size:11.5px">${s.lastSync}</td>
-              <td style="font-size:12px">${s.coverage}</td>
-              <td>${s.status==='active'?pill('good','Active'):s.status==='complete'?pill('ember','Complete'):pill('warn',s.status)}</td>
+              <td class="tnum" style="font-size:12.5px">${records}</td>
+              <td class="mut tnum" style="font-size:11.5px">${s.lastSync||'—'}</td>
+              <td style="font-size:12px">${coverage}</td>
+              <td>${statusPill}</td>
               <td class="mut">${svg('<polyline points="9 18 15 12 9 6"/>',14)}</td>
-            </tr>`).join('')}
+            </tr>`;}).join('')}
           </tbody>
         </table>
       </div>

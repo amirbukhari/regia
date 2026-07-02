@@ -9,7 +9,8 @@
     "prebuild": "npm run sync:legacy",
     "build": "next build",
     "start": "next start",
-    "test:parity": "node tests/parity.mjs"
+    "test:parity": "node tests/parity.mjs",
+    "test:audit": "node tests/runtime-audit.mjs"
   },
   "dependencies": {
     "next": "^15.3.4",
