@@ -394,8 +394,27 @@ function dbApplyGrouping(acctId){
 function demoAct(arg){ dbActivity(arg); dbSave(); closeDrawer(); toast(arg); }
 
 function copyText(arg){
-  try{ navigator.clipboard && navigator.clipboard.writeText(arg); }catch(e){}
-  toast('Copied to clipboard');
+  const ok = () => toast('Copied to clipboard');
+  const fallback = () => toast(copyTextLegacy(arg) ? 'Copied to clipboard' : 'Copy blocked by browser — select the text to copy it');
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(arg).then(ok, fallback);
+      return;
+    }
+  }catch(e){}
+  fallback();
+}
+/* clipboard API can be denied (permissions, insecure context) — old-school path */
+function copyTextLegacy(arg){
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = arg; ta.setAttribute('readonly','');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta); ta.select();
+    const done = document.execCommand('copy');
+    ta.remove();
+    return done;
+  }catch(e){ return false; }
 }
 
 /* line-item rows in drawer forms really add/remove */
